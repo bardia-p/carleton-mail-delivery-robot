@@ -4,16 +4,20 @@ from std_msgs.msg import String
 class StateType(Enum):
     OPERATIONAL = "OPERATIONAL"
     NOT_OPERATIONAL = "NOT_OPERATIONAL"
-    STOPPED = "STOPPED"
-    MOVING = "MOVING"
-    HANDLE_COLLISION = "HANDLE_COLLISON"
-    IDLE = "IDLE"
-    CHARGING = "CHARGING"
     FIND_WALL = "FIND_WALL"
     WALL_FOLLOWING = "WALL_FOLLOWING"
-    HANDLE_INTERSECTION = "HANDLE_INTERSECTION"
     DOCKING = "DOCKING"
+    PASS_INTERSECTION = "PASS_INTERSECTION"
+    TURN_RIGHT = "TURN_RIGHT"
+    TURN_LEFT = "TURN_LEFT"
+    HANDLE_COLLISION = "HANDLE_COLLISION"
 
+class Direction(Enum):
+    NONE = "NONE"
+    RIGHT = "RIGHT"
+    LEFT = "LEFT"
+    PASS = "PASS"
+    DOCK = "DOCK"
 
 class State:
     def __init__(self, actionPublisher):
@@ -23,27 +27,30 @@ class State:
     def printState(self):
         return "STATE IS: " + self.stateType.value
 
-    def gotTrip(self):
+    def gotNavLeft(self):
         return self
 
+    def gotNavRight(self):
+        return self
+    
+    def gotNavPass(self):
+        return self
+    
+    def gotNavDock(self):
+        return self
+    
     def gotWall(self, data):
         return self
 
     def lostWall(self):
         return self
 
-    def timeout(self):
+    def gotBump(self):
         return self
 
-    def needCharge(self):
+    def gotTrip(self):
         return self
-
-    def gotBeacon(self):
-        return self
-
-    def gotCollision(self):
-        return self
-
+    
     def gotError(self):
         return self
 
@@ -53,123 +60,177 @@ class Operational(State):
         super().__init__(actionPublisher)
         self.stateType = StateType.OPERATIONAL
 
-    def timeout(self):
-        return Stopped(self.actionPublisher)
-
     def gotError(self):
-        return NotOperationaL(self.actionPublisher)
+        return NotOperational(self.actionPublisher)
 
 class NotOperational(State):
     def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
         self.stateType = StateType.NOT_OPERATIONAL
 
-class Stopped(Operational):
-    def __init__(self, actionPublisher):
-        super().__init__(actionPublisher)
-        self.stateType = StateType.STOPPED
-
-    def timeout(self):
-        return Idle(self.actionPublisher)
-
-
-class Moving(Operational):
-    def __init__(self, actionPublisher):
-        super().__init__(actionPublisher)
-        self.stateType = StateType.MOVING
-
-    def timeout(self):
-        return FindWall(self.actionPublisher)
-
-class HandleCollision(Operational):
-    def __init__(self, actionPublisher):
-        super().__init__(actionPublisher)
-        self.stateType = StateType.HANDLE_COLLISION
-
-    def timeout(self):
-        return FindWall(self.actionPublisher)
-
-class Idle(Stopped):
-    def __init__(self, actionPublisher):
-        super().__init__(actionPublisher)
-        self.stateType = StateType.IDLE
-
-    def gotTrip(self):
-        return FindWall(self.actionPublisher)
-
-    def needCharge(self):
-        return Charging(self.actionPublisher)
-
-class Charging(Stopped):
-    def __init__(self, actionPublisher):
-        super().__init__(actionPublisher)
-        self.stateType = StateType.CHARGING
-
-    def timeout(self):
-        return Idle(self.actionPublisher)
-
-class FindWall(Moving):
+class FindWall(Operational):
     def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
         self.stateType = StateType.FIND_WALL
+        self.actionPublisher.publish(generateAction("R_TURN"))
 
+    def lostWall(self):
+        self.actionPublisher.publish(generateAction("FORWARD"))
+        return self
+    
     def gotWall(self, data):
-        action = String()
-        action = data
-        self.actionPublisher.publish(action)
-        return WallFollowing(self.actionPublisher)
+        return WallFollowing(self.actionPublisher, Direction.NONE, data)
 
-    def needCharge(self):
-        return NotOperational(self.actionPublisher)
+    def gotNavLeft(self):
+        return TurnLeft(self.actionPublisher)
 
-class WallFollowing(Moving):
-    def __init__(self, actionPublisher):
+    def gotNavRight(self):
+        return TurnRight(self.actionPublisher)
+    
+    def gotNavPass(self):
+        return PassIntersection(self.actionPublisher)
+    
+    def gotNavDock(self):
+        return Docking(self.actionPublisher)
+    
+class WallFollowing(Operational):
+    def __init__(self, actionPublisher, nextDir, lidarData = ""):
         super().__init__(actionPublisher)
         self.stateType = StateType.WALL_FOLLOWING
-        self.hasGotBeacon = False
-        self.hasLostWall = False
-
-    def lostWall(self):
-        self.hasLostWall = True
-        if self.hasGotBeacon:
-            return HandleIntersection(self.actionPublisher)
-        return FindWall(self.actionPublisher)
+        self.nextDir = nextDir
+        self.lidarData = lidarData
 
     def gotWall(self, data):
-        self.hasLostWall = False
-        action = String()
-        action = data
-        self.actionPublisher.publish(action)
+        self.actionPublisher.publish(generateAction("WALL_FOLLOW", data))
         return self
 
-    def gotBeacon(self):
-        self.hasGotBeacon = True
-        if self.hasLostWall:
-            return HandleIntersection(self.actionPublisher)
+    def lostWall(self):
+        if (self.nextDir == Direction.LEFT):
+            return TurnLeft(self.actionPublisher)
+        elif (self.nextDir == Direction.RIGHT):
+            return TurnRight(self.actionPublisher)
+        elif (self.nextDir == Direction.PASS):
+            return PassIntersection(self.actionPublisher)
+        elif (self.nextDir == Direction.DOCK):
+            return Docking(self.actionPublisher)
+        else:
+            return FindWall(self.actionPublisher)
+
+    def gotNavLeft(self):
+        self.nextDir = Direction.LEFT
         return self
 
-class HandleIntersection(Moving):
+    def gotNavRight(self):
+        self.nextDir = Direction.RIGHT
+        return self
+    
+    def gotNavPass(self):
+        self.nextDir = Direction.PASS
+        return self
+
+    def gotNavDock(self):
+        self.nextDir = Direction.DOCK
+        return self
+
+class TurnLeft(Operational):
     def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
-        self.stateType = StateType.HANDLE_INTERSECTION
+        self.stateType = StateType.TURN_LEFT
+        self.actionPublisher.publish(generateAction("L_TURN"))
 
     def lostWall(self):
-        return FindWall(self.actionPublisher)
-
+        self.actionPublisher.publish(generateAction("FORWARD"))
+        return self
+    
     def gotWall(self, data):
-        action = String()
-        action = data
-        self.actionPublisher.publish(action)
-        return WallFollowing(self.actionPublisher)
+        return WallFollowing(self.actionPublisher, Direction.LEFT, data)
+    
+    def gotBump(self):
+        return HandleCollision(self.actionPublisher, Direction.LEFT)
 
-class Docking(Moving):
+class TurnRight(Operational):
+    def __init__(self, actionPublisher):
+        super().__init__(actionPublisher)
+        self.actionPublisher.publish(generateAction("R_TURN"))
+
+    def lostWall(self):
+        self.actionPublisher.publish(generateAction("FORWARD"))
+        return self
+    
+    def gotWall(self, data):
+        return WallFollowing(self.actionPublisher, Direction.RIGHT, data)
+    
+    def gotBump(self):
+        return HandleCollision(self.actionPublisher, Direction.RIGHT)
+    
+class PassIntersection(Operational):
+    def __init__(self, actionPublisher):
+        super().__init__(actionPublisher)
+        self.actionPublisher.publish(generateAction("FORWARD"))
+
+    def lostWall(self):
+        self.actionPublisher.publish(generateAction("FORWARD"))
+        return self
+    
+    def gotWall(self, data):
+        return WallFollowing(self.actionPublisher, Direction.PASS, data)
+    
+    def gotBump(self):
+        return HandleCollision(self.actionPublisher, Direction.PASS)
+    
+class Docking(Operational):
     def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
         self.stateType = StateType.DOCKING
+        self.actionPublisher.publish(generateAction("DOCK"))
 
-    def needCharge(self):
-        return Idle(self.actionPublisher)
+    def gotTrip(self, data):
+        self.actionPublisher.publish(generateAction("UNDOCK"))
+        return FindWall(self.actionPublisher)
 
-    def timeout(self):
-        return Idle(self.actionPublisher)
+class HandleCollision(Operational):
+    def __init__(self, actionPublisher, nextDir):
+        super().__init__(actionPublisher)
+        self.stateType = StateType.HANDLE_COLLISION
+        self.nextDir = nextDir
+        self.actionPublisher.publish(generateAction("L_TURN"))
+
+    def gotWall(self, data):
+        return WallFollowing(self.actionPublisher, self.nextDir, data)
+
+    def lostWall(self):
+        if (self.nextDir == Direction.LEFT):
+            return TurnLeft(self.actionPublisher)
+        elif (self.nextDir == Direction.RIGHT):
+            return TurnRight(self.actionPublisher)
+        elif (self.nextDir == Direction.PASS):
+            return PassIntersection(self.actionPublisher)
+        elif (self.nextDir == Direction.DOCK):
+            return Docking(self.actionPublisher)
+        else:
+            return FindWall(self.actionPublisher)
+
+    def gotNavLeft(self):
+        self.nextDir = Direction.LEFT
+        return self
+
+    def gotNavRight(self):
+        self.nextDir = Direction.RIGHT
+        return self
+    
+    def gotNavPass(self):
+        self.nextDir = Direction.PASS
+        return self
+
+    def gotNavDock(self):
+        self.nextDir = Direction.DOCK
+        return self
+    
+def generateAction(command, data = ""):
+    action = String()
+    action.data = command
+    if data != "":
+        action.data += ":" + data
+    return action
+
 

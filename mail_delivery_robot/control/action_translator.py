@@ -24,27 +24,31 @@ class ActionTranslator(Node):
         action = str(data.data)
         emptyMessage = Empty
 
-        target_distance, current_distance, current_angle = action.split(":")
+        split_action = action.split(":")
 
-        self.get_logger().info('distance: ' + current_distance)
-        self.get_logger().info('angle: ' + current_angle)
-        self.get_logger().info('target distance: ' + target_distance)
-
-        message = Twist()
-        message.angular.z = float(target_distance) * 2
-        message.linear.x = 0.2 
-        
-        # Get the parameters
-        #(drivePublisher, dockPublisher, undockPublisher) = args
-        if action == "dock":
+        if split_action[0] == "DOCK":
             self.dockPublisher.publish(emptyMessage)
-        elif action == "undock":
+            return
+        elif split_action[0] == "UNDOCK":
             self.undockPublisher.publish(emptyMessage)
+            return
+        
+        message = Twist()
+        message.linear.x = 0.2 
+
+        if split_action[0] == "R_TURN":
+            message.angular.z = 1
+        elif split_action[0] == "L_TURN":
+            message.angular.z = -1
+        elif split_action[0] == "WALL_FOLLOW":
+            message.angular.z = int(split_action[1] * 2)
         else:
-            # actionMessage = Twist()  # the mess
-            # handle basic movement commands from actions topic
-            self.get_logger().info("angular.z: " + str(message.angular.z) + " ||| linear.x: " + str(message.linear.x))  
-            self.drivePublisher.publish(message)
+            pass
+
+        # actionMessage = Twist()  # the mess
+        # handle basic movement commands from actions topic
+        self.get_logger().info("angular.z: " + str(message.angular.z) + " ||| linear.x: " + str(message.linear.x))  
+        self.drivePublisher.publish(message)
 
 def main():
     rclpy.init()

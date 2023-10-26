@@ -71,7 +71,7 @@ class LidarSensor(Node):
         else: 
             self.pid_controller.update(feedback)
             output = self.pid_controller.output
-            calc.data = str(output) + ':' + str(feedback) + ':' + str(angle) 
+            calc.data = str(output)
 
         self.publisher_.publish(calc)
 

@@ -14,10 +14,12 @@ class RobotDriver(Node):
         self.state = state_machine.FindWall(self.actionPublisher)
 
     def updateLidarSensor(self, data):
-        if data.data == "-1":
+        lidarData = str(data.data)
+
+        if lidarData == "-1":
             self.setState(self.state.lostWall())
         else:
-            self.setState(self.state.gotWall(data))
+            self.setState(self.state.gotWall(lidarData))
 
     def setState(self, newState):
         if newState != self.state:
