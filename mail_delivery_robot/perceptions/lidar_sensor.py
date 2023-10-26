@@ -5,6 +5,7 @@ import rclpy
 from rclpy.node import Node
 import sys
 from sensor_msgs.msg import LaserScan
+from statistics import  mean, stdev
 
 TIMER_PERIOD = 0.07 #seconds
 FORWARD_X_SPEED = 0.2 #m/s
@@ -42,14 +43,14 @@ class LidarSensor(Node):
 
     def scan_callback(self, scan):
         count = int(scan.scan_time / scan.time_increment)
-        self.get_logger().info("[SLLIDAR INFO]: I heard a laser scan {}[{}]:".format(scan.header.frame_id, count))
-        self.get_logger().info("[SLLIDAR INFO]: angle_range : [{}, {}]".format(math.degrees(scan.angle_min), math.degrees(scan.angle_max)))
+        #self.get_logger().info("[SLLIDAR INFO]: I heard a laser scan {}[{}]:".format(scan.header.frame_id, count))
+        #self.get_logger().info("[SLLIDAR INFO]: angle_range : [{}, {}]".format(math.degrees(scan.angle_min), math.degrees(scan.angle_max)))
         self.scan = scan
         calc = String()
         
         #update pid controller and get output
         feedback, angle = calculate(self.scan)
-        self.get_logger().info("[SLLIDAR INFO]: distance {} and angle {}]".format(feedback, angle))
+        #self.get_logger().info("[SLLIDAR INFO]: distance {} and angle {}]".format(feedback, angle))
         if feedback == -1 and angle == -1: 
             calc.data = "-1"
         else: 
@@ -101,12 +102,24 @@ def calculate(scan):
     count = int(scan.scan_time / scan.time_increment)
     angle = 0
     min_distance = 10
+    distances = []
     for i in range(count):
         degree = math.degrees(scan.angle_min + scan.angle_increment * i)
         if degree >= 30 and degree <= 150:
-            if scan.ranges[i] < min_distance:
+            if scan.ranges[i] == math.inf:
+                curDir = 0.5
+            elif scan.ranges[i] == -math.inf:
+                curDir = -0.5
+            else:
+                curDir = scan.ranges[i]
+
+            distances.append(curDir)
+            if curDir < min_distance:
                 angle = degree
-                min_distance = scan.ranges[i]
+                min_distance = curDir
+
+    if mean(distances) > 1.4:
+        return -1,-1
 
     #calculate averages
     avg1 = sum(stack1)/5

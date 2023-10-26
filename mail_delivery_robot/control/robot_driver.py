@@ -9,17 +9,31 @@ class RobotDriver(Node):
 
         # configure publisher and subscribers
         self.actionPublisher = self.create_publisher(String, 'actions', 2)
-        self.lidarSubscriber = self.create_subscription(String, 'perceptions', self.updateLidarSensor, 10)
-        
-        self.state = state_machine.FindWall(self.actionPublisher)
+        self.lidarSubscriber = self.create_subscription(String, 'perceptions', self.updateLidarSensor, 10) 
+        self.beaconSubscriber = self.create_subscription(String, 'navigation', self.updateNavigation, 10)
+
+        self.state = state_machine.WallFollowing(self.actionPublisher, state_machine.Direction.NONE)
+        self.get_logger().info("Robot Starting " + self.state.printState())
 
     def updateLidarSensor(self, data):
         lidarData = str(data.data)
-
+        self.get_logger().info(lidarData)
         if lidarData == "-1":
             self.setState(self.state.lostWall())
         else:
             self.setState(self.state.gotWall(lidarData))
+
+    def updateNavigation(self, data):
+        navData = str(data.data)
+        self.get_logger().info(navData)
+        if navData == "NAV_RIGHT":
+            self.setState(self.state.gotNavRight())
+        elif navData == "NAV_LEFT":
+            self.setState(self.state.gotNavLeft())
+        elif navData == "NAV_PASS":
+            self.setState(self.state.gotNavPass())
+        elif navData == "NAV_DOCK":
+            self.setState(self.state.gotNavDock())
 
     def setState(self, newState):
         if newState != self.state:

@@ -37,17 +37,17 @@ class ActionTranslator(Node):
         message.linear.x = 0.2 
 
         if split_action[0] == "R_TURN":
-            message.angular.z = 1
+            message.angular.z = -0.1
         elif split_action[0] == "L_TURN":
-            message.angular.z = -1
+            message.angular.z = 0.1
         elif split_action[0] == "WALL_FOLLOW":
-            message.angular.z = int(split_action[1] * 2)
+            message.angular.z = float(split_action[1]) * 2
         else:
             pass
 
         # actionMessage = Twist()  # the mess
         # handle basic movement commands from actions topic
-        self.get_logger().info("angular.z: " + str(message.angular.z) + " ||| linear.x: " + str(message.linear.x))  
+        #self.get_logger().info("angular.z: " + str(message.angular.z) + " ||| linear.x: " + str(message.linear.x))  
         self.drivePublisher.publish(message)
 
 def main():

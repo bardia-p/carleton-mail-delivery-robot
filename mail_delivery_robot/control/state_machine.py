@@ -75,7 +75,7 @@ class FindWall(Operational):
         self.actionPublisher.publish(generateAction("R_TURN"))
 
     def lostWall(self):
-        self.actionPublisher.publish(generateAction("FORWARD"))
+        self.actionPublisher.publish(generateAction("R_TURN"))
         return self
     
     def gotWall(self, data):
@@ -139,11 +139,11 @@ class TurnLeft(Operational):
         self.actionPublisher.publish(generateAction("L_TURN"))
 
     def lostWall(self):
-        self.actionPublisher.publish(generateAction("FORWARD"))
+        self.actionPublisher.publish(generateAction("L_TURN"))
         return self
     
     def gotWall(self, data):
-        return WallFollowing(self.actionPublisher, Direction.LEFT, data)
+        return WallFollowing(self.actionPublisher, Direction.NONE, data)
     
     def gotBump(self):
         return HandleCollision(self.actionPublisher, Direction.LEFT)
@@ -151,14 +151,15 @@ class TurnLeft(Operational):
 class TurnRight(Operational):
     def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
+        self.stateType = StateType.TURN_RIGHT
         self.actionPublisher.publish(generateAction("R_TURN"))
 
     def lostWall(self):
-        self.actionPublisher.publish(generateAction("FORWARD"))
+        self.actionPublisher.publish(generateAction("R_TURN"))
         return self
     
     def gotWall(self, data):
-        return WallFollowing(self.actionPublisher, Direction.RIGHT, data)
+        return WallFollowing(self.actionPublisher, Direction.NONE, data)
     
     def gotBump(self):
         return HandleCollision(self.actionPublisher, Direction.RIGHT)
@@ -166,6 +167,7 @@ class TurnRight(Operational):
 class PassIntersection(Operational):
     def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
+        self.stateType = StateType.PASS_INTERSECTION
         self.actionPublisher.publish(generateAction("FORWARD"))
 
     def lostWall(self):
@@ -173,7 +175,7 @@ class PassIntersection(Operational):
         return self
     
     def gotWall(self, data):
-        return WallFollowing(self.actionPublisher, Direction.PASS, data)
+        return WallFollowing(self.actionPublisher, Direction.NONE, data)
     
     def gotBump(self):
         return HandleCollision(self.actionPublisher, Direction.PASS)

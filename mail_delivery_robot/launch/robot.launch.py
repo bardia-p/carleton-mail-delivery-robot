@@ -40,16 +40,30 @@ def generate_launch_description():
             remappings=[('/perceptions/perceptions', '/control/perceptions')]
             ),
         Node(package='mail_delivery_robot',
+            namespace='perceptions',
+            executable='beacon_sensor',
+            name='beacon_sensor',
+            output='log',
+            remappings=[('/perceptions/beacons', '/navigation/beacons')]
+            ),
+        Node(package='mail_delivery_robot',
             namespace='control',
             executable='action_translator',
             name='action_translator',
-            output="log"
+            output='log'
             ),
         Node(package='mail_delivery_robot',
             namespace='control',
             executable='robot_driver',
             name='robot_driver',
-            output="log"
+            output='log'
+            ),
+        Node(package='mail_delivery_robot',
+            namespace='navigation',
+            executable='captain',
+            name='captain',
+            output='log',
+            remappings=[('/navigation/navigation', '/control/navigation')]
             ),
 
     ])
