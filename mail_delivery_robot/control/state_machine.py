@@ -76,6 +76,7 @@ class FindWall(Operational):
 
     def lostWall(self):
         self.actionPublisher.publish(generateAction("R_TURN"))
+        self.actionPublisher.publish(generateAction("FORWARD"))
         return self
     
     def gotWall(self, data):

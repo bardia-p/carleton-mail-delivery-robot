@@ -36,7 +36,7 @@ def generate_launch_description():
             namespace='perceptions',
             executable='lidar_sensor',
             name='lidar_sensor',
-            output="log",
+            output='log',
             remappings=[('/perceptions/perceptions', '/control/perceptions')]
             ),
         Node(package='mail_delivery_robot',
@@ -45,6 +45,14 @@ def generate_launch_description():
             name='beacon_sensor',
             output='log',
             remappings=[('/perceptions/beacons', '/navigation/beacons')]
+            ),
+        Node(package='mail_delivery_robot',
+            namespace='preceptions',
+            executable='bumper_sensor',
+            name='bumper_sensor',
+            output='log',
+            remappings=[('/perceptions/bumpEvent', '/control/bumpEvent'),
+                        ('/perceptions/bumper', '/bumper')]
             ),
         Node(package='mail_delivery_robot',
             namespace='control',
@@ -65,5 +73,4 @@ def generate_launch_description():
             output='log',
             remappings=[('/navigation/navigation', '/control/navigation')]
             ),
-
-    ])
+        ])

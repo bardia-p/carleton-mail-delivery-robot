@@ -34,14 +34,14 @@ class ActionTranslator(Node):
             return
         
         message = Twist()
-        message.linear.x = 0.2 
+        message.linear.x = 0.4 
 
         if split_action[0] == "R_TURN":
-            message.angular.z = -0.1
+            message.angular.z = -4.0
         elif split_action[0] == "L_TURN":
-            message.angular.z = 0.1
+            message.angular.z = 1.0
         elif split_action[0] == "WALL_FOLLOW":
-            message.angular.z = float(split_action[1]) * 2
+            message.angular.z = float(split_action[1])*2
         else:
             pass
 

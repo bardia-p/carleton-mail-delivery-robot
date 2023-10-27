@@ -11,8 +11,10 @@ class RobotDriver(Node):
         self.actionPublisher = self.create_publisher(String, 'actions', 2)
         self.lidarSubscriber = self.create_subscription(String, 'perceptions', self.updateLidarSensor, 10) 
         self.beaconSubscriber = self.create_subscription(String, 'navigation', self.updateNavigation, 10)
+        self.beaconSubscriber = self.create_subscription(String, 'bumpEvent', self.updateCollision, 10)
 
         self.state = state_machine.WallFollowing(self.actionPublisher, state_machine.Direction.NONE)
+        #self.state = state_machine.Docking(self.actionPublisher)
         self.get_logger().info("Robot Starting " + self.state.printState())
 
     def updateLidarSensor(self, data):
@@ -35,6 +37,12 @@ class RobotDriver(Node):
         elif navData == "NAV_DOCK":
             self.setState(self.state.gotNavDock())
 
+    def updateCollision(self, data):
+        bumpData = str(data.data)
+        self.get_logger().info(bumpData)
+        if bumpData == "PRESSED":
+            self.setState(self.state.gotBump())
+        
     def setState(self, newState):
         if newState != self.state:
             self.state = newState

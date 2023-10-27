@@ -32,7 +32,6 @@ class LidarSensor(Node):
     def __init__(self):
         super().__init__('lidar_sensor')
         self.publisher_ = self.create_publisher(String, 'perceptions' , 10)
-        self.pid_controller = PID(1.4517, 0.0001, 0.0129) #init pid controller
         self.lidar_info_sub = self.create_subscription(LaserScan, "/scan", self.scan_callback, qos_profile=rclpy.qos.qos_profile_sensor_data)
 
         self.pid_controller = PID(1.1,0,0) #init pid controller
@@ -103,6 +102,7 @@ def calculate(scan):
     angle = 0
     min_distance = 10
     distances = []
+    max_distance = 0
     for i in range(count):
         degree = math.degrees(scan.angle_min + scan.angle_increment * i)
         if degree >= 30 and degree <= 150:
@@ -118,7 +118,10 @@ def calculate(scan):
                 angle = degree
                 min_distance = curDir
 
-    if mean(distances) > 1.4:
+            if degree >= 60 and degree <= 90:
+                max_distance = max(curDir, max_distance)
+
+    if max_distance > 2:
         return -1,-1
 
     #calculate averages
