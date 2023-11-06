@@ -8,7 +8,7 @@ class Captain(Node):
         super().__init__('captain')
         self.mapPublisher = self.create_publisher(String, 'navigation', 10)
         self.beaconSubscriber = self.create_subscription(String, 'beacons', self.readBeacon, 10)
-        self.route = [["d0:6a:d2:02:42:eb", "NAV_PASS"]]
+        self.route = [["d0:6a:d2:02:42:eb", "NAV_RIGHT"]]
 
     def readBeacon(self, beacon):
         if len(self.route) > 0:

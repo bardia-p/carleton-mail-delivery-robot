@@ -7,7 +7,7 @@ import sys
 from sensor_msgs.msg import LaserScan
 from statistics import  mean, stdev
 
-TIMER_PERIOD = 0.1 #seconds
+TIMER_PERIOD = 0.0 #seconds
 FORWARD_X_SPEED = 0.2 #m/s
 
 class LidarSensor(Node):
@@ -16,10 +16,10 @@ class LidarSensor(Node):
         self.publisher_ = self.create_publisher(String, 'perceptions' , 10)
         self.lidar_info_sub = self.create_subscription(LaserScan, "/scan", self.scan_callback, qos_profile=rclpy.qos.qos_profile_sensor_data)
 
-        self.pid_controller = PID(1.1,0,0) #init pid controller
+        #self.pid_controller = PID(1.1,0.0,0.0) #init pid controller
+        self.pid_controller = PID(1.4517, 0.0001, 0.0129) #init pid controller        
         
         self.pid_controller.setSampleTime(TIMER_PERIOD)
-        self.scan = []
         self.stack = [0,0,0,0,0]
 
     def scan_callback(self, scan):
@@ -35,9 +35,8 @@ class LidarSensor(Node):
         if feedback == -1 and angle == -1: 
             calc.data = "-1"
         else: 
-            self.pid_controller.update(feedback)
-            output = self.pid_controller.output
-            calc.data = str(output) + ':' + str(feedback) + ':' + str(angle) 
+            output = self.get_new_angle(feedback, angle)
+            calc.data = str(output) + ":" + str(feedback) + ":" + str(angle) 
 
         self.publisher_.publish(calc)
 
@@ -47,28 +46,29 @@ class LidarSensor(Node):
         min_distance = 10
         max_pos_distance = 0
         max_neg_distance = 0
+        last_scan = 1.0
         for i in range(count):
             degree = math.degrees(scan.angle_min + scan.angle_increment * i)
-            if scan.ranges[i] == math.inf:
-                curDir = 0.5
-            else:
-                curDir = scan.ranges[i]
-
-            if degree >= 30 and degree <= 150 and curDir < min_distance:
+            #self.get_logger().info(str(degree) + "  " + str(scan.ranges[i]))
+            curDir = scan.ranges[i]
+            if degree >= 60 and degree <= 170 and curDir < min_distance:
                 angle = degree
                 min_distance = curDir
 
-            if degree >= 60 and degree <= 90:
-                max_pos_distance = max(curDir, max_pos_distance)
+            #if degree >= 60 and degree <= 90:
+            #    max_pos_distance = max(curDir, max_pos_distance)
 
-            if degree >= -90 and degree <= -60:
-                max_neg_distance = min(curDir, max_neg_distance)
+            #if degree >= -90 and degree <= -60:
+            #    max_neg_distance = min(curDir, max_neg_distance)
 
+        
         if max_pos_distance > 2 and max_neg_distance > 4:
             self.stack = [0,0,0,0,0]
             self.pid_controller.clear()
             return -1,-1
 
+        return min_distance, angle - 90
+        
         #calculate averages
         avg1 = sum(self.stack)/5
         
@@ -79,10 +79,28 @@ class LidarSensor(Node):
         #check if the values are in the range and valid
         #TODO previous groups have mentioned that this could use tuning
         if min_distance < avg1*1.5 and min_distance > avg1*0.5:
-            return min_distance, abs(90 - angle)
+            return min_distance, angle - 90
         
         return 0.5, 0
-    
+
+    def get_new_angle(self, cur_distance, cur_angle):
+        SET_POINT = 0.8
+        AIM_ANGLE = 60
+        ERROR = 0.4 * math.sin(AIM_ANGLE * math.pi / 180.0) / 2.0
+        
+        if cur_angle > 180:
+            cur_angle -= 360
+
+        res_angle = 0
+        if cur_distance > SET_POINT + ERROR:
+            res_angle = -1 * AIM_ANGLE + cur_angle
+        elif cur_distance < SET_POINT - ERROR:
+            res_angle = AIM_ANGLE + cur_angle
+        else:
+            res_angle = cur_angle
+
+        return res_angle * math.pi / 180.0
+
 class PID:
     """PID Controller
     """
@@ -101,7 +119,7 @@ class PID:
 
     def clear(self):
         """Clears PID computations and coefficients"""
-        self.SetPoint = 0.4
+        self.SetPoint = 0.5
 
         self.PTerm = 0.0
         self.ITerm = 0.0

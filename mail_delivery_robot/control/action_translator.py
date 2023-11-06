@@ -36,12 +36,19 @@ class ActionTranslator(Node):
         message = Twist()
         message.linear.x = 0.4 
 
+        rev_angle = 0
         if split_action[0] == "R_TURN":
             message.angular.z = -4.0
         elif split_action[0] == "L_TURN":
             message.angular.z = 1.0
         elif split_action[0] == "WALL_FOLLOW":
-            message.angular.z = float(split_action[1])*2
+            #message.angular.z = max(-3.5, min(3.5, self.angular_speed(float(split_action[3]), float(split_action[2]), float(split_action[1]))))
+            feedback = float(split_action[1])
+            #if feedback <= 0:
+            #    message.angular.z = feedback * math.cos(angle *  math.pi / 180.0)
+            #elif feedback < 0.5:
+            #    message.angular.z = 1.0/feedback * math.sin(angle * math.pi / 180.0)
+            message.angular.z = feedback
         else:
             pass
 
