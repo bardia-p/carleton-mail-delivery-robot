@@ -72,10 +72,9 @@ class FindWall(Operational):
     def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
         self.stateType = StateType.FIND_WALL
-        self.actionPublisher.publish(generateAction("R_TURN"))
+        self.actionPublisher.publish(generateAction("FORWARD"))
 
     def lostWall(self):
-        self.actionPublisher.publish(generateAction("R_TURN"))
         self.actionPublisher.publish(generateAction("FORWARD"))
         return self
     
@@ -138,7 +137,6 @@ class TurnLeft(Operational):
         super().__init__(actionPublisher)
         self.stateType = StateType.TURN_LEFT
         self.actionPublisher.publish(generateAction("L_TURN"))
-
     def lostWall(self):
         self.actionPublisher.publish(generateAction("L_TURN"))
         return self

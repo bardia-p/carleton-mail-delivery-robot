@@ -44,25 +44,28 @@ class LidarSensor(Node):
         count = int(scan.scan_time / scan.time_increment)
         angle = 0
         min_distance = 10
-        max_pos_distance = 0
-        max_neg_distance = 0
+        min_left_distance = 10
+        min_right_distance = 10
+        min_front_distance = 10
+
         last_scan = 1.0
         for i in range(count):
             degree = math.degrees(scan.angle_min + scan.angle_increment * i)
             #self.get_logger().info(str(degree) + "  " + str(scan.ranges[i]))
             curDir = scan.ranges[i]
+            #wall_following
             if degree >= 60 and degree <= 170 and curDir < min_distance:
-                angle = degree
                 min_distance = curDir
-
-            #if degree >= 60 and degree <= 90:
-            #    max_pos_distance = max(curDir, max_pos_distance)
-
-            #if degree >= -90 and degree <= -60:
-            #    max_neg_distance = min(curDir, max_neg_distance)
-
-        
-        if max_pos_distance > 2 and max_neg_distance > 4:
+                angle = degree
+            
+            if (degree <= -170 or degree >= 170) and curDir < min_front_distance:
+                min_front_distance = curDir
+            elif degree >= 85 and degree < 95 and curDir < min_right_distance:
+                min_right_distance = curDir
+            elif degree > -95 and degree <= -85 and curDir < min_left_distance:
+                min_left_distance = curDir
+            
+        if (min_left_distance > 4 or min_right_distance > 1.6) and min_front_distance >= 1:
             self.stack = [0,0,0,0,0]
             self.pid_controller.clear()
             return -1,-1
@@ -84,7 +87,7 @@ class LidarSensor(Node):
         return 0.5, 0
 
     def get_new_angle(self, cur_distance, cur_angle):
-        SET_POINT = 0.8
+        SET_POINT = 0.6
         AIM_ANGLE = 60
         ERROR = 0.4 * math.sin(AIM_ANGLE * math.pi / 180.0) / 2.0
         

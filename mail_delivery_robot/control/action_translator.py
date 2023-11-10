@@ -34,14 +34,16 @@ class ActionTranslator(Node):
             return
         
         message = Twist()
-        message.linear.x = 0.4 
-
+        self.get_logger().info(split_action[0])
         rev_angle = 0
         if split_action[0] == "R_TURN":
-            message.angular.z = -4.0
+            message.linear.x = 0.4 
+            message.angular.z = -2.0
         elif split_action[0] == "L_TURN":
+            message.linear.x = 0.4
             message.angular.z = 1.0
         elif split_action[0] == "WALL_FOLLOW":
+            message.linear.x = 0.4 
             #message.angular.z = max(-3.5, min(3.5, self.angular_speed(float(split_action[3]), float(split_action[2]), float(split_action[1]))))
             feedback = float(split_action[1])
             #if feedback <= 0:
@@ -50,7 +52,7 @@ class ActionTranslator(Node):
             #    message.angular.z = 1.0/feedback * math.sin(angle * math.pi / 180.0)
             message.angular.z = feedback
         else:
-            pass
+            message.linear.x = 0.4 
 
         # actionMessage = Twist()  # the mess
         # handle basic movement commands from actions topic
