@@ -13,40 +13,40 @@ class RobotDriver(Node):
         self.beaconSubscriber = self.create_subscription(String, 'navigation', self.updateNavigation, 10)
         self.beaconSubscriber = self.create_subscription(String, 'bumpEvent', self.updateCollision, 10)
 
-        self.state = state_machine.WallFollowing(self.actionPublisher, state_machine.Direction.NONE)
-        #self.state = state_machine.Docking(self.actionPublisher)
+        timer_period = 0.1 # Seconds
+        self.timer = self.create_timer(timer_period, self.updateStateMachine) # call checkForBeacons() every 0.1 seconds
+
+        self.state = state_machine.No_Dest(self.actionPublisher)
         self.get_logger().info("Robot Starting " + self.state.printState())
+
+        self.wall_data = "-1:-1"
+        self.nav_data = "NAV_NONE"
+        self.bump_data = False
 
     def updateLidarSensor(self, data):
         lidarData = str(data.data)
         self.get_logger().info(lidarData)
-        if lidarData == "-1":
-            self.setState(self.state.lostWall())
-        else:
-            self.setState(self.state.gotWall(lidarData))
+        self.wall_data = lidarData
 
     def updateNavigation(self, data):
         navData = str(data.data)
         self.get_logger().info(navData)
-        if navData == "NAV_RIGHT":
-            self.setState(self.state.gotNavRight())
-        elif navData == "NAV_LEFT":
-            self.setState(self.state.gotNavLeft())
-        elif navData == "NAV_PASS":
-            self.setState(self.state.gotNavPass())
-        elif navData == "NAV_DOCK":
-            self.setState(self.state.gotNavDock())
+        self.nav_data = navData
 
     def updateCollision(self, data):
         bumpData = str(data.data)
         self.get_logger().info(bumpData)
         if bumpData == "PRESSED":
-            self.setState(self.state.gotBump())
-        
-    def setState(self, newState):
-        if newState != self.state:
-            self.state = newState
-            self.get_logger().info("Changed State " + newState.printState())
+            self.bump_data = True
+        else:
+            self.bump_data = False
+
+    def updateStateMachine(self):
+        new_state = self.state.handleUpdate(self.bump_data, self.nav_data, self.wall_data)
+        self.nav_data = "NAV_NONE" # Should reset the navigation data
+        if new_state != self.state:
+            self.state = new_state
+            self.get_logger().info("Changed State " + new_state.printState())
 
 def main():
     rclpy.init()

@@ -95,27 +95,27 @@ class State:
             else:
                 return self.bumper_none()
         if nav == "NAV_LEFT":
-            if wall == "-1,-1":
+            if wall == "-1:-1":
                 return self.no_bumper_left_no_wall()
             else:
                 return self.no_bumper_left_wall()
         elif nav == "NAV_RIGHT":
-            if wall == "-1,-1":
+            if wall == "-1:-1":
                 return self.no_bumper_right_no_wall()
             else:
                 return self.no_bumper_right_wall()
         elif nav == "NAV_PASS":
-            if wall == "-1,-1":
+            if wall == "-1:-1":
                 return self.no_bumper_pass_no_wall()
             else:
                 return self.no_bumper_pass_wall()
         elif nav == "NAV_DOCK":
-            if wall == "-1,-1":
+            if wall == "-1:-1":
                 return self.no_bumper_dock_no_wall()
             else:
                 return self.no_bumper_dock_wall()
         else:
-            if wall == "-1,-1":
+            if wall == "-1:-1":
                 return self.no_bumper_none_no_wall()
             else:
                 return self.no_bumper_none_wall()

@@ -35,7 +35,6 @@ class ActionTranslator(Node):
         
         message = Twist()
         self.get_logger().info(split_action[0])
-        rev_angle = 0
         if split_action[0] == "R_TURN":
             message.linear.x = 0.4 
             message.angular.z = -2.0
@@ -44,26 +43,36 @@ class ActionTranslator(Node):
             message.angular.z = 1.0
         elif split_action[0] == "WALL_FOLLOW":
             message.linear.x = 0.4 
-            #message.angular.z = max(-3.5, min(3.5, self.angular_speed(float(split_action[3]), float(split_action[2]), float(split_action[1]))))
-            feedback = float(split_action[1])
-            #if feedback <= 0:
-            #    message.angular.z = feedback * math.cos(angle *  math.pi / 180.0)
-            #elif feedback < 0.5:
-            #    message.angular.z = 1.0/feedback * math.sin(angle * math.pi / 180.0)
+            feedback = self.get_new_angle(float(split_action[1]), float(split_action[2]))
             message.angular.z = feedback
         else:
             message.linear.x = 0.4 
 
-        # actionMessage = Twist()  # the mess
-        # handle basic movement commands from actions topic
-        #self.get_logger().info("angular.z: " + str(message.angular.z) + " ||| linear.x: " + str(message.linear.x))  
         self.drivePublisher.publish(message)
+
+    
+    def get_new_angle(self, cur_distance, cur_angle):
+        SET_POINT = 0.6
+        AIM_ANGLE = 60
+        ERROR = 0.4 * math.sin(AIM_ANGLE * math.pi / 180.0) / 2.0
+        
+        if cur_angle > 180:
+            cur_angle -= 360
+
+        res_angle = 0
+        if cur_distance > SET_POINT + ERROR:
+            res_angle = -1 * AIM_ANGLE + cur_angle
+        elif cur_distance < SET_POINT - ERROR:
+            res_angle = AIM_ANGLE + cur_angle
+        else:
+            res_angle = cur_angle
+
+        return res_angle * math.pi / 180.0
 
 def main():
     rclpy.init()
     action_translator = ActionTranslator()
     rclpy.spin(action_translator)
-
 
 if __name__ == '__main__':
     main()
