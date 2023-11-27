@@ -2,8 +2,7 @@ name: ROS Test
 
 on:
   push:
-    branches:
-      - master  # Change this to your default branch
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
   
