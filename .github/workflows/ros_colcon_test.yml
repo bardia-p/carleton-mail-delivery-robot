@@ -5,10 +5,10 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  
+
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
@@ -17,7 +17,8 @@ jobs:
       - name: Set up ROS
         uses: ros-tooling/setup-ros@v0.7
         with:
-          ros-distro: 'foxy'  # Change this to your ROS distribution
+          required-ros-distributions: foxy
+      - run: "source /opt/ros/humble/setup.bash && pip install setuptools==58.2.0"
 
       - name: Build and Test
         run: |
