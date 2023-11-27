@@ -21,5 +21,4 @@ jobs:
       - run: "source /opt/ros/humble/setup.bash && pip install setuptools==58.2.0"
 
       - name: Build and Test
-        run: |
-          colcon build
+        run: colcon build && colcon test
