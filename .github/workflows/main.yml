@@ -1,0 +1,24 @@
+name: ROS Test
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up ROS
+        uses: ros-tooling/setup-ros@v2
+        with:
+          ros-distro: 'foxy'  # Change this to your ROS distribution
+
+      - name: Build and Test
+        run: |
+          colcon build
+          colcon test
