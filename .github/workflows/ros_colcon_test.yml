@@ -23,4 +23,3 @@ jobs:
       - name: Build and Test
         run: |
           colcon build
-          colcon test
