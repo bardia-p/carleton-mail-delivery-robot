@@ -21,4 +21,4 @@ jobs:
       - run: "source /opt/ros/humble/setup.bash && pip install setuptools==58.2.0"
 
       - name: Build and Test
-        run: colcon build && colcon test
+        run: colcon build && colcon test --packages-select mail_delivery_robot --event-handlers console_cohesion+
