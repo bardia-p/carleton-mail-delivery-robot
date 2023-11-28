@@ -1,0 +1,24 @@
+name: ROS Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up ROS
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: humble
+      - run: "source /opt/ros/humble/setup.bash && pip install setuptools==58.2.0"
+
+      - name: Build and Test
+        run: colcon build && colcon test --packages-select mail_delivery_robot --event-handlers console_cohesion+
