@@ -3,10 +3,10 @@ name: Generate Diagrams
 on:
   push:
     paths: [ '**.plantuml' ]
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
     paths: [ '**.plantuml' ]
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   run_tests:
