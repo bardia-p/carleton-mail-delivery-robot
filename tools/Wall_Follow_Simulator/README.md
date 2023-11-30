@@ -20,6 +20,10 @@ You can run the application by simply running the following command:
 python3 wall_follow_sim.py
 ```
 
+Once the simulator starts a window will appear which will look as follows:
+
+<img src="./simulator_res.png" >
+
 ## Using the application
 
 The application has various variables that allow you to configure the robot's initial position, angle, and speed. You can also modify the robot's ideal distance with the wall. Here is a summary of those variables:
