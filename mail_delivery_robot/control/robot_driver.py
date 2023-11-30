@@ -84,8 +84,8 @@ class RobotDriver(Node):
         @param data: The data sent by the bumper sensor..
         '''
         bumpData = str(data.data)
-        self.get_logger().info(bumpData)
         if bumpData == Bump_Event.PRESSED.value:
+            self.get_logger().info("GOT COLLISION")
             self.bump_data = True
         else:
             self.bump_data = False
