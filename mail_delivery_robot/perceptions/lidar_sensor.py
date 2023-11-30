@@ -1,31 +1,51 @@
-import time
 import math
 from std_msgs.msg import String
 import rclpy
 from rclpy.node import Node
-import sys
 from sensor_msgs.msg import LaserScan
 from statistics import  mean, stdev
 
 class LidarSensor(Node):
+    '''
+    The Node in charge of listening to the lidar sensor.
+
+    @Subscribers:
+    - Listens to /scan for new lidar scans.
+
+    @Publishers:
+    - Publishes new updates to /perceptions.
+    '''
     def __init__(self):
+        '''
+        The constructor for the node.
+        Defines the necessary publishers and subscribers.
+        '''
         super().__init__('lidar_sensor')
+
+        # The publishers for the node.
         self.publisher_ = self.create_publisher(String, 'perceptions' , 10)
+        
+        # The subscribers for the node.
         self.lidar_info_sub = self.create_subscription(LaserScan, "/scan", self.scan_callback, qos_profile=rclpy.qos.qos_profile_sensor_data)
 
     def scan_callback(self, scan):
-        self.scan = scan
+        '''
+        The callback for /scan.
+        Reads the lidar scan and acts accordingly.
+        '''
         calc = String()
         
-        feedback, angle = self.calculate(self.scan)
-        if feedback == -1 and angle == -1: 
-            calc.data = "-1:-1"
-        else: 
-            calc.data = str(feedback) + ":" + str(angle) 
+        feedback, angle = self.calculate(scan)
+        calc.data = str(feedback) + ":" + str(angle) 
 
         self.publisher_.publish(calc)
 
-    def calculate(self, scan):     
+    def calculate(self, scan):
+        '''
+        Calculates the robot's distance with its surroundings.
+
+        @param scan: The current lidar scan.
+        ''' 
         count = int(scan.scan_time / scan.time_increment)
         angle = 0
         min_distance = 10
@@ -55,9 +75,11 @@ class LidarSensor(Node):
         return min_distance, angle - 90
 
 def main():
+    '''
+    Starts up the node. 
+    '''
     rclpy.init()
     lidar_sensor = LidarSensor()
-
     rclpy.spin(lidar_sensor)
     
 if __name__ == '__main__':

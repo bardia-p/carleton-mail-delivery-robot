@@ -47,7 +47,7 @@ def generate_launch_description():
             remappings=[('/perceptions/beacons', '/navigation/beacons')]
             ),
         Node(package='mail_delivery_robot',
-            namespace='preceptions',
+            namespace='perceptions',
             executable='bumper_sensor',
             name='bumper_sensor',
             output='log',
