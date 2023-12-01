@@ -1,0 +1,24 @@
+@@startuml
+actor Customer
+actor Robot
+actor RequestManager
+actor System
+User <|-- Administrator
+User <|-- Customer
+
+
+rectangle Mail<U+0020>Delivery<U+0020>Service<U+0020>Robot {
+    usecase SendMail
+    usecase RetrieveMail
+    usecase NotifyRobot
+    usecase MonitorSystem
+    usecase ReadBeacon
+    usecase NotifyUser
+    usecase NavigateTunnels
+    usecase UpdateStatus
+    usecase DockRobot
+    usecase HandleCollision
+    usecase CreateRequest
+    usecase NotifyUser
+}
+@@enduml
