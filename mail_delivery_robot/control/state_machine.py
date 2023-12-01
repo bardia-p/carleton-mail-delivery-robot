@@ -551,43 +551,43 @@ class Collision_No_Dest(Operational):
 
     def no_bumper_none_no_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return Should_Turn_Left(self.actionPublisher)
+        return No_Dest(self.actionPublisher)
 
     def no_bumper_none_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return Should_Turn_Left(self.actionPublisher)
+        return No_Dest(self.actionPublisher)
     
     def no_bumper_left_no_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return Should_Turn_Right(self.actionPublisher)
+        return Should_Turn_Left(self.actionPublisher)
 
     def no_bumper_left_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return Should_Turn_Right(self.actionPublisher)
+        return Should_Turn_Left(self.actionPublisher)
     
     def no_bumper_right_no_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return Should_Pass(self.actionPublisher)
+        return Should_Turn_Right(self.actionPublisher)
 
     def no_bumper_right_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return Should_Pass(self.actionPublisher)
+        return Should_Turn_Right(self.actionPublisher)
     
     def no_bumper_pass_no_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return Should_Dock(self.actionPublisher)
+        return Should_Pass(self.actionPublisher)
 
     def no_bumper_pass_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return Should_Dock(self.actionPublisher)
+        return Should_Pass(self.actionPublisher)
 
     def no_bumper_dock_no_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return No_Dest(self.actionPublisher)
+        return Should_Dock(self.actionPublisher)
 
     def no_bumper_dock_wall(self):
         self.actionPublisher.publish(generateAction(Action.R_TURN.value))
-        return No_Dest(self.actionPublisher)
+        return Should_Dock(self.actionPublisher)
     
     def bumper_none(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
@@ -870,7 +870,7 @@ class Collision_Dock(Operational):
         return self
 
 class Collision_Intersection(Operational):
-    def __init__(self, actionPublisher, dir):
+    def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
         self.stateType = StateType.COLLISION_INTERSECTION
 

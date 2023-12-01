@@ -61,9 +61,15 @@ class RobotDriver(Node):
 
         @param data: The data sent by the lidar sensor.
         '''
+        #TODO: ADD PARTICLE FILTERING HERE
         lidarData = str(data.data)
         self.get_logger().info(lidarData)
-        self.wall_data = lidarData
+
+        split_data = lidarData.split(":")
+        if split_data[2] == "-1" and split_data[4] == "-1":
+            self.wall_data = "-1:-1"
+        else:
+            self.wall_data = ":".join(split_data[:2])
 
     def updateNavigation(self, data):
         '''

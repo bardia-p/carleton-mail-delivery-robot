@@ -35,8 +35,8 @@ class LidarSensor(Node):
         '''
         calc = String()
         
-        feedback, angle = self.calculate(scan)
-        calc.data = str(feedback) + ":" + str(angle) 
+        feedback, angle, right, left, front  = self.calculate(scan)
+        calc.data = str(feedback) + ":" + str(angle) + ":" + str(right) + ":" + str(left) + ":" + str(front)
 
         self.publisher_.publish(calc)
 
@@ -49,30 +49,43 @@ class LidarSensor(Node):
         count = int(scan.scan_time / scan.time_increment)
         angle = 0
         min_distance = 10
-        min_left_distance = 10
-        min_right_distance = 10
-        min_front_distance = 10
+        left_distances = []
+        right_distances = []
+        front_distances = []
 
         for i in range(count):
             degree = math.degrees(scan.angle_min + scan.angle_increment * i)
             #self.get_logger().info(str(degree) + "  " + str(scan.ranges[i]))
             curDir = scan.ranges[i]
+            if curDir == math.inf:
+                continue
+
             #wall_following
-            if degree >= 60 and degree <= 170 and curDir < min_distance:
+            elif degree >= 60 and degree <= 170 and curDir < min_distance:
                 min_distance = curDir
                 angle = degree
+    
+            if degree <= -170 or degree >= 170:
+                front_distances.append(curDir)    
+            elif degree >= 85 and degree < 95:
+                right_distances.append(curDir)
+            elif degree > -95 and degree <= -85:
+                left_distances.append(curDir)
             
-            if (degree <= -170 or degree >= 170) and curDir < min_front_distance:
-                min_front_distance = curDir
-            elif degree >= 85 and degree < 95 and curDir < min_right_distance:
-                min_right_distance = curDir
-            elif degree > -95 and degree <= -85 and curDir < min_left_distance:
-                min_left_distance = curDir
-            
-        if (min_left_distance > 4 or min_right_distance > 1.6) and min_front_distance >= 1:
-            return -1,-1
+        min_left = 1000 if len(left_distances) == 0 else min(left_distances)
+        min_right = 1000 if len(right_distances) == 0 else min(right_distances)
+        min_front = 1000 if len(front_distances) == 0 else min(front_distances)
+        
+        if min_front >= 1 or stdev(front_distances) > 0.5:
+            min_front = -1
+        
+        if min_right  >= 1.0 or stdev(right_distances) > 0.5:
+            min_right = -1
 
-        return min_distance, angle - 90
+        if min_left >= 3 or stdev(left_distances) > 0.5:
+            min_left = - 1
+
+        return min_distance, angle - 90, min_right, min_left, min_front
 
 def main():
     '''
