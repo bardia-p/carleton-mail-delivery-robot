@@ -93,11 +93,11 @@ class ActionTranslator(Node):
         message = Twist()
         self.get_logger().info(move_action[0])
         if move_action[0] == Action.R_TURN.value:
-            message.linear.x = 0.2 
-            message.angular.z = -2.0
+            message.linear.x = 0.4 
+            message.angular.z = -4.0
         elif move_action[0] == Action.L_TURN.value:
-            message.linear.x = 0.2
-            message.angular.z = 4.0
+            message.linear.x = 0.4
+            message.angular.z = 2.0
         elif move_action[0] == Action.WALL_FOLLOW.value:
             message.linear.x = 0.4 
             feedback = self.wall_follow(float(move_action[1]), float(move_action[2]))

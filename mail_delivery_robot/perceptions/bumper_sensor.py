@@ -50,12 +50,12 @@ class BumperSensor(Node):
         is_pressed = False
         is_pressed = is_pressed or data.is_left_pressed
         is_pressed = is_pressed or data.is_right_pressed
-        is_pressed = is_pressed or data.is_light_left
-        is_pressed = is_pressed or data.is_light_front_left
-        is_pressed = is_pressed or data.is_light_center_left
-        is_pressed = is_pressed or data.is_light_center_right
-        is_pressed = is_pressed or data.is_light_front_right
-        is_pressed = is_pressed or data.is_light_right
+        #is_pressed = is_pressed or data.is_light_left
+        #is_pressed = is_pressed or data.is_light_front_left
+        #is_pressed = is_pressed or data.is_light_center_left
+        #is_pressed = is_pressed or data.is_light_center_right
+        #is_pressed = is_pressed or data.is_light_front_right
+        #is_pressed = is_pressed or data.is_light_right
 
         # Updates the bumper state.
         bumpEvent = String()
@@ -65,7 +65,7 @@ class BumperSensor(Node):
             bumpEvent.data = Bump_Event.UNPRESSED.value
 
         # Slows the publishing of the messages to ensure the detection is smooth.
-        if (self.lastState != bumpEvent.data or self.counter > 30):
+        if (self.lastState != bumpEvent.data or self.counter > 100):
             self.lastState = bumpEvent.data
             #self.get_logger().info(bumpEvent.data)
             self.publisher_.publish(bumpEvent)
