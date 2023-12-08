@@ -1,8 +1,12 @@
 #!/bin/bash
 
-input_directory="./diagrams/plantuml_files"
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
-plantuml="./tools/plantuml.jar"
+cd "$parent_path"
+
+input_directory="./plantuml_files"
+
+plantuml="../tools/plantuml.jar"
 
 if [ $(which dot 2>/dev/null) ]; then
   echo "Found GraphViz"
