@@ -1,4 +1,4 @@
-@@startuml use_case_diagram
+@startuml use_case_diagram
 
 User <|-- Administrator
 User <|-- Customer
@@ -49,4 +49,4 @@ Robot -- ReadBeacon
 Robot -- DockRobot
 Robot -- HandleCollision
 Robot -- UpdateStatus
-@@enduml
+@enduml
