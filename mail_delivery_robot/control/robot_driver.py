@@ -49,7 +49,7 @@ class RobotDriver(Node):
         Initializes the robot's state and sensor data.
         '''
         self.state = state_machine.No_Dest(self.actionPublisher)
-        self.wall_data = "-1:-1"
+        self.wall_data = ""
         self.nav_data = Nav_Event.NAV_NONE.value
         self.bump_data = False
         self.get_logger().info("Robot Starting " + self.state.printState())
@@ -66,9 +66,12 @@ class RobotDriver(Node):
         self.get_logger().info(lidarData)
 
         split_data = lidarData.split(":")
-        if split_data[2] == "-1" and split_data[4] == "-1":
+        # waiting for the lidar to callibrate
+        if split_data[0] == "-1" and split_data[1] == "-1":
+            self.wall_data = ""
+        elif split_data[2] == "-1" and split_data[4] == "-1": # got intersection
             self.wall_data = "-1:-1"
-        else:
+        else: # got wall
             self.wall_data = ":".join(split_data[:2])
 
     def updateNavigation(self, data):

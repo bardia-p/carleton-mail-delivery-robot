@@ -33,6 +33,10 @@ class State:
         self.actionPublisher = actionPublisher
         self.stateType = None
         self.wall = "-1,-1"
+        self.longAction = None
+        self.longActionCount = 0
+        self.longActionLimit = 0
+        self.postLongActionState = self
 
     def printState(self):
         '''
@@ -97,6 +101,20 @@ class State:
         @param nav: The navigation event.
         @param wall: The wall status.
         '''
+        if self.longAction != None:
+            if self.longActionCount < self.longActionLimit:
+                self.actionPublisher.publish(self.longAction)
+                self.longActionCount += 1
+                return self
+            else:
+                self.longActionCount = 0
+                self.longActionLimit = 0
+                self.longAction = None
+                return self.postLongActionState
+
+        if wall == "":
+            return self
+
         self.wall = wall
         if bumper:
             if nav == Nav_Event.NAV_LEFT.value:
@@ -134,6 +152,7 @@ class State:
                 return self.no_bumper_none_no_wall()
             else:
                 return self.no_bumper_none_wall()
+
 
 class Operational(State):
     def __init__(self, actionPublisher):
@@ -545,393 +564,429 @@ class Handle_Intersection(Operational):
         return Collision_Dock(self.actionPublisher)
 
 class Collision_No_Dest(Operational):
-    def __init__(self, actionPublisher):
+    def __init__(self, actionPublisher, count = 1):
         super().__init__(actionPublisher)
         self.stateType = StateType.COLLISION_NO_DEST
+        self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return No_Dest(self.actionPublisher)
 
     def no_bumper_none_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return No_Dest(self.actionPublisher)
     
     def no_bumper_left_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
 
     def no_bumper_left_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
     
     def no_bumper_right_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
 
     def no_bumper_right_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
     
     def no_bumper_pass_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
 
     def no_bumper_pass_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
 
     def no_bumper_dock_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
 
     def no_bumper_dock_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
     
     def bumper_none(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_left(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
-        return Collision_Turn_Left(self.actionPublisher)
+        self.count += 1
+        return Collision_Turn_Left(self.actionPublisher, self.count)
     
     def bumper_right(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
-        return Collision_Turn_Right(self.actionPublisher)
+        self.count += 1
+        return Collision_Turn_Right(self.actionPublisher, self.count)
 
     def bumper_pass(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
-        return Collision_Pass(self.actionPublisher)
+        self.count += 1
+        return Collision_Pass(self.actionPublisher, self.count)
     
     def bumper_dock(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
-        return Collision_Dock(self.actionPublisher)
+        self.count += 1
+        return Collision_Dock(self.actionPublisher, self.count)
 
 class Collision_Turn_Left(Operational):
-    def __init__(self, actionPublisher):
+    def __init__(self, actionPublisher, count = 1):
         super().__init__(actionPublisher)
         self.stateType = StateType.COLLISION_TURN_LEFT
+        self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
 
     def no_bumper_none_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
     
     def no_bumper_left_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
 
     def no_bumper_left_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
     
     def no_bumper_right_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
 
     def no_bumper_right_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
     
     def no_bumper_pass_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
 
     def no_bumper_pass_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
 
     def no_bumper_dock_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
 
     def no_bumper_dock_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Left(self.actionPublisher)
     
     def bumper_none(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_left(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_right(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_pass(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_dock(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
 class Collision_Turn_Right(Operational):
-    def __init__(self, actionPublisher):
+    def __init__(self, actionPublisher, count = 1):
         super().__init__(actionPublisher)
         self.stateType = StateType.COLLISION_TURN_RIGHT
+        self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
 
     def no_bumper_none_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
     
     def no_bumper_left_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
 
     def no_bumper_left_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
     
     def no_bumper_right_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
 
     def no_bumper_right_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
     
     def no_bumper_pass_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
 
     def no_bumper_pass_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
 
     def no_bumper_dock_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
 
     def no_bumper_dock_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Turn_Right(self.actionPublisher)
     
     def bumper_none(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_left(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_right(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_pass(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_dock(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
 class Collision_Pass(Operational):
-    def __init__(self, actionPublisher):
+    def __init__(self, actionPublisher, count = 1):
         super().__init__(actionPublisher)
         self.stateType = StateType.COLLISION_PASS
+        self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
 
     def no_bumper_none_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
     
     def no_bumper_left_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
 
     def no_bumper_left_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
     
     def no_bumper_right_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
 
     def no_bumper_right_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
     
     def no_bumper_pass_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
 
     def no_bumper_pass_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
 
     def no_bumper_dock_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
 
     def no_bumper_dock_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Pass(self.actionPublisher)
     
     def bumper_none(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_left(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_right(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_pass(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_dock(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
 class Collision_Dock(Operational):
-    def __init__(self, actionPublisher):
+    def __init__(self, actionPublisher, count = 1):
         super().__init__(actionPublisher)
         self.stateType = StateType.COLLISION_DOCK
+        self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
 
     def no_bumper_none_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
     
     def no_bumper_left_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
 
     def no_bumper_left_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
     
     def no_bumper_right_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
 
     def no_bumper_right_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
     
     def no_bumper_pass_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
 
     def no_bumper_pass_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
 
     def no_bumper_dock_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
 
     def no_bumper_dock_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Should_Dock(self.actionPublisher)
     
     def bumper_none(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_left(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_right(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_pass(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_dock(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
 class Collision_Intersection(Operational):
-    def __init__(self, actionPublisher):
+    def __init__(self, actionPublisher, count = 1):
         super().__init__(actionPublisher)
         self.stateType = StateType.COLLISION_INTERSECTION
+        self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
 
     def no_bumper_none_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
     
     def no_bumper_left_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
 
     def no_bumper_left_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
     
     def no_bumper_right_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
 
     def no_bumper_right_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
     
     def no_bumper_pass_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
 
     def no_bumper_pass_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
 
     def no_bumper_dock_no_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
 
     def no_bumper_dock_wall(self):
-        self.actionPublisher.publish(generateAction(Action.R_TURN.value))
+        self.actionPublisher.publish(generateAction(Action.R_TURN.value, self.count))
         return Handle_Intersection(self.actionPublisher)
     
     def bumper_none(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_left(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_right(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
     def bumper_pass(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
     
     def bumper_dock(self):
         self.actionPublisher.publish(generateAction(Action.L_TURN.value))
+        self.count += 1
         return self
 
 def generateAction(command, data = ""):
@@ -944,5 +999,5 @@ def generateAction(command, data = ""):
     action = String()
     action.data = command
     if data != "":
-        action.data += ":" + data
+        action.data += ":" + str(data)
     return action

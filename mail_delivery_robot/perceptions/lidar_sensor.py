@@ -28,9 +28,9 @@ class LidarSensor(Node):
         # The subscribers for the node.
         self.lidar_info_sub = self.create_subscription(LaserScan, "/scan", self.scan_callback, qos_profile=rclpy.qos.qos_profile_sensor_data)
 
-        self.right_distances = [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]
-        self.left_distances = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0]
-        self.front_distances = [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]
+        self.right_distances = [2.0]
+        self.left_distances = [6.0]
+        self.front_distances = [2.0]
 
     def scan_callback(self, scan):
         '''
@@ -56,6 +56,7 @@ class LidarSensor(Node):
         min_left = self.left_distances[-1]
         min_right = self.right_distances[-1]
         min_front = self.front_distances[-1]
+
         for i in range(count):
             degree = math.degrees(scan.angle_min + scan.angle_increment * i)
             #self.get_logger().info(str(degree) + "  " + str(scan.ranges[i]))
@@ -64,7 +65,7 @@ class LidarSensor(Node):
                 continue
 
             #wall_following
-            if degree >= 60 and degree <= 170 and curDir < min_distance:
+            if degree >= 30 and degree <= 150 and curDir < min_distance:
                 min_distance = curDir
                 angle = degree
     
@@ -74,16 +75,28 @@ class LidarSensor(Node):
                 min_right = curDir
             elif degree > -95 and degree <= -85 and curDir < min_left:
                 min_left = curDir
-            
-        self.left_distances.pop(0)
+        
         self.left_distances.append(min_left)
 
-        self.right_distances.pop(0)
         self.right_distances.append(min_right)
 
-        self.front_distances.pop(0)
         self.front_distances.append(min_front)
 
+        if len(self.left_distances) >  10:
+            self.left_distances.pop(0)
+        else:
+            return -1, -1, -1, -1, -1
+        
+        if len(self.right_distances) >  10:
+            self.right_distances.pop(0)
+        else:
+            return -1, -1, -1, -1, -1
+        
+        if len(self.front_distances) >  10:
+            self.front_distances.pop(0)
+        else:
+            return -1, -1, -1, -1, -1
+        
         if min_front >= 2.0 or stdev(self.front_distances) > 0.5:
             min_front = -1
        
@@ -92,7 +105,7 @@ class LidarSensor(Node):
             min_right = -1
 
         if min_left >= 6.0 or stdev(self.left_distances) > 0.5:
-            min_left = - 1
+            min_left = -1
 
         return min_distance, angle - 90, min_right, min_left, min_front
 

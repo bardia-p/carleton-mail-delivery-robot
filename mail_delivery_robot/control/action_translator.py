@@ -4,7 +4,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist
-
+import time
 from control.state_machine import Action
 
 #TODO: Replace hard coded values with a csv file that can be loaded.
@@ -68,7 +68,7 @@ class ActionTranslator(Node):
         #TODO: Move these to a constants file.
         SET_POINT = 0.6
         AIM_ANGLE = 60
-        ERROR = 0.4 * math.sin(AIM_ANGLE * math.pi / 180.0) / 2.0
+        ERROR = 0.4 * math.sin(AIM_ANGLE * math.pi / 180.0) / 2.0 + 0.1
         
         if cur_angle > 180:
             cur_angle -= 360
@@ -93,11 +93,11 @@ class ActionTranslator(Node):
         message = Twist()
         self.get_logger().info(move_action[0])
         if move_action[0] == Action.R_TURN.value:
-            message.linear.x = 0.4 
-            message.angular.z = -4.0
+            message.linear.x = 0.1 
+            message.angular.z = -0.8
         elif move_action[0] == Action.L_TURN.value:
-            message.linear.x = 0.4
-            message.angular.z = 2.0
+            message.linear.x = 0.0
+            message.angular.z = 0.8
         elif move_action[0] == Action.WALL_FOLLOW.value:
             message.linear.x = 0.4 
             feedback = self.wall_follow(float(move_action[1]), float(move_action[2]))
@@ -106,7 +106,6 @@ class ActionTranslator(Node):
             message.linear.x = 0.4 
 
         self.drivePublisher.publish(message)
-
 
 def main():
     '''
