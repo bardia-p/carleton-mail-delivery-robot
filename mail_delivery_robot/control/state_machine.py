@@ -8,6 +8,7 @@ LEFT_TURN_LIMIT = 10
 RIGHT_TURN_LIMIT = 10
 FORWARD_LIMIT = 10
 WALL_FOLLOW_LIMIT = 3
+COLLISION_FACTOR = 3 / 4
 
 class StateType(Enum):
     OPERATIONAL = "OPERATIONAL"
@@ -590,43 +591,43 @@ class Collision_No_Dest(Operational):
         self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, No_Dest(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, No_Dest(self.actionPublisher))
         return self
 
     def no_bumper_none_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, No_Dest(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, No_Dest(self.actionPublisher))
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
 
     def no_bumper_left_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
 
     def no_bumper_right_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
     
     def bumper_none(self):
@@ -661,43 +662,43 @@ class Collision_Turn_Left(Operational):
         self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
 
     def no_bumper_none_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
 
     def no_bumper_left_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
 
     def no_bumper_right_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Left(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
     
     def bumper_none(self):
@@ -732,43 +733,43 @@ class Collision_Turn_Right(Operational):
         self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
 
     def no_bumper_none_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
     
     def no_bumper_left_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
 
     def no_bumper_right_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Turn_Right(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
     
     def bumper_none(self):
@@ -803,43 +804,43 @@ class Collision_Pass(Operational):
         self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
     
     def no_bumper_none_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
 
     def no_bumper_left_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
 
     def no_bumper_right_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Pass(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Pass(self.actionPublisher))
         return self
     
     def bumper_none(self):
@@ -874,43 +875,43 @@ class Collision_Dock(Operational):
         self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
 
     def no_bumper_none_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
 
     def no_bumper_left_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
 
     def no_bumper_right_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Should_Dock(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Dock(self.actionPublisher))
         return self
     
     def bumper_none(self):
@@ -945,43 +946,43 @@ class Collision_Intersection(Operational):
         self.count = count
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_none_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_left_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
     
     def no_bumper_right_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR,  Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count // 2, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
     
     def bumper_none(self):

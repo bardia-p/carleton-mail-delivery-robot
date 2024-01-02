@@ -38,7 +38,7 @@ class RobotDriver(Node):
         self.beaconSubscriber = self.create_subscription(String, 'bumpEvent', self.updateCollision, 10)
 
         # Timer set up.
-        timer_period = 0.1 # Seconds
+        timer_period = 0.01 # Seconds
         self.timer = self.create_timer(timer_period, self.updateStateMachine) # call checkForBeacons() every 0.1 seconds
 
         # Initialize the robot.

@@ -102,7 +102,7 @@ class ActionTranslator(Node):
 
             # For minor changes avoid big arcs.
             if abs(feedback) > 0.1:
-                message.linear.x = 0.0
+                message.linear.x = 0.2
             else:
                 message.linear.x = 0.4
 
