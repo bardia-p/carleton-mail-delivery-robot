@@ -8,9 +8,9 @@ import time
 from control.state_machine import Action
 
 #TODO: Replace hard coded values with a csv file that can be loaded.
-SET_POINT = 0.6
+SET_POINT = 0.5
 AIM_ANGLE = 60
-ERROR = 0.4 * math.sin(AIM_ANGLE * math.pi / 180.0) / 2.0
+ERROR = 0.4 * math.sin(AIM_ANGLE * math.pi / 180.0) / 4.0
 
 class ActionTranslator(Node):
     '''
