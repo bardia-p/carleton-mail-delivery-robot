@@ -53,7 +53,7 @@ class RobotDriver(Node):
         self.nav_data = Nav_Event.NAV_NONE.value
         self.bump_data = False
         self.get_logger().info("Robot Starting " + self.state.printState())
-
+        
     def updateLidarSensor(self, data):
         '''
         The callback for /perceptions.
@@ -66,10 +66,12 @@ class RobotDriver(Node):
         self.get_logger().info(lidarData)
 
         split_data = lidarData.split(":")
+        
         # waiting for the lidar to callibrate
         if split_data[0] == "-1" and split_data[1] == "-1":
-            self.wall_data = ""
-        elif split_data[2] == "-1" and split_data[4] == "-1": # got intersection
+            return
+
+        if split_data[2] == "-1" and split_data[4] == "-1": # got intersection
             self.wall_data = "-1:-1"
         else: # got wall
             self.wall_data = ":".join(split_data[:2])
@@ -82,7 +84,7 @@ class RobotDriver(Node):
         @param data: The data sent by the captain.
         '''
         navData = str(data.data)
-        self.get_logger().info(navData)
+        self.get_logger().info("Got: " + navData)
         self.nav_data = navData
 
     def updateCollision(self, data):
@@ -104,11 +106,17 @@ class RobotDriver(Node):
         The callback for the timer.
         Sends the current state of the robot to the state machine to update the state.
         '''
+        # Waiting for everything to calibrate.
+        if self.wall_data == "":
+            return 
+
         new_state = self.state.handleUpdate(self.bump_data, self.nav_data, self.wall_data)
-        self.nav_data = "NAV_NONE" # Should reset the navigation data
+        
         if new_state != self.state:
             self.state = new_state
             self.get_logger().info("Changed State " + new_state.printState())
+        
+        self.nav_data = "NAV_NONE" # Should reset the navigation data
 
 def main():
     '''

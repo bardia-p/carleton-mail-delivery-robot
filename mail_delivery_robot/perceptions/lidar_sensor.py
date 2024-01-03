@@ -52,10 +52,10 @@ class LidarSensor(Node):
         ''' 
         count = int(scan.scan_time / scan.time_increment)
         angle = 0
+        min_left = 10
+        min_right = 10
+        min_front = 10
         min_distance = 10
-        min_left = self.left_distances[-1]
-        min_right = self.right_distances[-1]
-        min_front = self.front_distances[-1]
 
         for i in range(count):
             degree = math.degrees(scan.angle_min + scan.angle_increment * i)
@@ -69,11 +69,11 @@ class LidarSensor(Node):
                 min_distance = curDir
                 angle = degree
     
-            if (degree <= -175 or degree >= 175) and curDir < min_front :
+            if (degree <= -175 or degree >= 175) and curDir < min_front:
                 min_front = curDir
-            elif degree >= 85 and degree < 95 and curDir < min_right:
+            elif degree >= 110 and degree < 115 and curDir < min_right:
                 min_right = curDir
-            elif degree > -95 and degree <= -85 and curDir < min_left:
+            elif degree > -115 and degree <= -110 and curDir < min_left:
                 min_left = curDir
         
         self.left_distances.append(min_left)
@@ -86,22 +86,22 @@ class LidarSensor(Node):
             self.left_distances.pop(0)
         else:
             return -1, -1, -1, -1, -1
-        
+
         if len(self.right_distances) >  10:
             self.right_distances.pop(0)
         else:
             return -1, -1, -1, -1, -1
-        
+
         if len(self.front_distances) >  10:
             self.front_distances.pop(0)
         else:
             return -1, -1, -1, -1, -1
-        
-        if min_front >= 2.0 or stdev(self.front_distances) > 0.5:
+
+        if min_front >= 1.0 or stdev(self.front_distances) > 0.5:
             min_front = -1
        
         self.get_logger().info(str(min_right) + " " + str(stdev(self.right_distances)))
-        if min_right >= 1.0 or stdev(self.right_distances) > 0.5:
+        if min_right >= 2.0 or stdev(self.right_distances) > 0.5:
             min_right = -1
 
         if min_left >= 6.0 or stdev(self.left_distances) > 0.5:

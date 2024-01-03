@@ -44,7 +44,7 @@ class Captain(Node):
         '''
         Sets the route for the robot.
         '''
-        self.route = [["df:2b:70:a8:21:90", Nav_Event.NAV_LEFT.value]]
+        self.route = [["df:2b:70:a8:21:90", Nav_Event.NAV_RIGHT.value]]
 
     def readBeacon(self, beacon):
         '''

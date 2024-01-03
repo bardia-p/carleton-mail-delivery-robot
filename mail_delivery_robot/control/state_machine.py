@@ -4,11 +4,14 @@ from std_msgs.msg import String
 from navigation.captain import Nav_Event
 
 #TODO: Replace hard coded values with a csv file that can be loaded.
-LEFT_TURN_LIMIT = 10
-RIGHT_TURN_LIMIT = 10
-FORWARD_LIMIT = 10
+LEFT_TURN_LIMIT = 5
+RIGHT_TURN_LIMIT = 5
+FORWARD_LIMIT = 5
+LEFT_FACTOR = 5
+RIGHT_FACTOR = 10
+FORWARD_FACTOR = 20
 WALL_FOLLOW_LIMIT = 3
-COLLISION_FACTOR = 3 / 4
+COLLISION_FACTOR = 0.5
 
 class StateType(Enum):
     OPERATIONAL = "OPERATIONAL"
@@ -40,6 +43,8 @@ class State:
         self.actionPublisher = actionPublisher
         self.stateType = None
         self.wall = "-1,-1"
+        self.nav = None
+        self.isBusy = False
         self.longAction = None
         self.longActionCount = 0
         self.longActionLimit = 0
@@ -108,6 +113,11 @@ class State:
         @param nav: The navigation event.
         @param wall: The wall status.
         '''
+        self.wall = wall
+        # Make sure to capture important navigation info.
+        if nav != "NAV_NONE":
+            self.nav = nav
+
         # Checks to see if the state machine has unfinished action.
         if self.longAction != None:
             if self.longActionCount < self.longActionLimit:
@@ -118,15 +128,16 @@ class State:
                 self.longActionCount = 0
                 self.longActionLimit = 0
                 self.longAction = None
+                self.isBusy = False
                 return self.postLongActionState
 
-        # Checks to see if any useful wall data is received. 
-        if wall == "":
-            return self
-
-        self.wall = wall
-
         # Finds the proper transition based on the data.
+
+        # Restore the saved nav data.
+        if self.nav != "NAV_NONE":
+            nav = self.nav
+            self.nav = "NAV_NONE"
+
         if bumper:
             if nav == Nav_Event.NAV_LEFT.value:
                 return self.bumper_left()
@@ -171,9 +182,15 @@ class State:
         @param longAction: The action to generate.
         @param longActionLimit: The number of cycles required for the action.
         '''
+        self.isBusy = True
         self.longAction = longAction
         self.longActionLimit = longActionLimit
         self.postLongActionState = self if postLongActionState == None else postLongActionState
+
+class Busy(State):
+    def __init__(self, actionPublisher):
+        super().__init__(actionPublisher)
+        self.stateType = StateType.BUSY
 
 class Operational(State):
     def __init__(self, actionPublisher):
@@ -265,7 +282,7 @@ class Should_Turn_Left(Operational):
         self.stateType = StateType.SHOULD_TURN_LEFT
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT * LEFT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_none_wall(self):
@@ -273,7 +290,7 @@ class Should_Turn_Left(Operational):
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT * LEFT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_left_wall(self):
@@ -281,7 +298,7 @@ class Should_Turn_Left(Operational):
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT * LEFT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_right_wall(self):
@@ -289,7 +306,7 @@ class Should_Turn_Left(Operational):
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT * LEFT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
@@ -297,7 +314,7 @@ class Should_Turn_Left(Operational):
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT * LEFT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
@@ -330,7 +347,7 @@ class Should_Turn_Right(Operational):
         self.stateType = StateType.SHOULD_TURN_RIGHT  
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * RIGHT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_none_wall(self):
@@ -338,7 +355,7 @@ class Should_Turn_Right(Operational):
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * RIGHT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_left_wall(self):
@@ -346,7 +363,7 @@ class Should_Turn_Right(Operational):
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * RIGHT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_right_wall(self):
@@ -354,7 +371,7 @@ class Should_Turn_Right(Operational):
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * RIGHT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
@@ -362,7 +379,7 @@ class Should_Turn_Right(Operational):
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * RIGHT_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
@@ -395,7 +412,7 @@ class Should_Pass(Operational):
         self.stateType = StateType.SHOULD_PASS
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_none_wall(self):
@@ -403,7 +420,7 @@ class Should_Pass(Operational):
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_left_wall(self):
@@ -411,7 +428,7 @@ class Should_Pass(Operational):
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_right_wall(self):
@@ -419,7 +436,7 @@ class Should_Pass(Operational):
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_pass_wall(self):
@@ -427,7 +444,7 @@ class Should_Pass(Operational):
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT, Handle_Intersection(self.actionPublisher))
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR, Handle_Intersection(self.actionPublisher))
         return self
 
     def no_bumper_dock_wall(self):
@@ -525,7 +542,7 @@ class Handle_Intersection(Operational):
         self.stateType = StateType.HANDLE_INTERSECTION
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT)
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR)
         return self
 
     def no_bumper_none_wall(self):
@@ -533,7 +550,7 @@ class Handle_Intersection(Operational):
         return self
     
     def no_bumper_left_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT)
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR)
         return self
 
     def no_bumper_left_wall(self):
@@ -541,7 +558,7 @@ class Handle_Intersection(Operational):
         return self
     
     def no_bumper_right_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT)
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR)
         return self
 
     def no_bumper_right_wall(self):
@@ -549,7 +566,7 @@ class Handle_Intersection(Operational):
         return self
     
     def no_bumper_pass_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT)
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR)
         return self
 
     def no_bumper_pass_wall(self):
@@ -557,7 +574,7 @@ class Handle_Intersection(Operational):
         return self
 
     def no_bumper_dock_no_wall(self):
-        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT)
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT * FORWARD_FACTOR)
         return self
 
     def no_bumper_dock_wall(self):
