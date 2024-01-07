@@ -187,11 +187,6 @@ class State:
         self.longActionLimit = longActionLimit
         self.postLongActionState = self if postLongActionState == None else postLongActionState
 
-class Busy(State):
-    def __init__(self, actionPublisher):
-        super().__init__(actionPublisher)
-        self.stateType = StateType.BUSY
-
 class Operational(State):
     def __init__(self, actionPublisher):
         super().__init__(actionPublisher)
@@ -216,7 +211,7 @@ class No_Dest(Operational):
         self.stateType = StateType.NO_DEST
 
     def no_bumper_none_no_wall(self):
-        self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT)
+        self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT)
         return self
 
     def no_bumper_none_wall(self):
