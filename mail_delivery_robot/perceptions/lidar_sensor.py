@@ -97,14 +97,14 @@ class LidarSensor(Node):
         else:
             return -1, -1, -1, -1, -1
 
-        if min_front >= 1.0 or stdev(self.front_distances) > 0.5:
+        if min_front >= 1.0 or stdev(self.front_distances) > 0.1:
             min_front = -1
        
         self.get_logger().info(str(min_right) + " " + str(stdev(self.right_distances)))
-        if min_right >= 2.0 or stdev(self.right_distances) > 0.5:
+        if min_right >= 2.0 or stdev(self.right_distances) > 0.1:
             min_right = -1
 
-        if min_left >= 6.0 or stdev(self.left_distances) > 0.5:
+        if min_left >= 6.0 or stdev(self.left_distances) > 0.1:
             min_left = -1
 
         return min_distance, angle - 90, min_right, min_left, min_front

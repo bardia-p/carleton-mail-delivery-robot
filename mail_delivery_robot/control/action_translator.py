@@ -4,7 +4,6 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist
-import time
 from control.state_machine import Action
 
 #TODO: Replace hard coded values with a csv file that can be loaded.
@@ -92,7 +91,7 @@ class ActionTranslator(Node):
         message = Twist()
         self.get_logger().info(move_action[0])
         if move_action[0] == Action.R_TURN.value:
-            message.linear.x = 0.1 
+            message.linear.x = 0.2
             message.angular.z = -2.0
         elif move_action[0] == Action.L_TURN.value:
             message.linear.x = 0.0
