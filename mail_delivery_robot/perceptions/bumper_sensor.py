@@ -65,9 +65,9 @@ class BumperSensor(Node):
             bumpEvent.data = Bump_Event.UNPRESSED.value
 
         # Slows the publishing of the messages to ensure the detection is smooth.
-        if (self.lastState != bumpEvent.data or self.counter > 30):
+        if (self.lastState != bumpEvent.data or self.counter > 100):
             self.lastState = bumpEvent.data
-            self.get_logger().info(bumpEvent.data)
+            #self.get_logger().info(bumpEvent.data)
             self.publisher_.publish(bumpEvent)
             self.counter = 0
         self.counter += 1
