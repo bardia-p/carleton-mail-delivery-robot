@@ -3,7 +3,7 @@ import rclpy
 from rclpy.node import Node
 from bluepy.btle import Scanner, DefaultDelegate
 
-from tools.csv_parser import loadBeacons
+from tools.csv_parser import loadBeacons, loadConfig
 
 class ScanDelegate(DefaultDelegate):
     '''
@@ -33,6 +33,9 @@ class BeaconSensor(Node):
         
         self.initBeacons()
 
+        # Load the global config.
+        self.config = loadConfig()
+
         # The publishers for the node.
         self.publisher_ = self.create_publisher(String, 'beacons', 10)
 
@@ -40,8 +43,7 @@ class BeaconSensor(Node):
         self.scanner = Scanner().withDelegate(ScanDelegate()) # Create Scanner Class
 
         # Timer set up.
-        timer_period = 0.5 # Seconds
-        self.timer = self.create_timer(timer_period, self.checkForBeacons) # call checkForBeacons() every 0.5 seconds
+        self.timer = self.create_timer(self.config["BEACON_SCAN_TIME"], self.checkForBeacons) # call checkForBeacons() every 0.5 seconds
 
     def initBeacons(self):
         '''

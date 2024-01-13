@@ -5,7 +5,7 @@ CONFIG_DIR = os.getcwd() + "/src/carleton-mail-delivery-robot/mail_delivery_robo
 BEACONS_FILE = "beacons.csv"
 CONFIG_FILE = "config.csv"
 
-def parseCSVFile(filename):
+def parseCSVFile(filename, parse_numbers = False):
     '''
     Parses a CSV file located in te config directory and returns its contents as a dictionary.
 
@@ -17,7 +17,7 @@ def parseCSVFile(filename):
     with open(CONFIG_DIR + filename) as csvfile:
         reader = csv.reader(csvfile, delimiter=",")
         for row in reader:
-            result[row[0]] = row[1]
+            result[row[0]] = row[1] if not parse_numbers else float(parse_numbers)
     return result
 
 def loadBeacons():
@@ -30,4 +30,4 @@ def loadConfig():
     '''
     Loads the global config from the config file.
     '''
-    return parseCSVFile(CONFIG_FILE)
+    return parseCSVFile(CONFIG_FILE, True)
