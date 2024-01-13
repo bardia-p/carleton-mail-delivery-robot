@@ -17,7 +17,7 @@ def parseCSVFile(filename, parse_numbers = False):
     with open(CONFIG_DIR + filename) as csvfile:
         reader = csv.reader(csvfile, delimiter=",")
         for row in reader:
-            result[row[0]] = row[1] if not parse_numbers else float(parse_numbers)
+            result[row[0]] = row[1] if not parse_numbers else float(row[1])
     return result
 
 def loadBeacons():
