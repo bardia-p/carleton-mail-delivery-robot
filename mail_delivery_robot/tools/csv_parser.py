@@ -1,7 +1,7 @@
 import os
 import csv
 
-CONFIG_DIR = os.getcwd() + "src/carleton-mail-delivery-robot/mail_delivery_robot/config/"
+CONFIG_DIR = os.getcwd() + "/src/carleton-mail-delivery-robot/mail_delivery_robot/config/"
 BEACONS_FILE = "beacons.csv"
 CONFIG_FILE = "config.csv"
 

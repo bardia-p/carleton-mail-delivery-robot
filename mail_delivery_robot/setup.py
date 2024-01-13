@@ -8,7 +8,7 @@ setup(
     name=package_name,
     version='0.0.0',
     packages=[package_name],
-    py_modules=["control.robot_driver", "control.state_machine", "perceptions.lidar_sensor", "control.action_translator", "perceptions.beacon_sensor", "navigation.captain", "perceptions.bumper_sensor"],
+    py_modules=["control.robot_driver", "control.state_machine", "perceptions.lidar_sensor", "control.action_translator", "perceptions.beacon_sensor", "navigation.captain", "perceptions.bumper_sensor", "tools.csv_parser"],
     data_files=[
         # Install marker file in the package index
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
