@@ -3,6 +3,8 @@ import rclpy
 from rclpy.node import Node
 from bluepy.btle import Scanner, DefaultDelegate
 
+from tools.csv_parser import loadBeacons
+
 class ScanDelegate(DefaultDelegate):
     '''
     A default delegate for the scanner class.
@@ -45,8 +47,7 @@ class BeaconSensor(Node):
         '''
         Initializes all the beacons and their values.
         '''
-        #TODO: Use a file for this.
-        self.beacons = {"e2:77:fc:f9:04:93": 1, "ea:2f:93:a6:98:20":2, "fc:e2:2e:62:9b:3d":3, "e4:87:91:3d:1e:d7": 4, "ee:16:86:9a:c2:a8": 5, "d0:6a:d2:02:42:eb": 6, "df:2b:70:a8:21:90":7, "fb:ef:5c:de:ef:e4":8}
+        self.beacons = loadBeacons()
 
     def checkForBeacons(self):
         '''

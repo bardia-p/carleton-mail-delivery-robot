@@ -3,7 +3,7 @@ from std_msgs.msg import String
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
-from statistics import  mean, stdev
+from statistics import  stdev
 
 class LidarSensor(Node):
     '''
@@ -36,6 +36,8 @@ class LidarSensor(Node):
         '''
         The callback for /scan.
         Reads the lidar scan and acts accordingly.
+
+        @param scan: The current lidar scan.
         '''
         calc = String()
         

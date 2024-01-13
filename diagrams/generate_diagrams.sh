@@ -4,7 +4,7 @@ parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 cd "$parent_path"
 
-input_directory="./plantuml_files"
+input_directory="./src/plantuml_files"
 
 plantuml="../tools/plantuml.jar"
 
@@ -17,7 +17,7 @@ fi
 
 for file in "$input_directory"/*.plantuml; do
     if [ -f "$file" ]; then
-      java -jar "$plantuml" "$file" -o "../"
+      java -jar "$plantuml" "$file" -o "../../"
       if [ $? != 0 ]; then
           exit 1
       fi
