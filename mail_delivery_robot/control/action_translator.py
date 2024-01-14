@@ -70,7 +70,7 @@ class ActionTranslator(Node):
         '''
         SET_POINT = self.config["WALL_FOLLOW_SET_POINT"]
         AIM_ANGLE = self.config["WALL_FOLLOW_AIM_ANGLE"]
-        ERROR = 0.4 * math.sin(AIM_ANGLE * math.pi / 180.0)
+        ERROR = self.config["WALL_FOLLOW_SPEED"] * math.sin(AIM_ANGLE * math.pi / 180.0)
 
         if cur_angle > 180:
             cur_angle -= 360
