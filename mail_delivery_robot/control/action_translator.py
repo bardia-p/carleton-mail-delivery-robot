@@ -104,7 +104,7 @@ class ActionTranslator(Node):
             feedback = self.wall_follow(float(move_action[1]), float(move_action[2]))
 
             # For minor changes avoid big arcs.
-            if abs(feedback) > self.config["WALL_FOLLW_ANGLE_CHANGE_THRESHOLD"]:
+            if abs(feedback) > self.config["WALL_FOLLOW_ANGLE_CHANGE_THRESHOLD"]:
                 message.linear.x = self.config["WALL_FOLLOW_SPEED"] // 2
             else:
                 message.linear.x = self.config["WALL_FOLLOW_SPEED"]
