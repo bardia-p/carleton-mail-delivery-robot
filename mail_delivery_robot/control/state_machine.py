@@ -2,16 +2,17 @@ from enum import Enum
 from std_msgs.msg import String
 
 from navigation.captain import Nav_Event
+from tools.csv_parser import loadConfig
 
-#TODO: Replace hard coded values with a csv file that can be loaded.
-LEFT_TURN_LIMIT = 5
-RIGHT_TURN_LIMIT = 5
-FORWARD_LIMIT = 5
-LEFT_FACTOR = 5
-RIGHT_FACTOR = 10
-FORWARD_FACTOR = 20
-WALL_FOLLOW_LIMIT = 3
-COLLISION_FACTOR = 0.8
+config = loadConfig()
+LEFT_TURN_LIMIT = config["LEFT_TURN_CLOCK_CYCLES"]
+RIGHT_TURN_LIMIT = config["RIGHT_TURN_CLOCK_CYCLES"]
+FORWARD_LIMIT = config["FORWARD_CLOCK_CYCLES"]
+WALL_FOLLOW_LIMIT =config["WALL_FOLLOW_CLOCK_CYCLES"]
+LEFT_FACTOR = config["LEFT_TURN_MULTI_FACTOR"]
+RIGHT_FACTOR = config["RIGHT_TURN_MULTI_FACTOR"]
+FORWARD_FACTOR = config["FORWARD_MULTI_FACTOR"]
+COLLISION_FACTOR = config["COLLISION_MULTI_FACTOR"]
 
 class StateType(Enum):
     OPERATIONAL = "OPERATIONAL"

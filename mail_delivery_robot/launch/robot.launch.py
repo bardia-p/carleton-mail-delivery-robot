@@ -5,9 +5,8 @@ from launch.substitutions import TextSubstitution
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    robot_model = DeclareLaunchArgument(
-        "robot_model", default_value=TextSubstitution(text="CREATE_1"))
-
+    robot_model = DeclareLaunchArgument("robot_model", default_value=TextSubstitution(text="CREATE_2"))
+    
     return LaunchDescription([
         robot_model,
         Node(package='create_driver',

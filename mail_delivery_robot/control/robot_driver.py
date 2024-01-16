@@ -6,7 +6,8 @@ import control.state_machine as state_machine
 from navigation.captain import Nav_Event
 from perceptions.bumper_sensor import Bump_Event
 
-#TODO: Replace hard coded values with a csv file that can be loaded.
+from tools.csv_parser import loadConfig
+
 class RobotDriver(Node):
     '''
     The Node in charge of moving the robot based on all of its sensor data.
@@ -29,6 +30,9 @@ class RobotDriver(Node):
         '''
         super().__init__('robot_driver')
 
+        # Load the global config.
+        self.config = loadConfig()
+
         # The publishers for the node.
         self.actionPublisher = self.create_publisher(String, 'actions', 2)
 
@@ -38,8 +42,7 @@ class RobotDriver(Node):
         self.beaconSubscriber = self.create_subscription(String, 'bumpEvent', self.updateCollision, 10)
 
         # Timer set up.
-        timer_period = 0.01 # Seconds
-        self.timer = self.create_timer(timer_period, self.updateStateMachine) # call checkForBeacons() every 0.1 seconds
+        self.timer = self.create_timer(self.config["ROBOT_DRIVER_SCAN_TIMER"], self.updateStateMachine)
 
         # Initialize the robot.
         self.resetRobot()
