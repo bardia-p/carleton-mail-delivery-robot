@@ -42,7 +42,7 @@ class BeaconSensor(Node):
         self.scanner = Scanner().withDelegate(ScanDelegate()) # Create Scanner Class
 
         # Timer set up.
-        self.timer = self.create_timer(self.config["BEACON_SCAN_TIME"], self.checkForBeacons) # call checkForBeacons() every 0.5 seconds
+        self.timer = self.create_timer(self.config["BEACON_SCAN_TIMER"], self.checkForBeacons) # call checkForBeacons() every 0.5 seconds
 
     def initBeacons(self):
         '''
@@ -55,7 +55,7 @@ class BeaconSensor(Node):
         The callback for the timer.
         Performs a scan for the available Bluetooth devices.
         '''
-        devices = self.scanner.scan(self.config["BEACON_SCAN_TIME"]) # Listen for ADV_IND packages.
+        devices = self.scanner.scan(self.config["BEACON_SCAN_TIMER"]) # Listen for ADV_IND packages.
         beaconData = String()
 
         # For each scanned device check if device address matches beacon in list
