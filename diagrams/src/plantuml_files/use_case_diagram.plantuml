@@ -1,0 +1,52 @@
+@startuml use_case_diagram
+
+User <|-- Administrator
+User <|-- Customer
+
+
+
+rectangle Mail<U+0020>Delivery<U+0020>Service<U+0020>Robot {
+    left to right direction
+    together {
+    usecase SendMail
+    usecase RetrieveMail
+    usecase NotifyRobot
+    usecase MonitorSystem
+    }
+    usecase ReadBeacon
+    usecase NotifyUser
+    usecase NavigateTunnels
+    usecase DockRobot
+    usecase UpdateStatus
+    usecase HandleCollision
+    usecase CreateRequest
+    usecase NotifyUser
+    
+    
+    SendMail --> CreateRequest : <<include>>
+    RetrieveMail --> CreateRequest : <<include>>
+    CreateRequest --> NotifyRobot : <<include>>
+    MonitorSystem --> UpdateStatus : <<include>>
+    NotifyUser --> UpdateStatus : <<include>>
+    NavigateTunnels --> ReadBeacon : <<include>>
+    NavigateTunnels --> UpdateStatus : <<include>>
+    DockRobot --> UpdateStatus : <<include>>
+
+
+}
+actor Robot
+actor RequestManager
+actor System
+
+RequestManager -- CreateRequest
+User -- SendMail
+User -- RetrieveMail
+Administrator -- MonitorSystem
+System -- NotifyRobot
+System -- NotifyUser
+Robot -- NavigateTunnels
+Robot -- ReadBeacon
+Robot -- DockRobot
+Robot -- HandleCollision
+Robot -- UpdateStatus
+@enduml

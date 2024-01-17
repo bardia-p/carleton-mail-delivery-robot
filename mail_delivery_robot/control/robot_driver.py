@@ -6,7 +6,8 @@ import control.state_machine as state_machine
 from navigation.captain import Nav_Event
 from perceptions.bumper_sensor import Bump_Event
 
-#TODO: Replace hard coded values with a csv file that can be loaded.
+from tools.csv_parser import loadConfig
+
 class RobotDriver(Node):
     '''
     The Node in charge of moving the robot based on all of its sensor data.
@@ -29,6 +30,9 @@ class RobotDriver(Node):
         '''
         super().__init__('robot_driver')
 
+        # Load the global config.
+        self.config = loadConfig()
+
         # The publishers for the node.
         self.actionPublisher = self.create_publisher(String, 'actions', 2)
 
@@ -38,8 +42,7 @@ class RobotDriver(Node):
         self.beaconSubscriber = self.create_subscription(String, 'bumpEvent', self.updateCollision, 10)
 
         # Timer set up.
-        timer_period = 0.1 # Seconds
-        self.timer = self.create_timer(timer_period, self.updateStateMachine) # call checkForBeacons() every 0.1 seconds
+        self.timer = self.create_timer(self.config["ROBOT_DRIVER_SCAN_TIMER"], self.updateStateMachine)
 
         # Initialize the robot.
         self.resetRobot()
@@ -49,11 +52,11 @@ class RobotDriver(Node):
         Initializes the robot's state and sensor data.
         '''
         self.state = state_machine.No_Dest(self.actionPublisher)
-        self.wall_data = "-1:-1"
+        self.wall_data = ""
         self.nav_data = Nav_Event.NAV_NONE.value
         self.bump_data = False
         self.get_logger().info("Robot Starting " + self.state.printState())
-
+        
     def updateLidarSensor(self, data):
         '''
         The callback for /perceptions.
@@ -61,9 +64,20 @@ class RobotDriver(Node):
 
         @param data: The data sent by the lidar sensor.
         '''
+        #TODO: ADD PARTICLE FILTERING HERE
         lidarData = str(data.data)
         self.get_logger().info(lidarData)
-        self.wall_data = lidarData
+
+        split_data = lidarData.split(":")
+        
+        # waiting for the lidar to callibrate
+        if split_data[0] == "-1" and split_data[1] == "-1":
+            return
+
+        if split_data[2] == "-1" and split_data[4] == "-1": # got intersection
+            self.wall_data = "-1:-1"
+        else: # got wall
+            self.wall_data = ":".join(split_data[:2])
 
     def updateNavigation(self, data):
         '''
@@ -73,7 +87,7 @@ class RobotDriver(Node):
         @param data: The data sent by the captain.
         '''
         navData = str(data.data)
-        self.get_logger().info(navData)
+        self.get_logger().info("Got: " + navData)
         self.nav_data = navData
 
     def updateCollision(self, data):
@@ -95,11 +109,17 @@ class RobotDriver(Node):
         The callback for the timer.
         Sends the current state of the robot to the state machine to update the state.
         '''
+        # Waiting for everything to calibrate.
+        if self.wall_data == "":
+            return 
+
         new_state = self.state.handleUpdate(self.bump_data, self.nav_data, self.wall_data)
-        self.nav_data = "NAV_NONE" # Should reset the navigation data
+        
         if new_state != self.state:
             self.state = new_state
             self.get_logger().info("Changed State " + new_state.printState())
+        
+        self.nav_data = "NAV_NONE" # Should reset the navigation data
 
 def main():
     '''

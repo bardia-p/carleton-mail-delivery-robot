@@ -4,6 +4,8 @@ import rclpy
 from rclpy.node import Node
 from enum import Enum
 
+from tools.csv_parser import loadConfig
+
 class Bump_Event(Enum):
     '''
     An enum for the various bump events for the robot.
@@ -11,7 +13,6 @@ class Bump_Event(Enum):
     PRESSED = "PRESSED"
     UNPRESSED = "UNPRESSED"
 
-#TODO: Replace hard coded values with a csv file that can be loaded.
 class BumperSensor(Node):
     '''
     The Node in charge of listening to the bumper sensor.
@@ -29,6 +30,9 @@ class BumperSensor(Node):
         '''
         super().__init__('bumper_sensor')
 
+        # Load the global config.
+        self.config = loadConfig()
+
         # Sets the default values for the sensor.
         self.counter = 0
         self.lastState = ""
@@ -38,7 +42,7 @@ class BumperSensor(Node):
         
         # The subscribers for the node.
         self.bumperSubscriber = self.create_subscription(Bumper, 'bumper', self.readBump, 10)
-
+    
     def readBump(self, data):
         '''
         The callback for /bumper.
@@ -65,9 +69,9 @@ class BumperSensor(Node):
             bumpEvent.data = Bump_Event.UNPRESSED.value
 
         # Slows the publishing of the messages to ensure the detection is smooth.
-        if (self.lastState != bumpEvent.data or self.counter > 30):
+        if (self.lastState != bumpEvent.data or self.counter > self.config["MAX_BUMP_COUNT"]):
             self.lastState = bumpEvent.data
-            self.get_logger().info(bumpEvent.data)
+            #self.get_logger().info(bumpEvent.data)
             self.publisher_.publish(bumpEvent)
             self.counter = 0
         self.counter += 1

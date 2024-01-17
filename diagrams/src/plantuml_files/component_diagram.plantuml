@@ -1,0 +1,61 @@
+@startuml component_diagram
+
+database "H2" {
+ [Requests]
+}
+
+node "Web App" {
+  [server]
+}
+
+cloud {
+  [Azure]
+}
+
+node "mail_delivery_robot" {
+ package "communication" {
+  [client]
+ }
+
+ package "navigation" {
+  [captain]
+  [map]
+ }
+
+ package "perceptions" {
+  [beacon_sensor]
+  [bumper_sensor]
+  [lidar_sensor]
+ }
+
+ package "control" {
+  [robot_driver]
+  [state_machine]
+  [action_translator]
+ }
+}
+
+server <--> Requests : SQL
+server <--> Azure : HTTP Request
+Azure <--> client : HTTP Request
+
+Beacons --> beacon_sensor : Bluetooth
+LiDAR --> lidar_sensor : /scan
+Bumper --> bumper_sensor : /bumper
+
+beacon_sensor --> captain : /beacon
+lidar_sensor --> robot_driver : /perceptions
+bumper_sensor --> robot_driver : /bumpEvent
+
+captain --> robot_driver : /navigation
+robot_driver --> state_machine : handleUpdate()
+state_machine --> action_translator : /actions
+
+captain --> map : getRoute()
+
+client --> captain : /trip
+captain --> client : /update
+
+action_translator --> Robot : /cmd_vel
+
+@enduml

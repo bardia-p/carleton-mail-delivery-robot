@@ -5,9 +5,8 @@ from launch.substitutions import TextSubstitution
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    robot_model = DeclareLaunchArgument(
-        "robot_model", default_value=TextSubstitution(text="CREATE_1"))
-
+    robot_model = DeclareLaunchArgument("robot_model", default_value=TextSubstitution(text="CREATE_2"))
+    
     return LaunchDescription([
         robot_model,
         Node(package='create_driver',
@@ -33,6 +32,26 @@ def generate_launch_description():
             output='screen'
             ),
         Node(package='mail_delivery_robot',
+            namespace='control',
+            executable='action_translator',
+            name='action_translator',
+            output='log'
+            ),
+        Node(package='mail_delivery_robot',
+            namespace='control',
+            executable='robot_driver',
+            name='robot_driver',
+            output='log'
+            ),
+        Node(package='mail_delivery_robot',
+            namespace='navigation',
+            executable='captain',
+            name='captain',
+            output='log',
+            remappings=[('/navigation/navigation', '/control/navigation')]
+            ),
+
+        Node(package='mail_delivery_robot',
             namespace='perceptions',
             executable='lidar_sensor',
             name='lidar_sensor',
@@ -53,24 +72,5 @@ def generate_launch_description():
             output='log',
             remappings=[('/perceptions/bumpEvent', '/control/bumpEvent'),
                         ('/perceptions/bumper', '/bumper')]
-            ),
-        Node(package='mail_delivery_robot',
-            namespace='control',
-            executable='action_translator',
-            name='action_translator',
-            output='log'
-            ),
-        Node(package='mail_delivery_robot',
-            namespace='control',
-            executable='robot_driver',
-            name='robot_driver',
-            output='log'
-            ),
-        Node(package='mail_delivery_robot',
-            namespace='navigation',
-            executable='captain',
-            name='captain',
-            output='log',
-            remappings=[('/navigation/navigation', '/control/navigation')]
             ),
         ])

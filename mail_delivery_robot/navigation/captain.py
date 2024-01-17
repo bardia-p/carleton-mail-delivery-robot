@@ -29,6 +29,10 @@ class Captain(Node):
         Defines the necessary publishers and subscribers.
         '''
         super().__init__('captain')
+        
+        # Maintains the route for the robot.
+        self.setRoute()
+
 
         # The publishers for the node.
         self.mapPublisher = self.create_publisher(String, 'navigation', 10)
@@ -36,14 +40,11 @@ class Captain(Node):
         # The subscribers for the node.
         self.beaconSubscriber = self.create_subscription(String, 'beacons', self.readBeacon, 10)
 
-        # Maintains the route for the robot.
-        self.route = []
-
     def setRoute(self):
         '''
         Sets the route for the robot.
         '''
-        self.route = ["d0:6a:d2:02:42:eb", Nav_Event.NAV_LEFT.value]
+        self.route = [["df:2b:70:a8:21:90", Nav_Event.NAV_LEFT.value]]
 
     def readBeacon(self, beacon):
         '''
