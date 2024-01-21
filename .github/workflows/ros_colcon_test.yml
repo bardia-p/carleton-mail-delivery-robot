@@ -18,7 +18,7 @@ jobs:
         uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: humble
-      - run: source /opt/ros/humble/setup.bash && pip install setuptools==58.2.0 && pip install pyrosenv
+      - run: pip install setuptools==58.2.0 && source /opt/ros/humble/setup.bash
 
 
       - name: Build and Test
