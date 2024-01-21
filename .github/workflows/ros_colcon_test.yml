@@ -18,8 +18,11 @@ jobs:
         uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: humble
-      - run: pip install setuptools==58.2.0 && source /opt/ros/humble/setup.bash
 
+      - name: Install dependencies
+        run: |
+          colcon build --packages-select mail_delivery_robot --symlink-install
 
-      - name: Build and Test
-        run: colcon build && colcon test --packages-select mail_delivery_robot --event-handlers console_cohesion+
+      - name: Run tests
+        run: |
+          colcon test --packages-select mail_delivery_robot --event-handlers console_cohesion+
