@@ -56,15 +56,15 @@ def test_path_one():
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
 
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, (True, "NAV_NONE", "10:-0"))
+    state = send_update(state, T11)
     assert state.stateType.value == "COLLISION_NO_DEST"
-    state = send_update(state, (True, "NAV_RIGHT", "10:0"))
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, (False, "NAV_RIGHT", "10:0"))
+    state = send_update(state, T6)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, (False, "NAV_NONE", "-1:-1"))
+    state = send_update(state, T1)
     assert state.stateType.value == "HANDLE_INTERSECTION"
 
     actionPublisher.extract_data()
