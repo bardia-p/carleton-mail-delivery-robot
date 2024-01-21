@@ -1,7 +1,10 @@
 import os
 import csv
+import sys
 
-CONFIG_DIR = os.path.expanduser('~') + "/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot/config/"
+print(sys.path)
+
+CONFIG_DIR = sys.path[0] + "/config/"
 BEACONS_FILE = "beacons.csv"
 CONFIG_FILE = "config.csv"
 

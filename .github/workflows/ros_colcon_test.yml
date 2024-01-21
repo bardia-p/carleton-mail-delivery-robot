@@ -7,30 +7,33 @@ on:
     branches: [ "master" ]
 
 jobs:
-  test:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up ROS
-        uses: ros-tooling/setup-ros@v0.7
-        with:
-          required-ros-distributions: humble
+    - name: Set up ROS environment
+      uses: ros-tooling/setup-ros@v0.7
+      with:
+        ros-distro: humble
 
-      - name: Install dependencies
-        run: |
-          colcon build --packages-select mail_delivery_robot --symlink-install
+    - name: build and test
+      uses: ros-tooling/action-ros-ci@v0.2
+      with:
+        package-name: mail_delivery_robot
+        target-ros2-distro: humble
+        colcon-defaults: |
+          {
+            "build": {
+              "mixin": ["coverage-pytest"]
+            },
+            "test": {
+              "mixin": ["coverage-pytest"]
+            }
+          }
+        # If possible, pin the repository in the workflow to a specific commit to avoid
+        # changes in colcon-mixin-repository from breaking your tests.
+        colcon-mixin-repository: https://raw.githubusercontent.com/colcon/colcon-mixin-repository/1ddb69bedfd1f04c2f000e95452f7c24a4d6176b/index.yaml
 
-      - name: Set Python Path
-        run: |
-          export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/install/lib/python3/dist-packages
-
-      - name: Source ROS Workspace
-        run: |
-          source $GITHUB_WORKSPACE/install/setup.bash
-
-      - name: Run tests
-        run: |
-          colcon test --packages-select mail_delivery_robot --event-handlers console_cohesion+
