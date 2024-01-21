@@ -1,5 +1,22 @@
 from control import state_machine as state_machine
 
+T1 = (False, "NAV_NONE", "-1:-1")
+T2 = (False, "NAV_NONE", "10:0")
+T3 = (False, "NAV_LEFT", "-1:-1")
+T4 = (False, "NAV_LEFT", "10:0")
+T5 = (False, "NAV_RIGHT", "-1:-1")
+T6 = (False, "NAV_RIGHT", "10:0")
+T7 = (False, "NAV_PASS", "-1:-1")
+T8 = (False, "NAV_PASS", "10:0")
+T9 = (False, "NAV_DOCK", "-1:-1")
+T10 = (False, "NAV_DOCK", "10:0")
+T11 = (True, "NAV_NONE", "10:0")
+T12 = (True, "NAV_LEFT", "10:0")
+T13 = (True, "NAV_RIGHT", "10:0")
+T14 = (True, "NAV_PASS", "10:0")
+T15 = (True, "NAV_DOCK", "10:0")
+
+
 class ActionPublisherStub():
     '''
     The stub for the Action Publisher in the state machine
@@ -96,7 +113,7 @@ def test_path_three():
     state = send_update(state, (True, "NAV_PASS", "10:0"))
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, (False, "NAV_PASS", "10:0")) 
-    assert state.stateType.value == "SHOULD_PASS", "THIS IS AN ERROR"
+    assert state.stateType.value == "SHOULD_PASS"
     state = send_update(state, (False, "NAV_PASS", "-1:-1"))
     assert state.stateType.value == "HANDLE_INTERSECTION"
 
@@ -149,10 +166,141 @@ def test_path_six():
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, (True, "NAV_RIGHT", "-1:-1"))
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-
+    state = send_update(state, (True, "NAV_NONE", "-1:-1"))
+    assert state.stateType.value == "COLLISION_TURN_RIGHT"
+    state = send_update(state, (True, "NAV_LEFT", "-1:-1"))
+    assert state.stateType.value == "COLLISION_TURN_RIGHT"
+    state = send_update(state, (True, "NAV_TRUE", "-1:-1"))
+    assert state.stateType.value == "COLLISION_TURN_RIGHT"
+    state = send_update(state, (True, "NAV_PASS", "-1:-1"))
+    assert state.stateType.value == "COLLISION_TURN_RIGHT"
+    state = send_update(state, (True, "NAV_DOCK", "-1:-1"))
+    assert state.stateType.value == "COLLISION_TURN_RIGHT"
+    state = send_update(state, (False, "NAV_NONE", "-1:-1"))
+    assert state.stateType.value == "SHOULD_TURN_RIGHT"
+    state = send_update(state, T2)
+    assert state.stateType.value == "SHOULD_TURN_RIGHT"
+    state = send_update(state, T4)
+    assert state.stateType.value == "SHOULD_TURN_RIGHT"
+    state = send_update(state, T6)
+    assert state.stateType.value == "SHOULD_TURN_RIGHT"
+    state = send_update(state, T8)
+    assert state.stateType.value == "SHOULD_TURN_RIGHT"
+    state = send_update(state, T10)
+    assert state.stateType.value == "SHOULD_TURN_RIGHT"
+    state = send_update(state, T3)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T1)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T3)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T5)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T7)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T9)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T11)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T11)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T12)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T14)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T1)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T2)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T14)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T4)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T5)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T6)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T7)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T8)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T9)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T10)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T2)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T1)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T2)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T11)
+    assert state.stateType.value == "COLLISION_NO_DEST"
+    state = send_update(state, T11)
+    assert state.stateType.value == "COLLISION_NO_DEST"
+    state = send_update(state, T1)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T11)
+    assert state.stateType.value == "COLLISION_NO_DEST"
+    state = send_update(state, T2)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_TURN_RIGHT"
+    state = send_update(state, T2)
+    assert state.stateType.value == "SHOULD_TURN_RIGHT"
+    
 def test_path_seven():
     '''
+    Test path 7:
     '''
+    actionPublisher = ActionPublisherStub()
+    state = state_machine.No_Dest(actionPublisher)
+    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T12)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T11)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T12)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T14)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T1)
+    assert state.stateType.value == "SHOULD_TURN_LEFT"
+    state = send_update(state, T2)
+    assert state.stateType.value == "SHOULD_TURN_LEFT"
+    state = send_update(state, T4)
+    assert state.stateType.value == "SHOULD_TURN_LEFT"
+    state = send_update(state, T6)
+    assert state.stateType.value == "SHOULD_TURN_LEFT"
+    state = send_update(state, T8)
+    assert state.stateType.value == "SHOULD_TURN_LEFT"
+    state = send_update(state, T10)
+    assert state.stateType.value == "SHOULD_TURN_LEFT"
+    state = send_update(state, T1)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
 
 
 
