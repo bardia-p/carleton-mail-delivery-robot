@@ -1,0 +1,12 @@
+[1m============================= test session starts ==============================[0m
+platform linux -- Python 3.8.10, pytest-4.6.9, py-1.8.1, pluggy-0.13.0
+cachedir: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/.pytest_cache
+rootdir: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot
+plugins: ament-pep257-0.9.8, launch-testing-0.10.10, ament-xmllint-0.9.8, ament-lint-0.9.8, ament-flake8-0.9.8, ament-copyright-0.9.8, launch-testing-ros-0.11.7, colcon-core-0.15.0, cov-2.8.1
+[1mcollecting ... [0m[1m
+collected 13 items                                                             [0m
+
+test/test_state_machine.py [32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[36m                                 [100%][0m
+
+- generated xml file: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/pytest.xml -
+[32m[1m========================== 13 passed in 0.15 seconds ===========================[0m

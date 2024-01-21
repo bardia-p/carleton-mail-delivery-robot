@@ -1,0 +1,14 @@
+[0.506s] Invoking command in '/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot': PYTEST_ADDOPTS=--tb=short --junit-xml=/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/pytest.xml --junit-prefix=mail_delivery_robot -o cache_dir=/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/.pytest_cache /usr/bin/python3 -m pytest
+[1.072s] [1m============================= test session starts ==============================[0m
+[1.072s] platform linux -- Python 3.8.10, pytest-4.6.9, py-1.8.1, pluggy-0.13.0
+[1.078s] cachedir: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/.pytest_cache
+[1.078s] rootdir: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot
+[1.079s] plugins: ament-pep257-0.9.8, launch-testing-0.10.10, ament-xmllint-0.9.8, ament-lint-0.9.8, ament-flake8-0.9.8, ament-copyright-0.9.8, launch-testing-ros-0.11.7, colcon-core-0.15.0, cov-2.8.1
+[1.296s] [1mcollecting ... [0m[1m
+[1.296s] collected 11 items                                                             [0m
+[1.297s] 
+[1.314s] test/test_state_machine.py [32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[36m                                   [100%][0m
+[1.315s] 
+[1.315s] - generated xml file: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/pytest.xml -
+[1.315s] [32m[1m========================== 11 passed in 0.24 seconds ===========================[0m
+[1.361s] Invoked command in '/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot' returned '0': PYTEST_ADDOPTS=--tb=short --junit-xml=/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/pytest.xml --junit-prefix=mail_delivery_robot -o cache_dir=/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/.pytest_cache /usr/bin/python3 -m pytest

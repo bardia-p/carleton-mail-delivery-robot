@@ -1,0 +1,23 @@
+[0.502s] Invoking command in '/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot': PYTEST_ADDOPTS=--tb=short --junit-xml=/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/pytest.xml --junit-prefix=mail_delivery_robot -o cache_dir=/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/.pytest_cache /usr/bin/python3 -m pytest
+[1.103s] [1m============================= test session starts ==============================[0m
+[1.103s] platform linux -- Python 3.8.10, pytest-4.6.9, py-1.8.1, pluggy-0.13.0
+[1.109s] cachedir: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/.pytest_cache
+[1.109s] rootdir: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot
+[1.109s] plugins: ament-pep257-0.9.8, launch-testing-0.10.10, ament-xmllint-0.9.8, ament-lint-0.9.8, ament-flake8-0.9.8, ament-copyright-0.9.8, launch-testing-ros-0.11.7, colcon-core-0.15.0, cov-2.8.1
+[1.362s] [1mcollecting ... [0m[1m
+[1.362s] collected 13 items                                                             [0m
+[1.363s] 
+[1.460s] test/test_state_machine.py [32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[32m.[0m[31mF[0m[36m                                 [100%][0m
+[1.460s] 
+[1.460s] =================================== FAILURES ===================================
+[1.461s] [31m[1m______________________________ test_path_thirteen ______________________________[0m
+[1.461s] [1m[31mtest/test_state_machine.py[0m:650: in test_path_thirteen
+[1.461s] [1m    assert state.stateType.value == "SHOULD_TURN_LEFT"[0m
+[1.462s] [1m[31mE   AssertionError: assert 'SHOULD_TURN_RIGHT' == 'SHOULD_TURN_LEFT'[0m
+[1.462s] [1m[31mE     - SHOULD_TURN_RIGHT[0m
+[1.462s] [1m[31mE     ?             ^^^^[0m
+[1.463s] [1m[31mE     + SHOULD_TURN_LEFT[0m
+[1.463s] [1m[31mE     ?             ^^^[0m
+[1.463s] - generated xml file: /home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/pytest.xml -
+[1.464s] [31m[1m===================== 1 failed, 12 passed in 0.36 seconds ======================[0m
+[1.504s] Invoked command in '/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot' returned '1': PYTEST_ADDOPTS=--tb=short --junit-xml=/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/pytest.xml --junit-prefix=mail_delivery_robot -o cache_dir=/home/cassidypacada/cmds_ws/src/carleton-mail-delivery-robot/build/mail_delivery_robot/.pytest_cache /usr/bin/python3 -m pytest
