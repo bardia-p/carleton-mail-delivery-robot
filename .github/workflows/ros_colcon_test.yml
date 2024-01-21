@@ -23,6 +23,10 @@ jobs:
         run: |
           colcon build --packages-select mail_delivery_robot --symlink-install
 
+      - name: Set Python Path
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/install/lib/python3/dist-packages
+
       - name: Source ROS Workspace
         run: |
           source $GITHUB_WORKSPACE/install/setup.bash
