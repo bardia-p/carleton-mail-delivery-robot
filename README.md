@@ -1,5 +1,7 @@
 # Carleton Mail Delivery Robot System
 
+Build Status:  ![Build Status](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/ros_colcon_test.yml/badge.svg)
+
 ### Group Members: 
 - [Max Curkovic](https://github.com/maxcurkovic)
 - [Bardia Parmoun](https://github.com/bardia-p)
@@ -8,12 +10,17 @@
 
 ## Description:
 
-This project is being completed to fulfill the 2023 - 2024 Capstone project requirements for SYSC 4997 at Carleton University.
+This project is being completed to fulfill the 2023 - 2024 Capstone project requirements for SYSC 4907 at Carleton University.
 
 The Carleton Mail Delivery Robot system aims to automate Carleton's existing mail deliver system. With the placement of several bluetoopth beacons throughout the tunnels, the robot will be able to navigate across Carleton using a LiDAR sensor.
 For the purpose of this project, the robot's navigation system should allow it to reach its intended destination while detecting and avoiding any obstacles. The robot must be resilient and should be able to find its destination in the event
 that it strays off its original course.
 The system will be controlled through a web application component which will allow users to give the robot a desired destination.
+
+<div align='center'>
+  <img src='https://github.com/bardia-p/carleton-mail-delivery-robot/assets/140274454/b95c08f0-48f5-4438-bfb1-273eea98c4e5'>
+  <p>iRobot Create 2 version of the Carleton Mail Delivery Robot System</p>
+</div>
 
 ## Project Components:
 
