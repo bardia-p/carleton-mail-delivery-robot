@@ -41,7 +41,7 @@ class ActionPublisherStub():
 def send_update(state, update):
     newState= state.handleUpdate(update[0], update[1], update[2])
     if newState.isBusy:
-        #newState.handleUpdate(update[0], update[1], update[2])
+        #newState.handleUpdate(update[0], update[1], update[2])S
         newState.longActionCount = newState.longActionLimit
         newState = newState.handleUpdate(update[0], update[1], update[2])
     return newState
@@ -81,17 +81,17 @@ def test_path_two():
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
 
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, (True, "NAV_LEFT", "10:0"))
+    state = send_update(state, T12)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
-    state = send_update(state, (False, "NAV_LEFT", "10:0"))
+    state = send_update(state, T4)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, (False, "NAV_LEFT", "-1:-1"))
+    state = send_update(state, T3)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, (True, "NAV_LEFT", "-1:-1"))
+    state = send_update(state, T12)
     assert state.stateType.value == "COLLISION_INTERSECTION"
-    state = send_update(state, (False, "NAV_LEFT", "-1:-1"))
+    state = send_update(state, T3)
     assert state.stateType.value == "HANDLE_INTERSECTION"
 
     actionPublisher.extract_data()
@@ -108,13 +108,13 @@ def test_path_three():
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
 
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, (True, "NAV_PASS", "10:0"))
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_PASS"
-    state = send_update(state, (False, "NAV_PASS", "10:0")) 
+    state = send_update(state, T8) 
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, (False, "NAV_PASS", "-1:-1"))
+    state = send_update(state, T7)
     assert state.stateType.value == "HANDLE_INTERSECTION"
 
     actionPublisher.extract_data()
@@ -130,13 +130,13 @@ def test_path_four():
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
 
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, (True, "NAV_DOCK", "10:0"))
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_DOCK"
-    state = send_update(state, (False, "NAV_DOCK", "10:0"))
+    state = send_update(state, T10)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, (False, "NAV_DOCK", "-1:-1"))
+    state = send_update(state, T9)
     assert state.stateType.value == "DOCKED"
 
     actionPublisher.extract_data()
@@ -162,21 +162,21 @@ def test_path_six():
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, (True, "NAV_RIGHT", "-1:-1"))
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, (True, "NAV_NONE", "-1:-1"))
+    state = send_update(state, T11)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, (True, "NAV_LEFT", "-1:-1"))
+    state = send_update(state, T12)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, (True, "NAV_TRUE", "-1:-1"))
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, (True, "NAV_PASS", "-1:-1"))
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, (True, "NAV_DOCK", "-1:-1"))
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, (False, "NAV_NONE", "-1:-1"))
+    state = send_update(state, T1)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
     state = send_update(state, T2)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
@@ -301,7 +301,7 @@ def test_path_seven():
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T12)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
@@ -384,7 +384,7 @@ def test_path_eight():
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T11)
     assert state.stateType.value == "COLLISION_NO_DEST"
@@ -478,7 +478,7 @@ def test_path_nine():
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T11)
     assert state.stateType.value == "COLLISION_NO_DEST"
@@ -549,7 +549,7 @@ def test_path_ten():
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T9)
     assert state.stateType.value == "SHOULD_DOCK"
@@ -562,7 +562,7 @@ def test_path_eleven():
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T10)
     assert state.stateType.value == "SHOULD_DOCK"
@@ -575,7 +575,7 @@ def test_path_twelve():
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T11)
     assert state.stateType.value == "COLLISION_NO_DEST"
@@ -592,7 +592,7 @@ def test_path_thirteen():
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
-    state = send_update(state, (False, "NAV_NONE", "10:0"))
+    state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T7)
     assert state.stateType.value == "SHOULD_PASS"
