@@ -2,8 +2,6 @@ import os
 import csv
 import sys
 
-print(sys.path)
-
 CONFIG_DIR = sys.path[0] + "/config/"
 BEACONS_FILE = "beacons.csv"
 CONFIG_FILE = "config.csv"
