@@ -1,0 +1,42 @@
+@startgantt
+Project starts 2023-09-01
+[Update Project Proposal 1] starts 2023-09-05 and ends 2023-09-24
+[Update Project Proposal 2] starts 2023-10-22 and ends 2023-11-02
+[Develop New Chassis for Robot] starts 2023-09-11 and ends 2023-09-24
+[Implement New State Machine Designs 1] starts 2023-09-17 and ends 2023-10-01
+[Implement New State Machine Designs 2] starts 2023-10-24 and ends 2023-11-06
+[Implement New State Machine Designs 3] starts 2023-12-18 and ends 2023-12-30
+[Develop Prototype using LiDAR Sensor] starts 2023-10-01 and ends 2023-10-13
+[Design MVP 1] starts 2023-10-08 and ends 2023-10-22
+[Design MVP 2] starts 2023-11-26 and ends 2023-12-10
+[Design MVP 3] starts 2024-01-08 and ends 2024-01-21
+[Design MVP 4] starts 2024-01-25 and ends 2024-03-10
+[Unit and Integration Testing 1] starts 2023-10-13 and ends 2023-10-24
+[Unit and Integration Testing 2] starts 2023-12-11 and ends 2023-12-22
+[Unit and Integration Testing 3] starts 2024-01-15 and ends 2024-01-30
+[Unit and Integration Testing 4] starts 2024-02-25 and ends 2024-03-10
+[Improve Wall Following] starts on 2023-11-06 and ends 2023-11-26
+[Introduce Dynamic Navigation] starts on 2023-11-06 and ends 2023-11-26
+[Implement Dynamic Navigation] starts on 2024-01-15 and ends 2024-02-09
+[Fix Turn Behaviour and Finalize Movements] starts on 2023-11-26 and ends on 2023-12-11
+[Update Final Report 1] starts on 2023-12-18 and ends 2024-01-08
+[Update Final Report 2] starts on 2024-01-21 and ends 2024-02-08
+[Update Final Report 3] starts on 2024-03-10 and ends 2024-04-16
+[Develop Web App Prototype] starts on 2024-02-02 and ends 2024-02-06
+[Oral Presentation Preparation] starts 2024-01-20 and ends 2024-01-23
+[Implement Better Intersection Detection] starts 2024-01-29 and ends 2024-02-16
+[Implement Simple Collision Handling] starts 2024-02-17 and ends 2024-03-01
+[Poster Fair Preparation] starts 2024-03-10 and ends 2024-03-31
+
+[Update Project Proposal 1] displays on same row as [Update Project Proposal 2]
+[Implement New State Machine Designs 1] displays on same row as [Implement New State Machine Designs 2]
+[Implement New State Machine Designs 2] displays on same row as [Implement New State Machine Designs 3]
+[Unit and Integration Testing 1] displays on same row as [Unit and Integration Testing 2]
+[Unit and Integration Testing 2] displays on same row as [Unit and Integration Testing 3]
+[Unit and Integration Testing 3] displays on same row as [Unit and Integration Testing 4]
+[Introduce Dynamic Navigation] displays on same row as [Implement Dynamic Navigation]
+[Update Final Report 1] displays on same row as [Update Final Report 2]
+[Update Final Report 2] displays on same row as [Update Final Report 3]
+@endgantt
+
+[Poster Fair Preparation]
