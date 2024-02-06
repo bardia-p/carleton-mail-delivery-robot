@@ -4,6 +4,7 @@ from std_msgs.msg import String
 from enum import Enum
 from tools.csv_parser import loadBeacons
 from tools.nav_parser import loadConnections
+from navigation.map import Map
  
 class Nav_Event(Enum):
     '''
@@ -34,7 +35,7 @@ class Captain(Node):
         
         # Defines the beacon orientation hashmap.
 
-        self.beacon_orientation = loadConnections()
+        self.beacon_orientations = loadConnections()
 
         # Destination route for the robot.
         self.destination = ""
@@ -42,32 +43,39 @@ class Captain(Node):
         # Previous beacon for the robot.
         self.prev_beacon = ""
 
+        # Routing table for the captain.
+        self.map = Map()
+
         # The publishers for the node.
         self.mapPublisher = self.create_publisher(String, 'navigation', 10)
 
         # The subscribers for the node.
         self.beaconSubscriber = self.create_subscription(String, 'beacons', self.readBeacon, 10)
 
-    def setRoute(self):
-        '''
-        Sets the route for the robot.
-        '''
-        self.route = [["df:2b:70:a8:21:90", Nav_Event.NAV_LEFT.value]]
 
-    def readBeacon(self, beacon):
+    def readBeacon(self, current_beacon):
         '''
         The callback for /beacons.
         Decodes the given beacon and sends the appropriate route.
 
         @param data: the beacon to analyze.
         '''
-        if len(self.route) > 0:
-            beacon_id = beacon.data.split(",")[0]
-            if beacon_id == self.route[0][0]:
-                beacon, direction = self.route.pop(0)
-                navMessage = String()
-                navMessage.data = direction
-                self.mapPublisher.publish(navMessage)
+        beacon_orientation = "0"
+
+
+
+        if self.prev_beacon.equals(""):
+            beacon_orientation = "1"
+        elif current_beacon.equals(self.prev_beacon):
+            return
+        else:
+            beacon_orientation = beacon_connections[current_beacon][prev_beacon]
+            if beacon_orientation.equals("-"):
+                self.get_logger().info("ROBOT HAS BEEN MOVED")
+                beacon_orientation = "1"
+            action = self.map.getValue(current_beacon + beacon_orientation)[prev_beacon]
+            self.mapPublisher.publish(action)
+        self.prev_beacon = current_beacon
 
 def main():
     '''
