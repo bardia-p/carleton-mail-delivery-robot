@@ -10,6 +10,8 @@ setup(
     packages=[package_name],
     py_modules=["control.robot_driver", "control.state_machine", "perceptions.lidar_sensor", "control.action_translator", "perceptions.beacon_sensor", "navigation.captain", "perceptions.bumper_sensor", "tools.csv_parser"],
     data_files=[
+        # Include the CSV files.
+        (os.path.join('lib', package_name, 'config'), glob(os.path.join('config', '*.csv'))),
         # Install marker file in the package index
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         # Include our package.xml file
