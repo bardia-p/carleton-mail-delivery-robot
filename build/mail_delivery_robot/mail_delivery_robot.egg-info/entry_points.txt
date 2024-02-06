@@ -1,0 +1,8 @@
+[console_scripts]
+action_translator = control.action_translator:main
+beacon_sensor = perceptions.beacon_sensor:main
+bumper_sensor = perceptions.bumper_sensor:main
+captain = navigation.captain:main
+lidar_sensor = perceptions.lidar_sensor:main
+robot_driver = control.robot_driver:main
+

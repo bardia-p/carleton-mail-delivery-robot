@@ -2,9 +2,7 @@ import os
 import csv
 import sys
 
-#CONFIG_DIR = sys.path[0] + "/config/"
-CONFIG_DIR = "/home/maxcurkovic/cmds_ws/src/carleton-mail-delivery-robot/mail_delivery_robot/config/"
-
+CONFIG_DIR = sys.path[0] + "/config/"
 ORIENTATION_FILE = "beacon_connections.csv"
 MAP_FILE = "map.csv"
 
