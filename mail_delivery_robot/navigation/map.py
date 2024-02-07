@@ -21,8 +21,8 @@ class Map:
         '''
         return self.routing_map
 
-    def getValue(self, key):
+    def getDirection(self, source, destination):
         '''
         General method to return the value from a given key in a key-value pair.
         '''
-        return self.routing_map.get(key)
+        return self.routing_map[source][destination]

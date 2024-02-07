@@ -38,10 +38,10 @@ class Captain(Node):
         self.beacon_orientations = loadConnections()
 
         # Destination route for the robot.
-        self.destination = ""
+        self.destination = "Nicol"
 
         # Previous beacon for the robot.
-        self.prev_beacon = ""
+        self.prev_beacon = "UC"
 
         # Routing table for the captain.
         self.map = Map()
@@ -56,9 +56,10 @@ class Captain(Node):
     def readBeacon(self, current_beacon):
         '''
         The callback for /beacons.
-        Decodes the given beacon and sends the appropriate route.
+        Decodes the given beacon and gives the appropriate route.
+        The main driver of dynamic navigation.
 
-        @param data: the beacon to analyze.
+        @param current_beacon: the beacon to analyze.
         '''
         beacon_orientation = "0"
 
@@ -73,8 +74,10 @@ class Captain(Node):
             if beacon_orientation.equals("-"):
                 self.get_logger().info("ROBOT HAS BEEN MOVED")
                 beacon_orientation = "1"
-            action = self.map.getValue(current_beacon + beacon_orientation)[prev_beacon]
-            self.mapPublisher.publish(action)
+            action = self.map.getDirection(current_beacon + beacon_orientation, prev_beacon)
+            navMessage = String()
+            navMessage.data = direction
+            self.mapPublisher.publish(navMessage)
         self.prev_beacon = current_beacon
 
 def main():
