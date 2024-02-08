@@ -74,7 +74,8 @@ class RobotDriver(Node):
         if split_data[0] == "-1" and split_data[1] == "-1":
             return
 
-        if split_data[2] == "-1" and split_data[4] == "-1": # got intersection
+        # check for an intersection (lost right/left wall AND the front wall)
+        if (split_data[2] == "-1" or split_data[3] == "-1") and split_data[4] == "-1":
             self.wall_data = "-1:-1"
         else: # got wall
             self.wall_data = ":".join(split_data[:2])
