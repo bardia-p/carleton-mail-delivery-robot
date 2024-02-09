@@ -111,7 +111,7 @@ class LidarSensor(Node):
         if min_right >= self.config["LOST_WALL_RIGHT_DISTANCE"]  or stdev(self.right_distances) > self.config["LOST_WALL_RIGHT_STDEV"]:
             min_right = -1
 
-        if min_left >= self.config["LOST_WALL_LEFT_DISTANCE"]  or stdev(self.left_distances) > self.config["LOST_WALLL_LEFT_STDEV"]:
+        if min_left >= self.config["LOST_WALL_LEFT_DISTANCE"]  or stdev(self.left_distances) > self.config["LOST_WALL_LEFT_STDEV"]:
             min_left = -1
 
         return min_distance, angle - 90, min_right, min_left, min_front
