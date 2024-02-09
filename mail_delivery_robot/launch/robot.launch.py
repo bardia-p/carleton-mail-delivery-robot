@@ -1,11 +1,17 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
-from launch.substitutions import TextSubstitution
+from launch.substitutions import LaunchConfiguration, TextSubstitution, PythonExpression
 from launch_ros.actions import Node
+from launch.conditions import IfCondition
 
 def generate_launch_description():
     robot_model = DeclareLaunchArgument("robot_model", default_value=TextSubstitution(text="CREATE_2"))
+    
+    is_create3 = IfCondition(PythonExpression(["'",LaunchConfiguration("robot_model"),"' == 'CREATE_3'"]))
+
+    not_create3 = IfCondition(PythonExpression(["'",LaunchConfiguration("robot_model"),"' != 'CREATE_3'"]))
+
+    lidar_serial_port = '/dev/ttyUSB0' if LaunchConfiguration("robot_model") == "CREATE_3" else '/dev/ttyUSB1'
     
     return LaunchDescription([
         robot_model,
@@ -14,17 +20,17 @@ def generate_launch_description():
              name='create_driver',
              output="screen",
              parameters=[{
-                 "robot_model": LaunchConfiguration('robot_model')
+                "robot_model": LaunchConfiguration('robot_model')
              }],
-            remappings=[
-             ('/cmd_vel', '/control/cmd_vel')]
+             remappings=[('/cmd_vel', '/control/cmd_vel')],
+             condition=not_create3
              ),
         Node(
             package='sllidar_ros2',
             executable='sllidar_node',
             name='sllidar_node',
             parameters=[{'channel_type': 'serial',
-                         'serial_port': '/dev/ttyUSB1',
+                         'serial_port': lidar_serial_port,
                          'serial_baudrate': 115200,
                          'frame_id': 'laser',
                          'inverted': False,
@@ -70,6 +76,7 @@ def generate_launch_description():
             executable='bumper_sensor',
             name='bumper_sensor',
             output='log',
+            parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
             remappings=[('/perceptions/bumpEvent', '/control/bumpEvent'),
                         ('/perceptions/bumper', '/bumper')]
             ),

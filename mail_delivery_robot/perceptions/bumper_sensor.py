@@ -1,5 +1,4 @@
 from std_msgs.msg import String
-from create_msgs.msg import Bumper
 import rclpy
 from rclpy.node import Node
 from enum import Enum
@@ -29,7 +28,11 @@ class BumperSensor(Node):
         Defines the necessary publishers and subscribers.
         '''
         super().__init__('bumper_sensor')
-
+        
+        # Get the model of the robot.
+        self.declare_parameter('robot_model', 'CREATE_2')
+        robot_model = self.get_parameter('robot_model').get_parameter_value().string_value
+        
         # Load the global config.
         self.config = loadConfig()
 
@@ -41,11 +44,37 @@ class BumperSensor(Node):
         self.publisher_ = self.create_publisher(String, 'bumpEvent', 10)
         
         # The subscribers for the node.
-        self.bumperSubscriber = self.create_subscription(Bumper, 'bumper', self.readBump, 10)
+        if robot_model != "CREATE_3":
+            from create_msgs.msg import Bumper
+            self.bumperSubscriber = self.create_subscription(Bumper, 'bumper', self.readBumpCreate2, 10)
+        else:
+            from std_msgs.msg import Bool
+            self.bumperSubscriber = self.create_subscription(Bool, 'bumper', self.readBumpCreate3, 10)
     
-    def readBump(self, data):
+    def readBumpCreate3(self, data):
         '''
-        The callback for /bumper.
+        The callback for /bumper for the CREATE 3.
+        Reads the bump data and acts accordingly.
+
+        @param data: The new bumper data received.
+        '''
+        # Updates the bumper state.
+        bumpEvent = String()
+        if (data.data):
+            bumpEvent.data = Bump_Event.PRESSED.value
+        else:
+            bumpEvent.data = Bump_Event.UNPRESSED.value
+
+        # Slows the publishing of the messages to ensure the detection is smooth.
+        if (self.lastState != bumpEvent.data or self.counter > self.config["MAX_BUMP_COUNT"]):
+            self.lastState = bumpEvent.data
+            self.publisher_.publish(bumpEvent)
+            self.counter = 0
+        self.counter += 1
+   
+    def readBumpCreate2(self, data):
+        '''
+        The callback for /bumper for the CREATE 2.
         Reads the bump data and acts accordingly.
 
         @param data: The new bumper data received.
@@ -71,7 +100,6 @@ class BumperSensor(Node):
         # Slows the publishing of the messages to ensure the detection is smooth.
         if (self.lastState != bumpEvent.data or self.counter > self.config["MAX_BUMP_COUNT"]):
             self.lastState = bumpEvent.data
-            #self.get_logger().info(bumpEvent.data)
             self.publisher_.publish(bumpEvent)
             self.counter = 0
         self.counter += 1
