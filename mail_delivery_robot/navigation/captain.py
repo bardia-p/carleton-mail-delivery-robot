@@ -35,7 +35,7 @@ class Captain(Node):
         
         # Defines the beacon orientation hashmap.
 
-        self.beacon_orientations = loadConnections()
+        self.beacon_connections = loadConnections()
 
         # Destination route for the robot.
         self.destination = "Nicol"
@@ -53,7 +53,7 @@ class Captain(Node):
         self.beaconSubscriber = self.create_subscription(String, 'beacons', self.readBeacon, 10)
 
 
-    def readBeacon(self, current_beacon):
+    def readBeacon(self, data):
         '''
         The callback for /beacons.
         Decodes the given beacon and gives the appropriate route.
@@ -63,20 +63,31 @@ class Captain(Node):
         '''
         beacon_orientation = "0"
 
+        current_beacon,rssi = data.data.split(",")
+        self.get_logger().info("CURRENT BEACON IS " + current_beacon)
 
-
-        if self.prev_beacon.equals(""):
+        if self.prev_beacon == "":
             beacon_orientation = "1"
-        elif current_beacon.equals(self.prev_beacon):
+        elif current_beacon == self.prev_beacon:
             return
         else:
-            beacon_orientation = beacon_connections[current_beacon][prev_beacon]
-            if beacon_orientation.equals("-"):
+            beacon_orientation = self.beacon_connections[current_beacon][self.prev_beacon]
+            if beacon_orientation == "-":
                 self.get_logger().info("ROBOT HAS BEEN MOVED")
                 beacon_orientation = "1"
-            action = self.map.getDirection(current_beacon + beacon_orientation, prev_beacon)
+            direction = self.map.getDirection(current_beacon + beacon_orientation, self.prev_beacon)
+            
             navMessage = String()
-            navMessage.data = direction
+            
+            if direction == "FORWARD":
+                navMessage.data = Nav_Event.NAV_PASS.value
+            elif direction == "LEFT":
+                navMessage.data = Nav_Event.NAV_LEFT.value
+            elif direction == "RIGHT":
+                navMessage.data = Nav_Event.NAV_RIGHT.value
+            elif direction == "DOCK":
+                navMessage.data = Nav_Event.NAV_DOCK.value
+
             self.mapPublisher.publish(navMessage)
         self.prev_beacon = current_beacon
 
