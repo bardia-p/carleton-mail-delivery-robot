@@ -15,6 +15,7 @@ class Nav_Event(Enum):
     NAV_RIGHT = "NAV_RIGHT"
     NAV_PASS = "NAV_PASS"
     NAV_DOCK = "NAV_DOCK"
+    NAV_U-TURN = "NAV_U-TURN"
 
 class Captain(Node):
     '''
@@ -76,18 +77,8 @@ class Captain(Node):
                 self.get_logger().info("ROBOT HAS BEEN MOVED")
                 beacon_orientation = "1"
             direction = self.map.getDirection(current_beacon + beacon_orientation, self.prev_beacon)
-            
             navMessage = String()
-            
-            if direction == "FORWARD":
-                navMessage.data = Nav_Event.NAV_PASS.value
-            elif direction == "LEFT":
-                navMessage.data = Nav_Event.NAV_LEFT.value
-            elif direction == "RIGHT":
-                navMessage.data = Nav_Event.NAV_RIGHT.value
-            elif direction == "DOCK":
-                navMessage.data = Nav_Event.NAV_DOCK.value
-
+            navMessage.data = direction
             self.mapPublisher.publish(navMessage)
         self.prev_beacon = current_beacon
 
@@ -96,7 +87,6 @@ def main():
     Starts up the node. 
     '''
     rclpy.init()
-    captain = Captain()
     rclpy.spin(captain)
 
 
