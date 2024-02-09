@@ -15,7 +15,7 @@ class Nav_Event(Enum):
     NAV_RIGHT = "NAV_RIGHT"
     NAV_PASS = "NAV_PASS"
     NAV_DOCK = "NAV_DOCK"
-    NAV_U-TURN = "NAV_U-TURN"
+    NAV_U_TURN = "NAV_U-TURN"
 
 class Captain(Node):
     '''
