@@ -87,6 +87,7 @@ def main():
     Starts up the node. 
     '''
     rclpy.init()
+    captain = Captain()
     rclpy.spin(captain)
 
 
