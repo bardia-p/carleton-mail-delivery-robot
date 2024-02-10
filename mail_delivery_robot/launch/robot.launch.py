@@ -3,7 +3,6 @@ from launch.actions import OpaqueFunction, DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, TextSubstitution, PythonExpression
 from launch_ros.actions import Node
 from launch.conditions import IfCondition
-from pathlib import Path
 
 lidar_serial_port = ""
 
