@@ -1,20 +1,26 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import OpaqueFunction, DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, TextSubstitution, PythonExpression
 from launch_ros.actions import Node
 from launch.conditions import IfCondition
+from pathlib import Path
+
+lidar_serial_port = ""
+
+def launch_setup(context):
+    robot_model = LaunchConfiguration('robot_model').perform(context)
+    lidar_serial_port = '/dev/ttyUSB0' if robot_model == "CREATE_3"  else '/dev/ttyUSB1'
 
 def generate_launch_description():
     robot_model = DeclareLaunchArgument("robot_model", default_value=TextSubstitution(text="CREATE_2"))
-    
+
     is_create3 = IfCondition(PythonExpression(["'",LaunchConfiguration("robot_model"),"' == 'CREATE_3'"]))
 
     not_create3 = IfCondition(PythonExpression(["'",LaunchConfiguration("robot_model"),"' != 'CREATE_3'"]))
 
-    lidar_serial_port = '/dev/ttyUSB0' if LaunchConfiguration("robot_model") == "CREATE_3" else '/dev/ttyUSB1'
-    
     return LaunchDescription([
         robot_model,
+        OpaqueFunction(function=launch_setup),
         Node(package='create_driver',
              executable='create_driver',
              name='create_driver',
@@ -22,7 +28,6 @@ def generate_launch_description():
              parameters=[{
                 "robot_model": LaunchConfiguration('robot_model')
              }],
-             remappings=[('/cmd_vel', '/control/cmd_vel')],
              condition=not_create3
              ),
         Node(
@@ -41,7 +46,8 @@ def generate_launch_description():
             namespace='control',
             executable='action_translator',
             name='action_translator',
-            output='log'
+            output='log',
+            remappings=[('/control/cmd_vel', '/cmd_vel')]
             ),
         Node(package='mail_delivery_robot',
             namespace='control',
