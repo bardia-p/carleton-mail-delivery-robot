@@ -67,7 +67,7 @@ class BeaconSensor(Node):
 
                     # Publishes the observed beacon only if it is within the RSSI range.
                     if dev.rssi > self.config["BEACON_RSSI_THRESHOLD"]:
-                        beaconData.data = beacon + "," + str(dev.rssi) 
+                        beaconData.data = self.beacons[beacon] + "," + str(dev.rssi) 
                         self.publisher_.publish(beaconData)
 
 def main():
