@@ -5,15 +5,25 @@ from launch.substitutions import TextSubstitution
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    robot_model = DeclareLaunchArgument("robot_model", default_value=TextSubstitution(text="CREATE_2"))
+    init_pos = DeclareLaunchArgument("init_pos", default_value=TextSubstitution(text="0.2:0.1"))
+
+    collision_freq = DeclareLaunchArgument("collision_freq", default_value="0")
+    
+    path = DeclareLaunchArgument("path", default_value="")
+
+    wall_diff = DeclareLaunchArgument("wall_diff", default_value="0")
     
     return LaunchDescription([
-        robot_model,
+        init_pos,
+        collision_freq,
+        path,
+        wall_diff,
         Node(package='mail_delivery_robot',
             namespace='control',
             executable='action_translator',
             name='action_translator',
-            output='log'
+            output='log',
+            remappings=[('/control/cmd_vel', '/cmd_vel')]
             ),
         Node(package='mail_delivery_robot',
             namespace='control',
@@ -33,8 +43,13 @@ def generate_launch_description():
             executable='stub_sensor',
             name='stub_sensor',
             output='log',
+            parameters=[{"init_pos": LaunchConfiguration('init_pos')},
+                        {"collision_freq": LaunchConfiguration('collision_freq')},
+                        {"path": LaunchConfiguration('path')},
+                        {"wall_diff": LaunchConfiguration('wall_diff')}],
             remappings=[('/stubs/perceptions', '/control/perceptions'),
                         ('/stubs/bumpEvent', '/control/bumpEvent'),
-                        ('/stubs/navigation', '/control/navigation')]
+                        ('/stubs/beacons', '/navigation/beacons'),
+                        ('/stubs/cmd_vel', '/cmd_vel')]
             ),
         ])
