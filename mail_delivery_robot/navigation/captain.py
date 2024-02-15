@@ -76,7 +76,7 @@ class Captain(Node):
             if beacon_orientation == "-":
                 self.get_logger().info("ROBOT HAS BEEN MOVED")
                 beacon_orientation = "1"
-            direction = self.map.getDirection(current_beacon + beacon_orientation, self.prev_beacon)
+            direction = self.map.getDirection(current_beacon + beacon_orientation, self.destination)
             navMessage = String()
             navMessage.data = direction
             self.mapPublisher.publish(navMessage)

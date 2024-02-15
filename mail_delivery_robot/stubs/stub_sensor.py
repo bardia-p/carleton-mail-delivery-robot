@@ -8,10 +8,11 @@ from geometry_msgs.msg import Twist
 from tools.csv_parser import loadConfig
 
 LIDAR_TIMER = 0.2
-BEACON_TIMER = 2
+BEACON_TIMER = 15
 MIN_WALL_DISTANCE = 0.1
-ANGLE_ERROR = 0.1
+ANGLE_ERROR = 0.6
 COLLISION_PERCENTAGE = 0.3
+INTERSECTION_COUNT = 1
 
 class StubSensor(Node):
     '''
@@ -21,6 +22,9 @@ class StubSensor(Node):
     - Publishes new lidar updates to /perceptions.
     - Publishes new beacon updates to /beacons.
     - Publishes new bumper updates to /bumper.
+
+    @Subscribers:
+    - Subscribes to /cmd_vel to get the robot commands.
     '''
     def __init__(self):
         '''
@@ -45,8 +49,11 @@ class StubSensor(Node):
         self.declare_parameter('wall_diff', '0')
         self.wall_diff = float(self.get_parameter('wall_diff').value)
 
+        self.declare_parameter('delivery', 'UC:Nicol')
+        self.source, self.destination = self.get_parameter('delivery').value.split(":")
 
-        self.get_logger().info(self.wall_distance + " " + self.wall_angle + " " + str(self.collision_freq) + " " + str(self.path) + " " + str(self.wall_diff))
+        self.get_logger().info("Init Pos (distance, angle): (" + self.wall_distance + "," + self.wall_angle + ") Collision Freq: " + str(self.collision_freq) + ", Path: " + str(self.path) + " , Wall Difficulty: " + str(self.wall_diff) + ", Delivery(src, dest): (" + self.source + "," + self.destination + ")")
+
         # Load the global config.
         self.config = loadConfig()
 
@@ -71,29 +78,49 @@ class StubSensor(Node):
         self.wall_distance = float(self.wall_distance)
         self.wall_angle = float(self.wall_angle)
 
+        # Stores the angle and distance differences received by the robot
         self.distance_diff = 0
         self.angle_diff = 0
+
+        # Stores the number of collision clock cycles.
+        self.intersection_count = 0
 
     def lidar_callback(self):
         '''
         The callback for the lidar timer.
         Reads the lidar scan and acts accordingly.
         '''
-        new_angle = self.wall_angle + self.angle_diff * LIDAR_TIMER
-
-        diff_probability = random.random()
-        if diff_probability < self.wall_diff:
-            self.wall_angle += ANGLE_ERROR
-
-        self.wall_angle = new_angle % (2 * math.pi)
-        self.wall_distance += (math.sin(self.angle_diff) + self.distance_diff) * LIDAR_TIMER
-        if self.wall_distance <= MIN_WALL_DISTANCE:
-            self.wall_distance = MIN_WALL_DISTANCE
-
         calc = String()
         
-        calc.data = str(self.wall_distance) + ":" + str(self.wall_angle) + ":" + str(self.wall_distance) + ":" + str(4) + ":" + str(3)
+        if self.intersection_count == 0:
+            new_angle = self.wall_angle + self.angle_diff * LIDAR_TIMER
+
+            diff_probability = random.random()
+            self.wall_angle = new_angle % (2 * math.pi)
+            self.wall_distance += (math.sin(self.angle_diff) + math.sin(self.wall_angle) * self.distance_diff) * LIDAR_TIMER
+
+            if diff_probability < self.wall_diff:
+                sign = random.random()
+                if sign <= 0.5:
+                    sign = -1
+                else:
+                    sign = 1
+                self.wall_angle += ANGLE_ERROR * sign
+                self.wall_distance += math.sin(ANGLE_ERROR * sign)
+
+            if self.wall_distance <= MIN_WALL_DISTANCE:
+                self.wall_distance = MIN_WALL_DISTANCE
         
+            calc.data = str(self.wall_distance) + ":" + str(self.wall_angle) + ":" + str(self.wall_distance) + ":" + str(4) + ":" + str(3)
+        else:
+            # Simulate an intersection
+            calc.data = str(self.wall_distance) + ":" + str(self.wall_angle) + ":-1:-1:-1"
+            self.intersection_count -= 1
+
+            if self.intersection_count == 0:
+                self.wall_distance = 0.2
+                self.wall_angle = 1.0
+
         self.lidar_publisher.publish(calc)
  
     def beacon_callback(self):
@@ -102,6 +129,7 @@ class StubSensor(Node):
         Sends a navigation event.
         '''
         if len(self.path) > 0:
+            self.intersection_count = INTERSECTION_COUNT
             calc = String()
         
             calc.data = self.path.pop(0) + "," + str(self.config["BEACON_RSSI_THRESHOLD"] + 1)
