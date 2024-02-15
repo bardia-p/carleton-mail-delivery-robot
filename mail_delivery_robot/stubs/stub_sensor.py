@@ -39,6 +39,9 @@ class StubSensor(Node):
         self.declare_parameter('path', '')
         self.path = self.get_parameter('path').value.split(":")
 
+        if self.path == ['']:
+            self.path = []
+
         self.declare_parameter('wall_diff', '0')
         self.wall_diff = float(self.get_parameter('wall_diff').value)
 
@@ -101,7 +104,7 @@ class StubSensor(Node):
         if len(self.path) > 0:
             calc = String()
         
-            calc.data = self.path.pop(0)
+            calc.data = self.path.pop(0) + "," + str(self.config["BEACON_RSSI_THRESHOLD"] + 1)
 
             self.beacon_publisher.publish(calc)
 
