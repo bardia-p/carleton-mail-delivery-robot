@@ -15,12 +15,15 @@ def generate_launch_description():
 
     delivery = DeclareLaunchArgument("delivery", default_value="UC:Nicol")
     
+    duration = DeclareLaunchArgument("duration", default_value="45")
+    
     return LaunchDescription([
         init_pos,
         collision_freq,
         path,
         wall_diff,
         delivery,
+        duration,
         Node(package='mail_delivery_robot',
             namespace='control',
             executable='action_translator',
@@ -50,7 +53,8 @@ def generate_launch_description():
                         {"collision_freq": LaunchConfiguration('collision_freq')},
                         {"path": LaunchConfiguration('path')},
                         {"wall_diff": LaunchConfiguration('wall_diff')},
-                        {"delivery": LaunchConfiguration('delivery')}],
+                        {"delivery": LaunchConfiguration('delivery')},
+                        {"duration": LaunchConfiguration('duration')}],
             remappings=[('/stubs/perceptions', '/control/perceptions'),
                         ('/stubs/bumpEvent', '/control/bumpEvent'),
                         ('/stubs/beacons', '/navigation/beacons'),

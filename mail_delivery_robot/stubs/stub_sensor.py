@@ -1,3 +1,4 @@
+import os
 import math
 import random
 from std_msgs.msg import String
@@ -52,7 +53,10 @@ class StubSensor(Node):
         self.declare_parameter('delivery', 'UC:Nicol')
         self.source, self.destination = self.get_parameter('delivery').value.split(":")
 
-        self.get_logger().info("Init Pos (distance, angle): (" + self.wall_distance + "," + self.wall_angle + ") Collision Freq: " + str(self.collision_freq) + ", Path: " + str(self.path) + " , Wall Difficulty: " + str(self.wall_diff) + ", Delivery(src, dest): (" + self.source + "," + self.destination + ")")
+        self.declare_parameter('duration', '45')
+        self.duration = float(self.get_parameter('duration').value)
+
+        self.get_logger().info("Init Pos (distance, angle): (" + self.wall_distance + "," + self.wall_angle + ") Collision Freq: " + str(self.collision_freq) + ", Path: " + str(self.path) + " , Wall Difficulty: " + str(self.wall_diff) + ", Delivery(src, dest): (" + self.source + "," + self.destination + "), Duration: " + str(self.duration))
 
         # Load the global config.
         self.config = loadConfig()
@@ -70,6 +74,8 @@ class StubSensor(Node):
         
         if self.collision_freq > 0:
             self.bumper_timer = self.create_timer(self.collision_freq, self.bumper_callback)
+
+        self.kill_timer = self.create_timer(self.duration, self.end_tests)
 
         # Action Translator Subscription
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.decode_action, 10)
@@ -159,6 +165,14 @@ class StubSensor(Node):
         '''
         self.angle_diff = data.angular.z
         self.distance_diff = data.linear.x
+
+    def end_tests(self):
+        '''
+        The callback to end the tests.
+        '''
+        nodes = ["action_translator", "robot_driver", "captain", "stub_sensor"]
+        for node in nodes:
+            os.system('killall ' + node)
 
 def main():
     '''
