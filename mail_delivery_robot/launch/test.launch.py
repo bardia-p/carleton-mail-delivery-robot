@@ -58,6 +58,7 @@ def generate_launch_description():
             remappings=[('/stubs/perceptions', '/control/perceptions'),
                         ('/stubs/bumpEvent', '/control/bumpEvent'),
                         ('/stubs/beacons', '/navigation/beacons'),
+                        ('/stubs/trips', '/navigation/trips'),
                         ('/stubs/cmd_vel', '/cmd_vel')]
             ),
         ])

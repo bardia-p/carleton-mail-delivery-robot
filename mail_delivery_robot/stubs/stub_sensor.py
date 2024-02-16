@@ -14,6 +14,7 @@ MIN_WALL_DISTANCE = 0.1
 ANGLE_ERROR = 0.6
 COLLISION_PERCENTAGE = 0.3
 INTERSECTION_COUNT = 1
+TRIP_TIMER = 0.5
 
 class StubSensor(Node):
     '''
@@ -65,6 +66,7 @@ class StubSensor(Node):
         self.lidar_publisher = self.create_publisher(String, 'perceptions' , 10)
         self.beacon_publisher = self.create_publisher(String, 'beacons' , 10)
         self.bumper_publisher = self.create_publisher(String, 'bumpEvent' , 10)
+        self.trip_publisher = self.create_publisher(String, 'trips', 10)
 
         # Timer set up.
         self.lidar_timer = self.create_timer(LIDAR_TIMER, self.lidar_callback)
@@ -75,6 +77,7 @@ class StubSensor(Node):
         if self.collision_freq > 0:
             self.bumper_timer = self.create_timer(self.collision_freq, self.bumper_callback)
 
+        self.trip_timer = self.create_timer(TRIP_TIMER, self.init_trip)
         self.kill_timer = self.create_timer(self.duration, self.end_tests)
 
         # Action Translator Subscription
@@ -165,6 +168,17 @@ class StubSensor(Node):
         '''
         self.angle_diff = data.angular.z
         self.distance_diff = data.linear.x
+
+    def init_trip(self):
+        '''
+        The callback function to initialize a new trip.
+        '''
+        if self.source != "" and self.destination != "":
+            trip = String()
+            trip.data = self.source + ":" + self.destination
+            self.trip_publisher.publish(trip)
+            self.source = ""
+            self.destination = ""
 
     def end_tests(self):
         '''
