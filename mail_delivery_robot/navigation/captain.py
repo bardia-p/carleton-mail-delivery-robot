@@ -2,7 +2,10 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 from enum import Enum
-
+from tools.csv_parser import loadBeacons
+from tools.nav_parser import loadConnections
+from navigation.map import Map
+ 
 class Nav_Event(Enum):
     '''
     An enum for the various navigation events for the robot.
@@ -12,12 +15,14 @@ class Nav_Event(Enum):
     NAV_RIGHT = "NAV_RIGHT"
     NAV_PASS = "NAV_PASS"
     NAV_DOCK = "NAV_DOCK"
+    NAV_U_TURN = "NAV_U-TURN"
 
 class Captain(Node):
     '''
     The Node in charge of determining the robot's path. 
 
     @Subscribers:
+    - Listens to /trip to get a new trip.
     - Listens to /beacons to read new beacons.
 
     @Publishers:
@@ -30,36 +35,67 @@ class Captain(Node):
         '''
         super().__init__('captain')
         
-        # Maintains the route for the robot.
-        self.setRoute()
+        # Defines the beacon orientation hashmap.
 
+        self.beacon_connections = loadConnections()
+
+        # Destination route for the robot.
+        self.destination = ""
+
+        # Previous beacon for the robot.
+        self.prev_beacon = ""
+
+        # Routing table for the captain.
+        self.map = Map()
 
         # The publishers for the node.
         self.mapPublisher = self.create_publisher(String, 'navigation', 10)
 
         # The subscribers for the node.
         self.beaconSubscriber = self.create_subscription(String, 'beacons', self.readBeacon, 10)
+        self.tripSubscriber = self.create_subscription(String, 'trips', self.readTrip, 10)
 
-    def setRoute(self):
-        '''
-        Sets the route for the robot.
-        '''
-        self.route = [["df:2b:70:a8:21:90", Nav_Event.NAV_LEFT.value]]
-
-    def readBeacon(self, beacon):
+    def readBeacon(self, data):
         '''
         The callback for /beacons.
-        Decodes the given beacon and sends the appropriate route.
+        Decodes the given beacon and gives the appropriate route.
+        The main driver of dynamic navigation.
 
         @param data: the beacon to analyze.
         '''
-        if len(self.route) > 0:
-            beacon_id = beacon.data.split(",")[0]
-            if beacon_id == self.route[0][0]:
-                beacon, direction = self.route.pop(0)
-                navMessage = String()
-                navMessage.data = direction
-                self.mapPublisher.publish(navMessage)
+        # No trip was defined
+        if self.destination == "" or self.prev_beacon == "":
+            return
+
+        beacon_orientation = "0"
+
+        current_beacon,rssi = data.data.split(",")
+        self.get_logger().info("CURRENT BEACON IS " + current_beacon)
+
+        if current_beacon == self.prev_beacon:
+            return
+        else:
+            beacon_orientation = self.beacon_connections[current_beacon][self.prev_beacon]
+            if beacon_orientation == "-":
+                self.get_logger().info("ROBOT HAS BEEN MOVED")
+                beacon_orientation = "1"
+            direction = self.map.getDirection(current_beacon + beacon_orientation, self.destination)
+            navMessage = String()
+            navMessage.data = direction
+            self.mapPublisher.publish(navMessage)
+        self.prev_beacon = current_beacon
+
+    def readTrip(self, data):
+        '''
+        The callback for trips.
+        Decodes the given route.
+
+        @param data: the trip to analyze/
+        '''
+        trip = data.data.split(":")
+        self.prev_beacon = trip[0]
+        self.destination = trip[1]
+        self.get_logger().info("Got a new trip from " + self.prev_beacon + " to " + self.destination)
 
 def main():
     '''

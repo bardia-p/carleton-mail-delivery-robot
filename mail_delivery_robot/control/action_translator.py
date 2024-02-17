@@ -47,7 +47,7 @@ class ActionTranslator(Node):
         @param data: the action data to interpret.
         '''
         action = str(data.data)
-        emptyMessage = Empty
+        emptyMessage = Empty()
 
         split_action = action.split(":")
 
