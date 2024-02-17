@@ -22,6 +22,7 @@ class Captain(Node):
     The Node in charge of determining the robot's path. 
 
     @Subscribers:
+    - Listens to /trip to get a new trip.
     - Listens to /beacons to read new beacons.
 
     @Publishers:
@@ -39,10 +40,10 @@ class Captain(Node):
         self.beacon_connections = loadConnections()
 
         # Destination route for the robot.
-        self.destination = "Nicol"
+        self.destination = ""
 
         # Previous beacon for the robot.
-        self.prev_beacon = "UC"
+        self.prev_beacon = ""
 
         # Routing table for the captain.
         self.map = Map()
@@ -52,7 +53,7 @@ class Captain(Node):
 
         # The subscribers for the node.
         self.beaconSubscriber = self.create_subscription(String, 'beacons', self.readBeacon, 10)
-
+        self.tripSubscriber = self.create_subscription(String, 'trips', self.readTrip, 10)
 
     def readBeacon(self, data):
         '''
@@ -60,27 +61,41 @@ class Captain(Node):
         Decodes the given beacon and gives the appropriate route.
         The main driver of dynamic navigation.
 
-        @param current_beacon: the beacon to analyze.
+        @param data: the beacon to analyze.
         '''
+        # No trip was defined
+        if self.destination == "" or self.prev_beacon == "":
+            return
+
         beacon_orientation = "0"
 
         current_beacon,rssi = data.data.split(",")
         self.get_logger().info("CURRENT BEACON IS " + current_beacon)
 
-        if self.prev_beacon == "":
-            beacon_orientation = "1"
-        elif current_beacon == self.prev_beacon:
+        if current_beacon == self.prev_beacon:
             return
         else:
             beacon_orientation = self.beacon_connections[current_beacon][self.prev_beacon]
             if beacon_orientation == "-":
                 self.get_logger().info("ROBOT HAS BEEN MOVED")
                 beacon_orientation = "1"
-            direction = self.map.getDirection(current_beacon + beacon_orientation, self.prev_beacon)
+            direction = self.map.getDirection(current_beacon + beacon_orientation, self.destination)
             navMessage = String()
             navMessage.data = direction
             self.mapPublisher.publish(navMessage)
         self.prev_beacon = current_beacon
+
+    def readTrip(self, data):
+        '''
+        The callback for trips.
+        Decodes the given route.
+
+        @param data: the trip to analyze/
+        '''
+        trip = data.data.split(":")
+        self.prev_beacon = trip[0]
+        self.destination = trip[1]
+        self.get_logger().info("Got a new trip from " + self.prev_beacon + " to " + self.destination)
 
 def main():
     '''
