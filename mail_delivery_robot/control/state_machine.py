@@ -7,6 +7,7 @@ from tools.csv_parser import loadConfig
 config = loadConfig()
 LEFT_TURN_LIMIT = config["LEFT_TURN_CLOCK_CYCLES"]
 RIGHT_TURN_LIMIT = config["RIGHT_TURN_CLOCK_CYCLES"]
+U_TURN_LIMIT = config["U_TURN_CLOCK_CYCLES"]
 FORWARD_LIMIT = config["FORWARD_CLOCK_CYCLES"]
 WALL_FOLLOW_LIMIT =config["WALL_FOLLOW_CLOCK_CYCLES"]
 LEFT_FACTOR = config["LEFT_TURN_MULTI_FACTOR"]
@@ -21,6 +22,7 @@ class StateType(Enum):
     NO_DEST = "NO_DEST"
     SHOULD_TURN_LEFT = "SHOULD_TURN_LEFT"
     SHOULD_TURN_RIGHT = "SHOULD_TURN_RIGHT"
+    SHOULD_U_TURN = "SHOULD_U_TURN"
     SHOULD_PASS = "SHOULD_PASS"
     SHOULD_DOCK = "SHOULD_DOCK"
     HANDLE_INTERSECTION = "HANDLE_INTERSECTION"
@@ -30,9 +32,11 @@ class StateType(Enum):
     COLLISION_PASS = "COLLISION_PASS"
     COLLISION_DOCK = "COLLISION_DOCK"
     COLLISION_INTERSECTION = "COLLISION_INTERSECTION"
+    COLLISION_U_TURN = "COLLISION_U_TURN"
 
 class Action(Enum):
     L_TURN = "L_TURN"
+    U_TURN = "U_TURN"
     R_TURN = "R_TURN"
     FORWARD = "FORWARD"
     DOCK = "DOCK"
@@ -82,6 +86,12 @@ class State:
     def no_bumper_pass_wall(self):
         return self
 
+    def no_bumper_uturn_no_wall(self):
+        return self
+
+    def no_bumper_uturn_wall(self):
+        return self
+
     def no_bumper_dock_no_wall(self):
         return self
 
@@ -101,6 +111,9 @@ class State:
         return self
     
     def bumper_dock(self):
+        return self
+
+    def bumper_uturn(self):
         return self
     
     def error(self):
@@ -148,6 +161,8 @@ class State:
                 return self.bumper_pass()
             elif nav == Nav_Event.NAV_DOCK.value:
                 return self.bumper_dock()
+            elif nav == Nav_Event.NAV_U_TURN.value:
+                return self.bumper_uturn()
             else:
                 return self.bumper_none()
         if nav == Nav_Event.NAV_LEFT.value:
@@ -160,6 +175,12 @@ class State:
                 return self.no_bumper_right_no_wall()
             else:
                 return self.no_bumper_right_wall()
+        elif nav == Nav_Event.NAV_U_TURN.value:
+            if wall == "-1:-1":
+                return self.no_bumper_uturn_no_wall()
+            else:
+                return self.no_bumper_uturn_wall()
+
         elif nav == Nav_Event.NAV_PASS.value:
             if wall == "-1:-1":
                 return self.no_bumper_pass_no_wall()
@@ -233,6 +254,15 @@ class No_Dest(Operational):
     def no_bumper_left_wall(self):
         self.setLongAction(generateAction(Action.WALL_FOLLOW.value, self.wall), WALL_FOLLOW_LIMIT, Should_Turn_Left(self.actionPublisher))
         return self
+
+    def no_bumper_uturn_no_wall(self):
+        self.setLongAction(generateAction(Action.U_TURN.value), U_TURN_LIMIT, Should_U_Turn(self.actionPublisher))
+        return self
+
+    def no_bumper_uturn_wall(self):
+        self.setLongAction(generateAction(Action.WALL_FOLLOW.value, self.wall), WALL_FOLLOW_LIMIT, Should_U_Turn(self.actionPublisher))
+        return self
+
     
     def no_bumper_right_no_wall(self):
         self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT, Should_Turn_Right(self.actionPublisher))
@@ -264,6 +294,10 @@ class No_Dest(Operational):
 
     def bumper_left(self):
         self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT, Collision_Turn_Left(self.actionPublisher))
+        return self
+
+    def bumper_uturn(self):
+        self.setLongAction(generateAction(Action.U_TURN.value), U_TURN_LIMIT, Collision_U_Turn(self.actionPublisher))
         return self
     
     def bumper_right(self):
@@ -626,6 +660,14 @@ class Collision_No_Dest(Operational):
         self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
         return self
     
+    def no_bumper_uturn_no_wall(self):
+        self.setLongAction(generateAction(Action.U_TURN.value), U_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
+        return self
+
+    def no_bumper_uturn_wall(self):
+        self.setLongAction(generateAction(Action.U_TURN.value), U_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Left(self.actionPublisher))
+        return self
+
     def no_bumper_right_no_wall(self):
         self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR, Should_Turn_Right(self.actionPublisher))
         return self
@@ -657,6 +699,11 @@ class Collision_No_Dest(Operational):
 
     def bumper_left(self):
         self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT, Collision_Turn_Left(self.actionPublisher, self.count))
+        self.count += 1
+        return self
+
+    def bumper_uturn(self):
+        self.setLongAction(generateAction(Action.U_TURN.value), U_TURN_LIMIT, Collision_Turn_Left(self.actionPublisher, self.count))
         self.count += 1
         return self
     
