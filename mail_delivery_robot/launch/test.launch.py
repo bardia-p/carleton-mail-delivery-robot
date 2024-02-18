@@ -5,17 +5,29 @@ from launch.substitutions import TextSubstitution
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    init_pos = DeclareLaunchArgument("init_pos", default_value=TextSubstitution(text="0.2:0.1"))
+    init_pos = DeclareLaunchArgument("init_pos",
+            default_value=TextSubstitution(text="0.2:0.1"),
+            description="Specifies the robot's initial distance and angle with the wall '[distance]:[angle]'.")
 
-    collision_freq = DeclareLaunchArgument("collision_freq", default_value="0")
+    collision_freq = DeclareLaunchArgument("collision_freq",
+            default_value="0",
+            description="Specifies the frequency of collisions as a percentage '[0.0 to 1.0]'.")
     
-    path = DeclareLaunchArgument("path", default_value="")
+    path = DeclareLaunchArgument("path",
+            default_value="",
+            description="Specifies the beacons the robot sees along its path '[a:b:c:..]'.")
 
-    wall_diff = DeclareLaunchArgument("wall_diff", default_value="0")
+    wall_diff = DeclareLaunchArgument("wall_diff",
+            default_value="0",
+            description="Specifies the wall's inconsistency as a percentage '[0.0 to 1.0]'.")
 
-    delivery = DeclareLaunchArgument("delivery", default_value="UC:Nicol")
+    delivery = DeclareLaunchArgument("delivery",
+            default_value="UC:Nicol",
+            description="Specifies the robot's delivery (source and destination) '[src:dest]'.")
     
-    duration = DeclareLaunchArgument("duration", default_value="45")
+    duration = DeclareLaunchArgument("duration",
+            default_value="45",
+            description="Specifies the total time for the simulation '[value in seconds]'.")
     
     return LaunchDescription([
         init_pos,

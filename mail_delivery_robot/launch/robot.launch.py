@@ -54,7 +54,6 @@ def launch_setup(context, *args, **kwargs):
             output='log',
             remappings=[('/navigation/navigation', '/control/navigation')]
             ),
-
         Node(package='mail_delivery_robot',
             namespace='perceptions',
             executable='lidar_sensor',
@@ -83,6 +82,8 @@ def launch_setup(context, *args, **kwargs):
 def generate_launch_description():
     declared_arguments = []
     declared_arguments.append(
-        DeclareLaunchArgument("robot_model", default_value=TextSubstitution(text="CREATE_2"))
+        DeclareLaunchArgument("robot_model",
+            default_value=TextSubstitution(text="CREATE_2"),
+            description="The parameter is used to declare the robot model ('CREATE_2' or 'CREATE_3'")
     )
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)]) 

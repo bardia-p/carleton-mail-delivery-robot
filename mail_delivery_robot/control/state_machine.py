@@ -129,7 +129,8 @@ class State:
                 self.longActionCount = 0
                 self.longActionLimit = 0
                 self.longAction = None
-                self.isBusy = False
+                # pass the navigation event to the next state
+                self.postLongActionState.nav = self.nav
                 return self.postLongActionState
 
         # Finds the proper transition based on the data.
@@ -183,7 +184,6 @@ class State:
         @param longAction: The action to generate.
         @param longActionLimit: The number of cycles required for the action.
         '''
-        self.isBusy = True
         self.longAction = longAction
         self.longActionCount = 1
         self.longActionLimit = longActionLimit

@@ -115,7 +115,6 @@ class RobotDriver(Node):
             return 
 
         new_state = self.state.handleUpdate(self.bump_data, self.nav_data, self.wall_data)
-        
         if new_state != self.state:
             self.state = new_state
             self.get_logger().info("Changed State " + new_state.printState())
