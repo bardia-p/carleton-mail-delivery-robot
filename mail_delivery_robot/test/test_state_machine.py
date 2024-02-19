@@ -41,9 +41,8 @@ class ActionPublisherStub():
 def send_update(state, update):
     newState= state.handleUpdate(update[0], update[1], update[2])
     if newState.isBusy:
-        #newState.handleUpdate(update[0], update[1], update[2])S
         newState.longActionCount = newState.longActionLimit
-        newState = newState.handleUpdate(update[0], update[1], update[2])
+        newState = newState.handleUpdate(update[0], "NAV_NONE", update[2])
     return newState
 
 
