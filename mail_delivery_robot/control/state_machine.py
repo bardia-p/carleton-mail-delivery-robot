@@ -266,7 +266,7 @@ class No_Dest(Operational):
         return self
 
     def no_bumper_uturn_no_wall(self):
-        self.setLongAction(generateAction(Action.U_TURN.value), U_TURN_LIMIT, Should_U_Turn(self.actionPublisher))
+        self.setLongAction(generateAction(Action.R_TURN.value), U_TURN_LIMIT, Should_U_Turn(self.actionPublisher))
         return self
 
     def no_bumper_uturn_wall(self):
@@ -312,7 +312,7 @@ class No_Dest(Operational):
         return self
 
     def bumper_uturn(self):
-        self.setLongAction(generateAction(Action.U_TURN.value), LEFT_TURN_LIMIT, Collision_U_Turn(self.actionPublisher))
+        self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT, Collision_U_Turn(self.actionPublisher))
         return self
 
     def bumper_right(self):
@@ -869,12 +869,12 @@ class Collision_No_Dest(Operational):
 
     def no_bumper_uturn_no_wall(self):
         self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR,
-                           Should_Turn_Left(self.actionPublisher))
+                           Should_U_Turn(self.actionPublisher))
         return self
 
     def no_bumper_uturn_wall(self):
         self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT * self.count * COLLISION_FACTOR,
-                           Should_Turn_Left(self.actionPublisher))
+                           Should_U_Turn(self.actionPublisher))
         return self
 
     def no_bumper_right_no_wall(self):
@@ -920,7 +920,7 @@ class Collision_No_Dest(Operational):
 
     def bumper_uturn(self):
         self.setLongAction(generateAction(Action.L_TURN.value), LEFT_TURN_LIMIT,
-                           Collision_Turn_Left(self.actionPublisher, self.count))
+                           Collision_U_Turn(self.actionPublisher, self.count))
         self.count += 1
         return self
 
@@ -946,7 +946,7 @@ class Collision_No_Dest(Operational):
 class Collision_Turn_Left(Operational):
     def __init__(self, actionPublisher, count=1):
         super().__init__(actionPublisher)
-        self.stateType = StateType.COLLISION_TURN_LEFT
+        self.stateType = StateType.COLLISION_U_TURN
         self.count = count
 
     def no_bumper_none_no_wall(self):
