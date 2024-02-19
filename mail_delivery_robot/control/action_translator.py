@@ -28,13 +28,23 @@ class ActionTranslator(Node):
         '''
         super().__init__('action_translator')
 
+        # Get the model of the robot.
+        self.declare_parameter('robot_model', 'CREATE_2')
+        self.robot_model = self.get_parameter('robot_model').get_parameter_value().string_value
+        
         # Load the global config.
         self.config = loadConfig()
 
         # The publishers for the node.
         self.drivePublisher = self.create_publisher(Twist, 'cmd_vel', 2)
-        self.undockPublisher = self.create_publisher(Empty, 'dock', 1)
-        self.dockPublisher = self.create_publisher(Empty, 'undock', 1)
+        
+        if self.robot_model != "CREATE_3":
+            self.undockPublisher = self.create_publisher(Empty, 'dock', 1)
+            self.dockPublisher = self.create_publisher(Empty, 'undock', 1)
+        else:
+            from create_msgs.msg import Dock, Undock
+            self.undockPublisher = self.create_publisher(Dock, 'dock', 1)
+            self.dockPublisher = self.create_publisher(Undock, 'undock', 1)
         
         # The subscribers for the node.
         self.subscription = self.create_subscription(String, 'actions', self.decodeAction, 10)
@@ -47,15 +57,22 @@ class ActionTranslator(Node):
         @param data: the action data to interpret.
         '''
         action = str(data.data)
-        emptyMessage = Empty()
 
         split_action = action.split(":")
 
-        # TODO: IMPLEMENT DOCK/UNDOCK later.
+        # TODO: FIX UNDOCK BEHAVIOUR FOR CREATE 2.
         if split_action[0] == Action.DOCK.value:
-            self.dockPublisher.publish(emptyMessage)
+            if self.robot_model != "CREATE_3":
+                dockMessage = Empty()
+            else:
+                dockMessage = Dock()
+            self.dockPublisher.publish(dockMessage)
         elif split_action[0] == Action.UNDOCK.value:
-            self.undockPublisher.publish(emptyMessage)
+            if self.robot_model != "CREATE_3":
+                undockMessage = Empty()
+            else:
+                undockMessage = Undock()
+            self.undockPublisher.publish(undockMessage)
         else:
             self.move_robot(split_action)
     

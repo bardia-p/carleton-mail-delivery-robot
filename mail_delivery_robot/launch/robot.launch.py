@@ -75,7 +75,8 @@ def launch_setup(context, *args, **kwargs):
             output='log',
             parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
             remappings=[('/perceptions/bumpEvent', '/control/bumpEvent'),
-                        ('/perceptions/bumper', '/bumper')]
+                        ('/perceptions/bumper', '/bumper'),
+                        ('/perceptions/hazard_detection', '/hazard_detection')]
             ),
         ]
 

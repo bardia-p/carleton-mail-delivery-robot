@@ -46,12 +46,12 @@ class BumperSensor(Node):
         # The subscribers for the node.
         if self.robot_model != "CREATE_3":
             from create_msgs.msg import Bumper
-            self.bumperSubscriber = self.create_subscription(Bumper, 'bumper', self.readBump, 10)
+            self.bumperSubscriber = self.create_subscription(Bumper, 'bumper', self.read_bump, 10)
         else:
-            from std_msgs.msg import Bool
-            self.bumperSubscriber = self.create_subscription(Bool, '/bumper', self.readBump, 10)
+            from create_msgs.msg import HazardDetection
+            self.bumperSubscriber = self.create_subscription(HazardDetection, 'hazard_detection', self.read_bump, 10)
     
-    def readBump(self, data):
+    def read_bump(self, data):
         '''
         The callback for /bumper.
         Reads the bump data and acts accordingly.
@@ -62,7 +62,15 @@ class BumperSensor(Node):
 
         # Updates the bumper state.
         if self.robot_model == "CREATE_3":
-            if (data.data):
+            hazards = data.detections
+            got_hazard = False
+            if len(hazards) != 0:
+                for h in hazards:
+                    if h.type == 1 or h.type == 2:
+                        got_hazard = True
+                        break
+
+            if got_hazard:
                 bumpEvent.data = Bump_Event.PRESSED.value
             else:
                 bumpEvent.data = Bump_Event.UNPRESSED.value
@@ -92,7 +100,6 @@ class BumperSensor(Node):
             self.publisher_.publish(bumpEvent)
             self.counter = 0
         self.counter += 1
-
 
 def main():
     '''
