@@ -946,7 +946,7 @@ class Collision_No_Dest(Operational):
 class Collision_Turn_Left(Operational):
     def __init__(self, actionPublisher, count=1):
         super().__init__(actionPublisher)
-        self.stateType = StateType.COLLISION_U_TURN
+        self.stateType = StateType.COLLISION_TURN_LEFT
         self.count = count
 
     def no_bumper_none_no_wall(self):
@@ -1040,7 +1040,7 @@ class Collision_Turn_Left(Operational):
 class Collision_U_Turn(Operational):
     def __init__(self, actionPublisher, count=1):
         super().__init__(actionPublisher)
-        self.stateType = StateType.COLLISION_TURN_LEFT
+        self.stateType = StateType.COLLISION_U_TURN
         self.count = count
 
     def no_bumper_none_no_wall(self):
