@@ -671,7 +671,7 @@ def test_path_thirteen():
 
 def test_path_fourteen():
     '''
-    Test Path 6:
+    Test Path 14 for the U-Turns
     '''
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
@@ -754,6 +754,10 @@ def test_path_fourteen():
 
 def test_path_fifteen():
 
+    '''
+    Test Path 15 for the U-Turns
+    '''
+    
     actionPublisher = ActionPublisherStub()
     state = state_machine.No_Dest(actionPublisher)
 
