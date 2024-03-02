@@ -1,10 +1,6 @@
 .DS_Store
 venv
 **/__pycache__
-### MAVEN ###
-.mvn/
-mvnw
-mvnw.cmd
 
 ### MACOS ###
 .DS_STORE
