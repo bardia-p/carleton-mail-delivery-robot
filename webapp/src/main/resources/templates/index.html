@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mail Delivery Robot - Home</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="/images/create2.png">
+</head>
+<body>
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+<h1>Carleton Mail Delivery Robot</h1>
+<img src="/images/robot.png" alt="robot">
+<br>
+<br>
+<form th:action="@{/api/v1/createDelivery}">
+    <h2>Launch a Delivery</h2>
+    <label for="source">Source: </label>
+    <select name="source" id="source">
+        <option value="loeb">Loeb Building</option>
+        <option value="southam">Southam Hall</option>
+        <option value="library">MacOdrum Library</option>
+        <option value="azrieli">Azrieli Theatre</option>
+        <option value="uc">Nideyinan Building</option>
+        <option value="steacie">Steacie Building</option>
+        <option value="richcraft">Richcraft Hall</option>
+        <option value="canal">Canal Building</option>
+        <option value="nicol">Nicol Building</option>
+        <option value="cttc">CTTC</option>
+        <option value="robertson">Pigiarvik Building</option>
+        <option value="minto">Minto/Mackenzie Building</option>
+        <option value="prescott">Prescott/Lanark/Renfrew/Frontenac House</option>
+        <option value="residence commons">Residence Commons</option>
+    </select>
+    <br><br>
+    <label for="destination">Destination: </label>
+    <select name="destination" id="destination">
+        <option value="loeb">Loeb Building</option>
+        <option value="southam">Southam Hall</option>
+        <option value="library">MacOdrum Library</option>
+        <option value="azrieli">Azrieli Theatre</option>
+        <option value="uc">Nideyinan Building</option>
+        <option value="steacie">Steacie Building</option>
+        <option value="richcraft">Richcraft Hall</option>
+        <option value="canal">Canal Building</option>
+        <option value="nicol">Nicol Building</option>
+        <option value="cttc">CTTC</option>
+        <option value="robertson">Pigiarvik Building</option>
+        <option value="minto">Minto/Mackenzie Building</option>
+        <option value="prescott">Prescott/Lanark/Renfrew/Frontenac House</option>
+        <option value="residence commons">Residence Commons</option>
+    </select>
+    <br><br>
+    <input type="submit">
+    </form>
+</body>
+</html>
