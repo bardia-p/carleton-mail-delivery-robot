@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -16,9 +14,10 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class AppUser {
     @Id
-    public Long studentId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long userId;
     // Define a username for the user
     private String username;
 
@@ -33,8 +32,7 @@ public class User {
      * @param username A string username.
      * @param password A string password.
      */
-    public User(Long studentId, String username, String password) {
-        this.studentId = studentId;
+    public AppUser(String username, String password) {
         this.username = username;
         this.password = password;
         this.currentDelivery = null;
@@ -49,7 +47,7 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User appUser = (User) o;
+        AppUser appUser = (AppUser) o;
         return Objects.equals(username, appUser.username) && Objects.equals(password, appUser.password);
     }
 

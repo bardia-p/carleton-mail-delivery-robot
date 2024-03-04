@@ -3,7 +3,9 @@
 <head>
     <title>Mail Delivery Robot | Register User</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/images/create2.png">
+    <link rel="icon" type="image/x-icon" href="/static/images/create2.png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
 </head>
 <body>
 <a href="/login">Login</a>
@@ -18,8 +20,9 @@
         <label for="password"></label><input type="password" id="password"/>
         <p id="error-message"></p>
         <button type="submit" id="registerUser-submit"  class="btn">Register</button>
-        <a href="/registerUser">Register</a>
     </form>
 </div>
+<script src="/static/scripts/common.js" type="application/javascript"></script>
+<script src="/static/scripts/registerUser.js" type="application/javascript"></script>
 </body>
 </html>

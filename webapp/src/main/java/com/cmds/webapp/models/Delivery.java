@@ -23,12 +23,10 @@ public class Delivery {
 
     /**
      * Default constructor for Delivery.
-     * @param deliveryId A string deliveryId.
      * @param startingDest A string starting destination.
      * @param finalDest A string final destination.
      */
-    public Delivery(Long deliveryId, String startingDest, String finalDest) {
-        this.deliveryId = deliveryId;
+    public Delivery(String startingDest, String finalDest) {
         this.startingDest = startingDest;
         this.finalDest = finalDest;
     }

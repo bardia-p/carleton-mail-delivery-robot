@@ -1,4 +1,4 @@
 package com.cmds.webapp.models;
 
-public class Superuser extends User{
+public class Superuser extends AppUser {
 }
