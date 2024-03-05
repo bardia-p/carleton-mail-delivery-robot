@@ -2,8 +2,10 @@ name: ROS Test
 
 on:
   push:
+    paths: [ "mail_delivery_robot/**" ]
     branches: [ "master" ]
   pull_request:
+    paths: [ "mail_delivery_robot/**" ]
     branches: [ "master" ]
 
 jobs:
