@@ -9,9 +9,9 @@
 </head>
 <body>
 <a th:if="${username == null}" href="/login">Login</a>
-<p>Logged in as <span th:text="${username}"></span></p>
+<p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
 <a href="/register">Register</a>
-<a th:if="${username != null}" href="/api/v1/logout">Log Out</a>
+<button th:if="${username != null}" id="logout-btn">Log Out</button>
 <h1>Carleton Mail Delivery Robot</h1>
 <p>2023-2024 Academic Year, SYSC 4907</p>
 <p>Max Curkovic, Cassidy Pacada, Matt Reid, Bardia Parmoun</p>
