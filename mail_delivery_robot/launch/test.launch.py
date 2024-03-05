@@ -45,6 +45,13 @@ def generate_launch_description():
             remappings=[('/navigation/navigation', '/control/navigation')]
             ),
         Node(package='mail_delivery_robot',
+            namespace='communication',
+            executable='client',
+            name='client',
+            output='log',
+            remappings=[('/communication/trips', '/navigation/trips')]
+            ),
+        Node(package='mail_delivery_robot',
             namespace='stubs',
             executable='stub_sensor',
             name='stub_sensor',
