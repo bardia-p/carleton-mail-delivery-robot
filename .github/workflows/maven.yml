@@ -29,6 +29,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Navigate to the webapp directory
+      run: cd webapp
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
