@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -50,6 +48,13 @@ public class APIController {
         System.out.println("JSONDATA: " + jsonData);
         return jsonData;
     }
+
+    /**
+     * Post mapping for creating a user.
+     * @param request An HttpServletRequest request.
+     * @return 200 if successful, 401 otherwise.
+     * @throws IOException
+     */
     @PostMapping("/createUser")
     public int createUser(HttpServletRequest request) throws IOException {
         System.out.println("createUser() API");
@@ -70,6 +75,12 @@ public class APIController {
         return 200;
     }
 
+    /**
+     * Post mapping for creating a delivery.
+     * @param request An HttpServletRequest request.
+     * @return Valid delivery if successful, null otherwise.
+     * @throws IOException
+     */
     @PostMapping("/createDelivery")
     public Delivery createDelivery(HttpServletRequest request) throws IOException {
         System.out.println("createDelivery() API");
@@ -89,7 +100,7 @@ public class APIController {
         return delivery;
     }
     /**
-     * <p>API Call to login a user by verifying that it exists in the userRespository</p>
+     * API Call to login a user by verifying that it exists in the userRespository
      * @param request HttpServletRequest, a request from the client.
      * @return 200, if user successfully logs in, 401 if user is not authenticated properly.
      * @throws IOException
@@ -121,7 +132,7 @@ public class APIController {
     }
 
     /**
-     * <p>API Call to log out a user by deleting their cookies</p>
+     * API Call to log out a user by deleting their cookies
      * @param response HttpServletResponse server side response.
      * @param request HttpServletRequest, a request from the client.
      * @return 200, if the API was a success.
@@ -177,7 +188,12 @@ public class APIController {
         return 200;
     }
 
-
+    /**
+     * Get mapping for delivery status.
+     * @param id Delivery id.
+     * @return Delivery from the id.
+     * @throws IOException
+     */
     @GetMapping("/getDeliveryStatus/{id}")
     public Delivery getDeliveryStatus(@PathVariable("id") String id) throws IOException {
         System.out.println("getDeliveryStatus()");
@@ -185,6 +201,11 @@ public class APIController {
         return deliveryRepo.findById(Long.valueOf(id)).orElse(null);
     }
 
+    /**
+     * Test mapping to ensure it is compatible in ROS.
+     * @return test string
+     * @throws IOException
+     */
     @GetMapping
     public String getEndpoint() throws IOException {
         return "test";

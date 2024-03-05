@@ -2,7 +2,7 @@ const logoutButton = $("#logout-btn");
 
 
 /**
- * The JavaScript AJAX call for when a user logs out of their account
+ * The JavaScript AJAX call for when a user logs out of their account.
  */
 logoutButton.click((e) => {
     e.preventDefault();

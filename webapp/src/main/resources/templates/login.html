@@ -7,16 +7,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
 <body>
-<a href="/register">Register</a>
-<a href="/">Home</a>
+<a href="/register"><button>Register</button></a>
+<a href="/"><button>Home</button></a>
 <div>
     <h1>Carleton Mail Delivery Robot</h1>
     <h2>Login</h2>
     <form id="loginUser-form" th:action="@{/api/v1/loginUser}" method="post">
         <p>Username:</p>
-        <input type="text" id="username" />
+        <label for="username"></label><input type="text" id="username" />
         <p>Password:</p>
-        <input type="password" id="password"/>
+        <label for="password"></label><input type="password" id="password"/>
         <p id="error-message"></p>
         <button type="submit" id="loginUser-submit" class="btn">Login</button>
     </form>

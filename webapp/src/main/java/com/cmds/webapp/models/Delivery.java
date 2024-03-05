@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Class Delivery for defining a Delivery entity.
+ */
 @Entity
 @Getter
 @Setter

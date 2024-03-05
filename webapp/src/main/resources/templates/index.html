@@ -8,9 +8,9 @@
     <link rel="icon" type="image/x-icon" href="/static/images/create2.png">
 </head>
 <body>
-<a th:if="${username == null}" href="/login">Login</a>
+<a th:if="${username == null}" href="/login"><button>Login</button></a>
 <p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
-<a href="/register">Register</a>
+<a href="/register"><button>Register</button></a>
 <button th:if="${username != null}" id="logout-btn">Log Out</button>
 <h1>Carleton Mail Delivery Robot</h1>
 <p>2023-2024 Academic Year, SYSC 4907</p>

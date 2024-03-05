@@ -1,3 +1,7 @@
+/**
+ * JavaScript file that defines all the toasts used.
+ */
+
 // toast configurations
 toastr.options = {
     "closeButton": true,

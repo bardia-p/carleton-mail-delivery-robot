@@ -8,6 +8,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class Robot for defining a Robot entity.
+ */
 @Entity
 @Getter
 @Setter

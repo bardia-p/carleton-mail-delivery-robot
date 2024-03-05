@@ -1,7 +1,6 @@
 /**
- * The JavaScript AJAX call for when a new user is registered (i.e. the submit button is clicked).
+ * The JavaScript AJAX call for when a delivery status is updated (added to the textbox).
  */
-
 const updateStatus = () => {
     const textbox = document.getElementById("logs");
     const splitRef = window.location.href.split("/");
@@ -15,8 +14,10 @@ const updateStatus = () => {
         contentType: "application/json",
         success: function (res) {
             console.log('Delivery status gotten');
+            console.log(res);
             if (res) {
-                textbox.append(res["status"]);
+                textbox.append("Example of a trip status log from: " + res["startingDest"] + " to " + res["finalDest"] + "\n");
+                //textbox.append(res["status"]);
             }
         },
         error: function (xhr, status, error) {
