@@ -36,4 +36,11 @@ public class PageController {
         return "log";
     }
 
+    @GetMapping("/status")
+    public String getRegisterRobotPage(Model model, HttpServletRequest request) {
+
+        CookieController.setUsernameCookie(model, request);
+        return "registerRobot";
+    }
+
 }

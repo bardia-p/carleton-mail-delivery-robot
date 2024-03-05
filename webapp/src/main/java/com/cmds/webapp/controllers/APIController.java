@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import com.cmds.webapp.models.*;
 import com.cmds.webapp.repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -124,5 +125,10 @@ public class APIController {
             }
         }
         return 200;
+    }
+
+    @GetMapping
+    public String getEndpoint() throws IOException {
+        return "test";
     }
 }
