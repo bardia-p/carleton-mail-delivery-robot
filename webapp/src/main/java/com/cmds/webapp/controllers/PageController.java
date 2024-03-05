@@ -36,7 +36,7 @@ public class PageController {
         return "log";
     }
 
-    @GetMapping("/status")
+    @GetMapping("/registerRobot")
     public String getRegisterRobotPage(Model model, HttpServletRequest request) {
 
         CookieController.setUsernameCookie(model, request);
