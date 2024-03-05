@@ -9,14 +9,13 @@ import lombok.NoArgsConstructor;
 import com.cmds.webapp.models.*;
 import com.cmds.webapp.repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -30,7 +29,7 @@ public class APIController {
     private RobotRepository robotRepo;
 
     @Autowired
-    private DeliveryRepository deliveryRepositoryRepo;
+    private DeliveryRepository deliveryRepo;
 
     /**
      * Method for building a JSON format from a request.
@@ -71,6 +70,24 @@ public class APIController {
         return 200;
     }
 
+    @PostMapping("/createDelivery")
+    public Delivery createDelivery(HttpServletRequest request) throws IOException {
+        System.out.println("createDelivery() API");
+        String username = CookieController.getUsernameFromCookie(request);
+        String jsonData = this.JSONBuilder(request);
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, String> userData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, String>>() {});
+        System.out.println(userData);
+        String source = userData.get("source");
+        String destination = userData.get("destination");
+        Delivery delivery = new Delivery(source, destination);
+        AppUser appUser = userRepo.findByUsername(username).orElse(null);
+        if (appUser == null) return null;
+        appUser.setCurrentDelivery(delivery);
+        deliveryRepo.save(delivery);
+        System.out.println(delivery);
+        return delivery;
+    }
     /**
      * <p>API Call to login a user by verifying that it exists in the userRespository</p>
      * @param request HttpServletRequest, a request from the client.
@@ -125,6 +142,47 @@ public class APIController {
             }
         }
         return 200;
+    }
+
+    /**
+     * <p>Handle the update of the status of a delivery based on its ID</p>
+     * @param id The delivery ID
+     * @param request
+     * @return 200 if successful, otherwise 400
+     * @throws IOException
+     */
+    @PostMapping("/updateStatus/{id}")
+    public int updateStatus(@PathVariable("id") String id, HttpServletRequest request) throws IOException {
+        System.out.println("Updating delivery status API()");
+        String username = CookieController.getUsernameFromCookie(request);
+        String jsonData = this.JSONBuilder(request);
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, Object> deliveryData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, Object>>() {});
+        // Extract specific data from the parsed JSON
+        String status = (String) deliveryData.get("status");
+
+        AppUser appUser = userRepo.findByUsername(username).orElse(null);
+        Delivery currDelivery = deliveryRepo.findById((Long.valueOf(id))).orElse(null);
+
+        if (currDelivery == null) return 400;
+
+        if (appUser == null) {
+            System.out.println("Could not find the user!");
+            return 400;
+        }
+
+        currDelivery.setStatus(status);
+        deliveryRepo.save(currDelivery);
+
+        return 200;
+    }
+
+
+    @GetMapping("/getDeliveryStatus/{id}")
+    public Delivery getDeliveryStatus(@PathVariable("id") String id) throws IOException {
+        System.out.println("getDeliveryStatus()");
+        // Extract specific data from the parsed JSON
+        return deliveryRepo.findById(Long.valueOf(id)).orElse(null);
     }
 
     @GetMapping
