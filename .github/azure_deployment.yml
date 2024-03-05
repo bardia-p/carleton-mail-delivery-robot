@@ -22,13 +22,14 @@ jobs:
           java-version: '17'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: cd webapp && mvn clean install
+        shell: bash
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: '${{ github.workspace }}/webapp/target/*.jar'
 
   deploy:
     runs-on: windows-latest
