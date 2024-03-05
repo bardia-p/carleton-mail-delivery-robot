@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mail Delivery Robot | Register Robot</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/static/images/create2.png">
+</head>
+<body>
+<a href="/login">Login</a>
+<a href="/">Home</a>
+<div class="container">
+    <h1>Carleton Mail Delivery Robot</h1>
+    <h2>Register a Robot</h2>
+    <form id="registerRobot-form" th:action="@{/api/v1/createRobot}" method="post">
+        <p>Robot Name:</p>
+        <label for="robotname"></label><input type="text" id="robotname"/>
+        <p id="error-message"></p>
+        <button type="submit" id="registerUser-submit"  class="btn">Register</button>
+        <a href="/registerRobot">Register</a>
+    </form>
+</div>
+</body>
+</html>

@@ -1,3 +1,7 @@
 .DS_Store
 venv
 **/__pycache__
+
+### MACOS ###
+.DS_STORE
+
