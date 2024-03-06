@@ -2,7 +2,7 @@ const submitButton = $("#loginUser-submit");
 const errorMessage = $("#error-message");
 
 /**
- * The JavaScript AJAX call for when a new user is registered (i.e. the submit button is clicked).
+ * The JavaScript AJAX call for when a user is logged in.
  */
 submitButton.click((e) => {
     e.preventDefault();

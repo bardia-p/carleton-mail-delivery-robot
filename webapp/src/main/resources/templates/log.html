@@ -4,15 +4,22 @@
     <title>Mail Delivery Robot | Status</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="icon" type="image/x-icon" href="/images/create2.png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
 </head>
 <body>
-<a href="/login">Login</a>
-<a href="/register">Register</a>
+<a th:if="${username == null}" href="/login"><button>Login</button></a>
+<p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
+<a href="/register"><button>Register</button></a>
+<button th:if="${username != null}" id="logout-btn">Log Out</button>
 <h1>Carleton Mail Delivery Robot</h1>
 <div class="container">
     <h2>Status of Delivery</h2>
     <label for="logs"></label>
-    <textarea id="logs" name="logs" rows="40" cols="100"></textarea>
+    <textarea id="logs" name="logs" rows="40" cols="100" contenteditable="false"></textarea>
 </div>
+<script src="/static/scripts/common.js" type="application/javascript"></script>
+<script src="/static/scripts/logoutFunc.js"></script>
+<script src="/static/scripts/updateStatus.js"></script>
 </body>
 </html>

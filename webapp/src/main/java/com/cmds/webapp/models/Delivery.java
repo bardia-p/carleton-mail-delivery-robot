@@ -1,13 +1,13 @@
 package com.cmds.webapp.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Class Delivery for defining a Delivery entity.
+ */
 @Entity
 @Getter
 @Setter
@@ -21,6 +21,8 @@ public class Delivery {
 
     public String finalDest;
 
+    public String status;
+
     /**
      * Default constructor for Delivery.
      * @param startingDest A string starting destination.
@@ -29,5 +31,6 @@ public class Delivery {
     public Delivery(String startingDest, String finalDest) {
         this.startingDest = startingDest;
         this.finalDest = finalDest;
+        this.status = "";
     }
 }
