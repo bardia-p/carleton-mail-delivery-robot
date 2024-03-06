@@ -50,7 +50,13 @@ def generate_launch_description():
             output='log',
             remappings=[('/navigation/navigation', '/control/navigation')]
             ),
-
+        Node(package='mail_delivery_robot',
+            namespace='communication',
+            executable='client',
+            name='client',
+            output='log',
+            remappings=[('/communication/trips', '/navigation/trips')]
+            ),
         Node(package='mail_delivery_robot',
             namespace='perceptions',
             executable='lidar_sensor',

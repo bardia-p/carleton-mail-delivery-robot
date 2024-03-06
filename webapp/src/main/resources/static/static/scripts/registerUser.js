@@ -1,9 +1,9 @@
 const submitButton = $("#registerUser-submit");
 const errorMessage = $("#error-message");
-/**
- * The JavaScript AJAX call for when a new user is registered (i.e. the submit button is clicked).
- */
 
+/**
+ * The JavaScript AJAX call for when a new user is registered.
+ */
 submitButton.click((e) => {
     e.preventDefault();
     const dataDictionary = {};
