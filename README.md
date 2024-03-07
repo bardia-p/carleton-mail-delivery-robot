@@ -42,8 +42,8 @@ Here is a summary of the hardware implementations of the project:
   </tr>
   <tr>
     <td><img src="demo/create1.png" width=1500></td>
-    <td><img src="demo/create2.png" width=1500></td>
-    <td><img src="demo/create3.png" width=1500></td>
+    <td><img src="demo/create2.png" width=1800></td>
+    <td><img src="demo/create3.png" width=2500></td>
   </tr>
  </table>
 
