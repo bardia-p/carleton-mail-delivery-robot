@@ -47,7 +47,7 @@ Here is a summary of the current implementations of the project:
 
 This project involves both software and hardware components. 
 
-The hardware build consists of:
+### Hardware Components
 * an iRobot CREATE 2 or 3
 * a 3D printed mailbox chassis to hold external components and mail
 * a power bank
@@ -55,7 +55,7 @@ The hardware build consists of:
 * a LiDAR to provide environmental data for navigation
 * 2 IR sensors (ONLY USED FOR CREATE 1)
 
-The software consists of:
+### Software Components
 * ROS 2 (Foxy or Humble) which is a set of libraries used to communicate with the robot
 * the AutonomyLab create_robot repository which allows us to program the robot using Python (USED ONLY FOR CREATE 1 and 2)
 * Slamtec Lidar Ros2 package to allow the robot to communicate with the LiDAR
