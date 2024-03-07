@@ -15,7 +15,6 @@ Diagram Generation Status: [![Generate Diagrams](https://github.com/bardia-p/car
 - [Cassidy Pacada](https://github.com/cassidypacada)
 
 ## Description
-
 This project is being completed to fulfill the 2023 - 2024 Capstone project requirements for SYSC 4907 at Carleton University.
 
 The Carleton Mail Delivery Robot system aims to automate Carleton's existing mail deliver system. With the placement of several bluetoopth beacons throughout the tunnels, the robot will be able to navigate across Carleton using a LiDAR sensor.
@@ -29,7 +28,12 @@ The system will be controlled through a web application component which will all
 </div>
 
 ## Implementation
-Here is a summary of the current implementations of the project:
+
+### Website
+The website for the project is located at: https://cudelivery.azurewebsites.net/. Make sure to checkout our website to place new deliveries!
+
+### Robots
+Here is a summary of the hardware implementations of the project:
 <table>
   <tr>
     <td>Iteration 1 using iRobot CREATE 1 (LEGACY)</td>
@@ -44,7 +48,6 @@ Here is a summary of the current implementations of the project:
  </table>
 
 ## Project Components
-
 This project involves both software and hardware components. 
 
 ### Hardware Components
@@ -67,7 +70,7 @@ The project is broken down into 2 major components:
 * [Web App](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/webapp): this package includes all the code related to the web application portion of the project.
 
 <div align='center'>
-  <img src='diagrams/component_diagram.png' width=300>
+  <img src='diagrams/component_diagram.png' width=400>
   <p>A component diagram summarizing the relationship between these packages.</p>
 </div>
 
@@ -78,6 +81,15 @@ For detailed instructions on how to set up the system please refer to Appendices
 
 ## Running the Project
 For detailed instructions on how to run system please refer to Appendix D of the [Final Report](https://github.com/bardia-p/carleton-mail-delivery-robot/blob/master/documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf)
+
+## Using the Project
+1. Make sure the robots are all set up by following the "Setting up the Project" step.
+2. Make sure the program is running on the robot.
+3. Navigate to the [project website](https://cudelivery.azurewebsites.net/) and register the robot to the website (ONLY SUPER USERS CAN DO THIS ACTION.)
+4. Click on the "Register" button if you do not have an account on the website.
+5. Login to the website using your newly created account.
+6. At the home page click on the "Launch a Delivery" button.
+7. Once you have created your delivery, you can select it on the home page to track its status.
 
 ## Tools
 To help with the development of the project, the team has created a few tools that allow for quick tests. The tools are as follows:
