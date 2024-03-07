@@ -5,8 +5,8 @@ name: Build and deploy JAR app to Azure Web App - cudelivery
 
 on:
   push:
-    branches:
-      - master
+    paths: [ "webapp/**" ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:

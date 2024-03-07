@@ -1,14 +1,20 @@
 # Carleton Mail Delivery Robot System
 
-Build Status:  ![Build Status](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/ros_colcon_test.yml/badge.svg)
+Deployment Status: [![Build and deploy JAR app to Azure Web App - cudelivery](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/master_cudelivery.yml/badge.svg)](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/master_cudelivery.yml)
 
-### Group Members: 
+ROS Colcon Build Status:  [![ROS Test](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/ros_colcon_test.yml/badge.svg)](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/ros_colcon_test.yml)
+
+Web App Build Status: [![Java CI with Maven](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/maven.yml/badge.svg)](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/maven.yml)
+
+Diagram Generation Status: [![Generate Diagrams](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/diagrams.yml/badge.svg)](https://github.com/bardia-p/carleton-mail-delivery-robot/actions/workflows/diagrams.yml)
+
+## Team Members
 - [Max Curkovic](https://github.com/maxcurkovic)
 - [Bardia Parmoun](https://github.com/bardia-p)
 - [Matt Reid](https://github.com/MattReid6767)
 - [Cassidy Pacada](https://github.com/cassidypacada)
 
-## Description:
+## Description
 
 This project is being completed to fulfill the 2023 - 2024 Capstone project requirements for SYSC 4907 at Carleton University.
 
@@ -18,34 +24,69 @@ that it strays off its original course.
 The system will be controlled through a web application component which will allow users to give the robot a desired destination.
 
 <div align='center'>
-  <img src='https://github.com/bardia-p/carleton-mail-delivery-robot/assets/140274454/b95c08f0-48f5-4438-bfb1-273eea98c4e5'>
-  <p>iRobot Create 2 version of the Carleton Mail Delivery Robot System</p>
+  <img src='diagrams/use_case_diagram.png' width=300>
+  <p>A use case diagram summarizing the main features of the system</p>
 </div>
 
-## Project Components:
+## Implementation
+Here is a summary of the current implementations of the project:
+<table>
+  <tr>
+    <td>Iteration 1 using iRobot CREATE 1 (LEGACY)</td>
+     <td>Iteration 2 using iRobot CREATE 2</td>
+     <td>Iteration 3 using iRobot CREATE 3</td>
+  </tr>
+  <tr>
+    <td><img src="demo/create1.png" width=1500></td>
+    <td><img src="demo/create2.jpg" width=800></td>
+    <td><img src="demo/create3.jpg" width=800></td>
+  </tr>
+ </table>
+
+## Project Components
 
 This project involves both software and hardware components. 
 
 The hardware build consists of:
-* an iRobot Create 2 (soon to be upgraded to the iRobot Create 3)
+* an iRobot CREATE 2 or 3
 * a 3D printed mailbox chassis to hold external components and mail
 * a power bank
 * a Raspberry Pi 4B to controls the robot's actions
 * a LiDAR to provide environmental data for navigation
+* 2 IR sensors (ONLY USED FOR CREATE 1)
 
 The software consists of:
-* ROS 2 (Foxy) which is a set of libraries used to communicate with the robot
-* the AutonomyLab create_robot repository which allows us to program the robot using Python
+* ROS 2 (Foxy or Humble) which is a set of libraries used to communicate with the robot
+* the AutonomyLab create_robot repository which allows us to program the robot using Python (USED ONLY FOR CREATE 1 and 2)
 * Slamtec Lidar Ros2 package to allow the robot to communicate with the LiDAR
+* Spring Boot for the web application
 
-## Running the System:
-1. Ensure that you have an Ubuntu environment setup with [ROS2 Foxy](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html) and the [create_robot](https://github.com/AutonomyLab/create_robot/tree/foxy) repository installed.
-2. Clone this repository into the create_ws folder created during the create_robot installation. 
-3. Clone the [Slamtec Lidar Ros2](https://github.com/Slamtec/sllidar_ros2) repository into the same directory.
-4. In your terminal, run the commands ```source /opt/ros/foxy/setup.bash``` and ```source ~/create_ws/install/setup.bash```
-5. Run the command ```source ~/create_ws/install/setup.bash``` and the system should start, indicated by the appearance of logs.
+## Project Design
+The project is broken down into 2 major components:
+* [ROS Backend](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/mail_delivery_robot): this package includes all the code related to the ROS portion of the application
+* [Web App](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/webapp): this package includes all the code related to the web application portion of the project.
 
+<div align='center'>
+  <img src='diagrams/component_diagram.png' width=300>
+  <p>A component diagram summarizing the relationship between these packages.</p>
+</div>
 
+For more detailed information about the design of the project please refer to the [Final Report](https://github.com/bardia-p/carleton-mail-delivery-robot/blob/master/documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf) and the [diagrams folder](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/diagrams).
 
+## Setting up the Project
+For detailed instructions on how to set up the system please refer to Appendices B & C of the [Final Report](https://github.com/bardia-p/carleton-mail-delivery-robot/blob/master/documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf)
+
+## Running the Project
+For detailed instructions on how to run system please refer to Appendix D of the [Final Report](https://github.com/bardia-p/carleton-mail-delivery-robot/blob/master/documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf)
+
+## Tools
+To help with the development of the project, the team has created a few tools that allow for quick tests. The tools are as follows:
+* [Beacon Analyzer](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Beacon_Analyzer): This tool allows the developers to quickly measure the range and signal strength of the beacons and record them in a CSV file.
+* [Wall Follow Simulator](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Wall_Follow_Simulator): This tool allows the developers to test the wall following algorithm of the robot in a Turtle simulator.
+
+## Other Iterations of the Project
+As previously mentioned this is a continuious project. You can find the previous iterations of the project here for reference:
+* [2022-2023](https://github.com/Em-kale/carleton-mail-delivery-robot)
+* [2021-2022](https://github.com/SteveWick/carleton-mail-delivery-robot)
 
 
