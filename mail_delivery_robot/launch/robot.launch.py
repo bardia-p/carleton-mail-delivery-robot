@@ -39,6 +39,7 @@ def launch_setup(context, *args, **kwargs):
             executable='action_translator',
             name='action_translator',
             output='log',
+            parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
             remappings=[('/control/cmd_vel', '/cmd_vel')]
             ),
         Node(package='mail_delivery_robot',

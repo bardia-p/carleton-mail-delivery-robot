@@ -5,6 +5,10 @@ from launch.substitutions import TextSubstitution
 from launch_ros.actions import Node
 
 def generate_launch_description():
+    robot_model = DeclareLaunchArgument("robot_model",
+            default_value=TextSubstitution(text="CREATE_2"),
+            description="The parameter is used to declare the robot model ('CREATE_2' or 'CREATE_3'")
+
     init_pos = DeclareLaunchArgument("init_pos",
             default_value=TextSubstitution(text="0.2:0.1"),
             description="Specifies the robot's initial distance and angle with the wall '[distance]:[angle]'.")
@@ -30,6 +34,7 @@ def generate_launch_description():
             description="Specifies the total time for the simulation '[value in seconds]'.")
     
     return LaunchDescription([
+        robot_model,
         init_pos,
         collision_freq,
         path,
@@ -41,6 +46,7 @@ def generate_launch_description():
             executable='action_translator',
             name='action_translator',
             output='log',
+            parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
             remappings=[('/control/cmd_vel', '/cmd_vel')]
             ),
         Node(package='mail_delivery_robot',

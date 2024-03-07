@@ -1,10 +1,12 @@
 import math
+import os
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist
 from control.state_machine import Action
+from rclpy.action import ActionClient
 
 from tools.csv_parser import loadConfig
 
@@ -42,10 +44,13 @@ class ActionTranslator(Node):
             self.undockPublisher = self.create_publisher(Empty, 'dock', 1)
             self.dockPublisher = self.create_publisher(Empty, 'undock', 1)
         else:
-            from create_msgs.msg import Dock, Undock
-            self.undockPublisher = self.create_publisher(Dock, 'dock', 1)
-            self.dockPublisher = self.create_publisher(Undock, 'undock', 1)
-        
+            from irobot_create_msgs.action import Dock, Undock
+            self.dockPublisher = ActionClient(self, Dock, 'dock')
+            #self.undockPublisher = ActionClient(self, Undock, 'undock')
+
+            #self.dockPublisher.wait_for_server()
+            #self.undockPublisher.wait_for_server()
+
         # The subscribers for the node.
         self.subscription = self.create_subscription(String, 'actions', self.decodeAction, 10)
 
@@ -64,9 +69,15 @@ class ActionTranslator(Node):
         if split_action[0] == Action.DOCK.value:
             if self.robot_model != "CREATE_3":
                 dockMessage = Empty()
+                self.dockPublisher.publish(dockMessage)
             else:
-                dockMessage = Dock()
-            self.dockPublisher.publish(dockMessage)
+                from irobot_create_msgs.action import Dock
+                #dockMessage = Dock.Goal()
+                #self.dockPublisher.send_goal(dockMessage)
+                # Waits for the server to finish performing the action.
+                #r = self.dockPublisher.wait_for_result()
+                #self.get_logger().info(r)
+                os.system('ros2 action send_goal /dock irobot_create_msgs/action/Dock "{}"')
         elif split_action[0] == Action.UNDOCK.value:
             if self.robot_model != "CREATE_3":
                 undockMessage = Empty()

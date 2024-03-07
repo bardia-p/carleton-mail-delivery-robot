@@ -48,8 +48,12 @@ class BumperSensor(Node):
             from create_msgs.msg import Bumper
             self.bumperSubscriber = self.create_subscription(Bumper, 'bumper', self.read_bump, 10)
         else:
-            from create_msgs.msg import HazardDetection
-            self.bumperSubscriber = self.create_subscription(HazardDetection, 'hazard_detection', self.read_bump, 10)
+            from irobot_create_msgs.msg import HazardDetection, HazardDetectionVector
+            from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
+            self.bumperSubscriber = self.create_subscription(HazardDetectionVector, 'hazard_detection', self.read_bump, qos_profile=QoSProfile(
+                reliability=QoSReliabilityPolicy.BEST_EFFORT,
+                depth=10
+                ))
     
     def read_bump(self, data):
         '''

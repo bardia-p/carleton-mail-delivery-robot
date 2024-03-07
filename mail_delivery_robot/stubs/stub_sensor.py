@@ -9,7 +9,7 @@ from geometry_msgs.msg import Twist
 from tools.csv_parser import loadConfig
 
 LIDAR_TIMER = 0.2
-BEACON_TIMER = 15
+BEACON_TIMER = 10
 BUMPER_TIMER = 0.1
 MIN_WALL_DISTANCE = 0.1
 ANGLE_ERROR = 0.6
@@ -39,7 +39,7 @@ class StubSensor(Node):
         self.declare_parameter('init_pos', '0.2:0.1')
         self.wall_distance, self.wall_angle = self.get_parameter('init_pos').value.split(":")
 
-        self.declare_parameter('collision_freq', '0')
+        self.declare_parameter('collision_freq', 0)
         self.collision_freq = float(self.get_parameter('collision_freq').value)
 
         self.declare_parameter('path', '')
@@ -48,13 +48,13 @@ class StubSensor(Node):
         if self.path == ['']:
             self.path = []
 
-        self.declare_parameter('wall_diff', '0')
+        self.declare_parameter('wall_diff', 0)
         self.wall_diff = float(self.get_parameter('wall_diff').value)
 
         self.declare_parameter('delivery', 'UC:Nicol')
         self.source, self.destination = self.get_parameter('delivery').value.split(":")
 
-        self.declare_parameter('duration', '45')
+        self.declare_parameter('duration', 45)
         self.duration = float(self.get_parameter('duration').value)
 
         self.get_logger().info("Init Pos (distance, angle): (" + self.wall_distance + "," + self.wall_angle + ") Collision Freq: " + str(self.collision_freq) + ", Path: " + str(self.path) + " , Wall Difficulty: " + str(self.wall_diff) + ", Delivery(src, dest): (" + self.source + "," + self.destination + "), Duration: " + str(self.duration))
