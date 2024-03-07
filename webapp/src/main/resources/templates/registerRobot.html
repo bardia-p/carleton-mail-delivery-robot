@@ -4,10 +4,14 @@
     <title>Mail Delivery Robot | Register Robot</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="icon" type="image/x-icon" href="/static/images/create2.png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
 </head>
 <body>
-<a href="/login">Login</a>
-<a href="/">Home</a>
+<a th:if="${username == null}" href="/login"><button>Login</button></a>
+<p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
+<a href="/register"><button>Register</button></a>
+<button th:if="${username != null}" id="logout-btn">Log Out</button>
 <div class="container">
     <h1>Carleton Mail Delivery Robot</h1>
     <h2>Register a Robot</h2>
@@ -15,9 +19,10 @@
         <p>Robot Name:</p>
         <label for="robotname"></label><input type="text" id="robotname"/>
         <p id="error-message"></p>
-        <button type="submit" id="registerUser-submit"  class="btn">Register</button>
-        <a href="/registerRobot">Register</a>
+        <button type="submit" id="registerRobot-submit"  class="btn">Register Robot</button>
     </form>
 </div>
+<script src="/static/scripts/common.js" type="application/javascript"></script>
+<script src="/static/scripts/registerRobot.js" type="application/javascript"></script>
 </body>
 </html>

@@ -26,6 +26,11 @@ public class PageController {
         return "index";
     }
 
+    @GetMapping("/createDelivery")
+    public String getDeliveryPage(Model model, HttpServletRequest request) {
+        CookieController.setUsernameCookie(model, request);
+        return "createDelivery";
+    }
 
     /**
      * Get mapping for the login page.
@@ -45,7 +50,7 @@ public class PageController {
     @GetMapping("/register")
     public String getRegisterPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
-        return "register";
+        return "registerUser";
     }
 
     /**

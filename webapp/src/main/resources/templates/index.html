@@ -23,48 +23,13 @@
     <p>Log into an account to access the website features!</p>
     <p><strong>Disclaimer: This website can only be accessed by Carleton University students.</strong></p>
 </div>
-<form th:action="@{/api/v1/createDelivery}" th:if="${username != null}">
-    <h2>Launch a Delivery</h2>
-    <label for="source">Source: </label>
-    <select name="source" id="source">
-        <option value="loeb">Loeb Building</option>
-        <option value="southam">Southam Hall</option>
-        <option value="library">MacOdrum Library</option>
-        <option value="azrieli">Azrieli Theatre</option>
-        <option value="uc">Nideyinan Building</option>
-        <option value="steacie">Steacie Building</option>
-        <option value="richcraft">Richcraft Hall</option>
-        <option value="canal">Canal Building</option>
-        <option value="nicol">Nicol Building</option>
-        <option value="cttc">CTTC</option>
-        <option value="robertson">Pigiarvik Building</option>
-        <option value="minto">Minto/Mackenzie Building</option>
-        <option value="prescott">Prescott/Lanark/Renfrew/Frontenac House</option>
-        <option value="residence commons">Residence Commons</option>
-    </select>
-    <br><br>
-    <label for="destination">Destination: </label>
-    <select name="destination" id="destination">
-        <option value="loeb">Loeb Building</option>
-        <option value="southam">Southam Hall</option>
-        <option value="library">MacOdrum Library</option>
-        <option value="azrieli">Azrieli Theatre</option>
-        <option value="uc">Nideyinan Building</option>
-        <option value="steacie">Steacie Building</option>
-        <option value="richcraft">Richcraft Hall</option>
-        <option value="canal">Canal Building</option>
-        <option value="nicol">Nicol Building</option>
-        <option value="cttc">CTTC</option>
-        <option value="robertson">Pigiarvik Building</option>
-        <option value="minto">Minto/Mackenzie Building</option>
-        <option value="prescott">Prescott/Lanark/Renfrew/Frontenac House</option>
-        <option value="residence commons">Residence Commons</option>
-    </select>
-    <br><br>
-    <button type="submit" id="createDelivery-submit"  class="btn">Submit</button>
-    </form>
+
+<div th:if="${username != null}">
+    <p>You can define a robot, and create a delivery for the robot to go on!</p>
+    <a href="/registerRobot"><button>Register Robot</button></a>
+    <a href="/createDelivery"><button>Create Delivery</button></a>
+</div>
 <script src="/static/scripts/common.js"></script>
 <script src="/static/scripts/logoutFunc.js"></script>
-<script src="/static/scripts/createDelivery.js"></script>
 </body>
 </html>

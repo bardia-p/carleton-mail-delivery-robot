@@ -17,9 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Robot {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long robotId;
-
     public String name;
 
     public String status;
@@ -27,15 +24,13 @@ public class Robot {
     @OneToMany
     public List<Delivery> listTrips;
 
-    public Robot(Long robotId, String name, String status, List<Delivery> listTrips){
-        this.robotId = robotId;
+    public Robot(String name, String status, List<Delivery> listTrips){
         this.name = name;
         this.status = status;
         this.listTrips = listTrips;
     }
 
-    public Robot(Long robotId, String name) {
-        this.robotId = robotId;
+    public Robot(String name) {
         this.name = name;
         this.status = "";
         this.listTrips = new ArrayList<>();

@@ -16,9 +16,6 @@ import java.util.Objects;
 @NoArgsConstructor
 public class AppUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long userId;
-    // Define a username for the user
     private String username;
 
     // Define a password for the associated username

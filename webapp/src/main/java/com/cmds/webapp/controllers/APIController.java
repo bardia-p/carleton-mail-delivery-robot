@@ -10,10 +10,13 @@ import com.cmds.webapp.models.*;
 import com.cmds.webapp.repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import org.json.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -82,22 +85,57 @@ public class APIController {
      * @throws IOException
      */
     @PostMapping("/createDelivery")
-    public Delivery createDelivery(HttpServletRequest request) throws IOException {
+    public int createDelivery(HttpServletRequest request) throws IOException {
         System.out.println("createDelivery() API");
         String username = CookieController.getUsernameFromCookie(request);
         String jsonData = this.JSONBuilder(request);
         ObjectMapper objectMapper = new ObjectMapper();
+        List<Robot> robots = robotRepo.findAll();
         HashMap<String, String> userData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, String>>() {});
         System.out.println(userData);
         String source = userData.get("source");
         String destination = userData.get("destination");
         Delivery delivery = new Delivery(source, destination);
         AppUser appUser = userRepo.findByUsername(username).orElse(null);
-        if (appUser == null) return null;
+        Robot robot = null;
+        if (appUser == null) return 400;
+        System.out.println("Hello this is a test 1");
+        for (Robot r: robots) {
+            if (Objects.equals(r.getStatus(), "")) {
+                r.addTrip(delivery);
+                robot = r;
+                break;
+            }
+        }
+        if (robot == null) {
+            System.out.println("Robots are all occupied with deliveries!");
+            return 400;
+        }
         appUser.setCurrentDelivery(delivery);
+        delivery.setAssignedRobot(robot);
         deliveryRepo.save(delivery);
         System.out.println(delivery);
-        return delivery;
+        return 200;
+    }
+
+    /**
+     * Post mapping for creating a delivery.
+     * @param request An HttpServletRequest request.
+     * @return Valid delivery if successful, null otherwise.
+     * @throws IOException
+     */
+    @PostMapping("/createRobot")
+    public int createRobot(HttpServletRequest request) throws IOException {
+        System.out.println("createRobot() API");
+        String jsonData = this.JSONBuilder(request);
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, String> userData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, String>>() {});
+        System.out.println(userData);
+        String robotName = userData.get("robotname");
+        Robot robot = new Robot(robotName);
+        robotRepo.save(robot);
+        System.out.println(robot);
+        return 200;
     }
     /**
      * API Call to login a user by verifying that it exists in the userRespository
@@ -165,22 +203,14 @@ public class APIController {
     @PostMapping("/updateStatus/{id}")
     public int updateStatus(@PathVariable("id") String id, HttpServletRequest request) throws IOException {
         System.out.println("Updating delivery status API()");
-        String username = CookieController.getUsernameFromCookie(request);
         String jsonData = this.JSONBuilder(request);
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String, Object> deliveryData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, Object>>() {});
         // Extract specific data from the parsed JSON
         String status = (String) deliveryData.get("status");
-
-        AppUser appUser = userRepo.findByUsername(username).orElse(null);
         Delivery currDelivery = deliveryRepo.findById((Long.valueOf(id))).orElse(null);
 
         if (currDelivery == null) return 400;
-
-        if (appUser == null) {
-            System.out.println("Could not find the user!");
-            return 400;
-        }
 
         currDelivery.setStatus(status);
         deliveryRepo.save(currDelivery);
@@ -201,6 +231,7 @@ public class APIController {
         return deliveryRepo.findById(Long.valueOf(id)).orElse(null);
     }
 
+
     /**
      * Test mapping to ensure it is compatible in ROS.
      * @return test string
@@ -209,5 +240,23 @@ public class APIController {
     @GetMapping
     public String getEndpoint() throws IOException {
         return "test";
+    }
+
+    @GetMapping("getRobotDeliveries/{id}")
+    public String getSurveyQuestions(@PathVariable("id") String id, HttpServletRequest request) throws JSONException  {
+        System.out.println("getRobotDeliveries() API");
+
+        Optional<Robot> r = robotRepo.findById(Long.valueOf(id));
+        JSONObject deliveriesObject = new JSONObject();
+        if (r.isPresent()) {
+            Robot robot = r.get();
+            for (Delivery d: robot.getListTrips()) {
+                deliveriesObject.put("deliveries", d);
+            }
+        } else {
+            System.out.println("No robot found of ID " + id);
+            return "";
+        }
+        return deliveriesObject.toString();
     }
 }

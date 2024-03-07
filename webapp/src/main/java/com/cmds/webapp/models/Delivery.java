@@ -23,6 +23,9 @@ public class Delivery {
 
     public String status;
 
+    @ManyToOne
+    private Robot assignedRobot;
+
     /**
      * Default constructor for Delivery.
      * @param startingDest A string starting destination.
