@@ -28,14 +28,21 @@ class Client(Node):
 
         # The timer to check for new requests with the web app.
         # TODO: REPLACE THIS WITH A CONSTANT
-        self.request_timer = self.create_timer(2, self.sendRequest)
+        self.request_timer = self.create_timer(2, self.handleUpdate)
 
-    def handleUpdate(self, data):
+    def handleUpdate(self):
         '''
         The callback for /updates.
 
         @param data: the new update data.
         '''
+        url = 'https://cudelivery.azurewebsites.net/api/v1/updateStatus/1'
+        post_data = {
+            "status": "max is a bozo"
+        }
+
+        x = requests.post(url, json = post_data)
+        self.get_logger().info(x.text)
         return
     
     def sendRequest(self):
