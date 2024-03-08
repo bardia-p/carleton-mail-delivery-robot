@@ -23,7 +23,8 @@ public class Delivery {
 
     public String status;
 
-    private String assignedRobot;
+    @ManyToOne
+    private Robot assignedRobot;
 
     /**
      * Default constructor for Delivery.
@@ -34,6 +35,6 @@ public class Delivery {
         this.startingDest = startingDest;
         this.finalDest = finalDest;
         this.status = "";
-        this.assignedRobot = "";
+        this.assignedRobot = null;
     }
 }

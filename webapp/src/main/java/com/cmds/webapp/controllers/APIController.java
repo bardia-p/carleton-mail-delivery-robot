@@ -99,9 +99,8 @@ public class APIController {
         Robot robot = null;
         if (appUser == null) return null;
         for (Robot r: robots) {
-            if (Objects.equals(r.getStatus(), RobotStatus.IDLE)) {
+            if (Objects.equals(r.getStatus(), Robot.RobotStatus.IDLE)) {
                 r.addTrip(delivery);
-                r.setStatus(RobotStatus.BUSY);
                 robot = r;
                 break;
             }
@@ -111,13 +110,9 @@ public class APIController {
             return null;
         }
         appUser.setCurrentDelivery(delivery);
-        delivery.setAssignedRobot(robot.getName());
+        delivery.setAssignedRobot(robot);
         deliveryRepo.save(delivery);
         System.out.println(delivery);
-        for (Delivery d: deliveryRepo.findAll()){
-            System.out.println("Gets here");
-            System.out.println(d);
-        }
         return delivery;
     }
 
@@ -211,7 +206,6 @@ public class APIController {
         HashMap<String, Object> deliveryData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, Object>>() {});
         // Extract specific data from the parsed JSON
         String status = (String) deliveryData.get("status");
-        System.out.print(id);
         Delivery currDelivery = deliveryRepo.findById((Long.valueOf(id))).orElse(null);
         System.out.println(currDelivery);
         if (currDelivery == null) return 400;
@@ -263,8 +257,8 @@ public class APIController {
             for (Delivery d: robot.getListTrips()) {
                 deliveryObject.put("sourceDest", d.getStartingDest());
                 deliveryObject.put("finalDest", d.getFinalDest());
+                robotObject.put(d.getDeliveryId().toString(), deliveryObject);
             }
-            robotObject.put("id", deliveryObject);
         } else {
             System.out.println("No robot found of ID " + id);
             return "";

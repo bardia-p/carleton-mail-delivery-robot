@@ -2,7 +2,6 @@ $(document).ready( function() {
     /**
      * The JavaScript AJAX call for when a delivery status is updated (added to the textbox).
      */
-    const updateStatus = () => {
         const textbox = document.getElementById("logs");
         const splitRef = window.location.href.split("/");
         const id = splitRef[splitRef.length - 1];
@@ -17,7 +16,9 @@ $(document).ready( function() {
                 console.log('Delivery status gotten');
                 console.log(res);
                 if (res) {
-                    textbox.append(res["status"]);
+                    if (res["status"] !== res["status"].prev) {
+                        textbox.append(res["status"]);
+                    }
                 }
             },
             error: function (xhr, status, error) {
@@ -26,6 +27,4 @@ $(document).ready( function() {
                 setToast("error", "Something went wrong", "Could not create user");
             }
         });
-    }
-    setInterval(() => {updateStatus()}, 2000);
 })

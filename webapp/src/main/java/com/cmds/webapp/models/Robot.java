@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Class Robot for defining a Robot entity.
  */
@@ -19,11 +20,18 @@ public class Robot {
     @Id
     public String name;
 
-    public RobotStatus status;
 
     @OneToMany
     public List<Delivery> listTrips;
 
+    /**
+     * Enum RobotStatus for defining Robot status entities.
+     */
+
+    public enum RobotStatus {
+        IDLE, BUSY;
+    }
+    private RobotStatus status;
     /**
      * One constructor for a Robot. Mostly used for testing purposes.
      * @param name String name.
@@ -51,6 +59,8 @@ public class Robot {
      * @param delivery Delivery object delivery.
      */
     public void addTrip (Delivery delivery){
+        this.setStatus(RobotStatus.BUSY);
+        delivery.setStatus("NEW");
         this.listTrips.add(delivery);
     }
 
@@ -60,7 +70,14 @@ public class Robot {
      * @return True if the trip was removed, false otherwise.
      */
     public boolean removeTrip (Long tripId) {
-        return this.listTrips.removeIf(trip -> trip.getDeliveryId().equals(tripId));
+        Delivery trip = this.getListTrips().get(tripId.intValue());
+        if (trip.getStatus().equals("COMPLETED")) {
+            if (trip.getDeliveryId().equals(tripId))
+            {
+                this.listTrips.remove(trip);
+                return true;
+            }
+        }
+        return false;
     }
-
 }
