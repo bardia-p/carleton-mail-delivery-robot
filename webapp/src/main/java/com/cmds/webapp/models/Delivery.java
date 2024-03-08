@@ -27,7 +27,7 @@ public class Delivery {
 
 
     @ManyToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference
     private Robot assignedRobot;
 
     /**

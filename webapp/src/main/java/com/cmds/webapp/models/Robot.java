@@ -25,7 +25,7 @@ public class Robot {
 
 
     @OneToMany(mappedBy = "assignedRobot", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonManagedReference
     public List<Delivery> listTrips;
 
     /**
