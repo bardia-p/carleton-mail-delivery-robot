@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import com.cmds.webapp.models.*;
 import com.cmds.webapp.repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.json.*;
 import java.io.BufferedReader;
@@ -243,20 +244,15 @@ public class APIController {
     }
 
     @GetMapping("getRobotDeliveries/{id}")
-    public String getSurveyQuestions(@PathVariable("id") String id, HttpServletRequest request) throws JSONException  {
+    public List<Delivery> getRobotDeliveries(@PathVariable("id") String id, Model model, HttpServletRequest request) throws JSONException  {
         System.out.println("getRobotDeliveries() API");
 
         Optional<Robot> r = robotRepo.findById(Long.valueOf(id));
-        JSONObject deliveriesObject = new JSONObject();
-        if (r.isPresent()) {
-            Robot robot = r.get();
-            for (Delivery d: robot.getListTrips()) {
-                deliveriesObject.put("deliveries", d);
-            }
-        } else {
-            System.out.println("No robot found of ID " + id);
-            return "";
-        }
-        return deliveriesObject.toString();
+        System.out.println(r);
+        Robot robot = r.stream().findFirst().orElse(null);
+        List<Delivery> listDeliveries = robot.getListTrips();
+        model.addAttribute("robot", robot);
+        model.addAttribute("listDeliveries", listDeliveries);
+        return listDeliveries;
     }
 }

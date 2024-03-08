@@ -28,8 +28,27 @@
     <p>You can define a robot, and create a delivery for the robot to go on!</p>
     <a href="/registerRobot"><button>Register Robot</button></a>
     <a href="/createDelivery"><button>Create Delivery</button></a>
+    <br>
+    <br>
+    <table>
+        <thead>
+        <tr>
+            <th>Robot Name</th>
+            <th>Robot Page</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="robot : ${robots}">
+            <td><span th:text="${robot.getName()}"></span></td>
+            <td><button id="robotInfo-submit" >View Robot Page</button></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
+
+
 <script src="/static/scripts/common.js"></script>
-<script src="/static/scripts/logoutFunc.js"></script>
+<script src="/static/scripts/logoutFunc.js" type="application/javascript"></script>
+<script src="/static/scripts/robotInfo.js" type="application/javascript"></script>
 </body>
 </html>
