@@ -17,8 +17,7 @@ $(document).ready( function() {
                 console.log('Delivery status gotten');
                 console.log(res);
                 if (res) {
-                    textbox.append("Example of a trip status log from: " + res["startingDest"] + " to " + res["finalDest"] + "\n");
-                    //textbox.append(res["status"]);
+                    textbox.append(res["status"]);
                 }
             },
             error: function (xhr, status, error) {

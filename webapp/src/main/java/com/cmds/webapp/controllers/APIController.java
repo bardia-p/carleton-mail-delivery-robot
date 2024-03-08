@@ -116,6 +116,10 @@ public class APIController {
         delivery.setAssignedRobot(robot);
         deliveryRepo.save(delivery);
         System.out.println(delivery);
+        for (Delivery d: deliveryRepo.findAll()){
+            System.out.println("Gets here");
+            System.out.println(d);
+        }
         return delivery;
     }
 
@@ -209,8 +213,9 @@ public class APIController {
         HashMap<String, Object> deliveryData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, Object>>() {});
         // Extract specific data from the parsed JSON
         String status = (String) deliveryData.get("status");
+        System.out.print(id);
         Delivery currDelivery = deliveryRepo.findById((Long.valueOf(id))).orElse(null);
-
+        System.out.println(currDelivery);
         if (currDelivery == null) return 400;
 
         currDelivery.setStatus(status);
@@ -244,14 +249,23 @@ public class APIController {
     }
 
     @GetMapping("getRobotDeliveries/{id}")
-    public List<Delivery> getRobotDeliveries(@PathVariable("id") String id, Model model, HttpServletRequest request) throws JSONException  {
+    public String getRobotDeliveries(@PathVariable("id") String id, Model model, HttpServletRequest request) throws JSONException  {
         System.out.println("getRobotDeliveries() API");
 
-        Robot r = robotRepo.findByName(id);
-        System.out.println(r);
-        List<Delivery> listDeliveries = r.getListTrips();
-        model.addAttribute("robot", r);
-        model.addAttribute("listDeliveries", listDeliveries);
-        return listDeliveries;
+        Robot robot = robotRepo.findByName(id);
+        JSONObject robotObject = new JSONObject();
+        if (robot != null) {
+            JSONObject deliveryObject = new JSONObject();
+            for (Delivery d: robot.getListTrips()) {
+                deliveryObject.put("sourceDest", d.getStartingDest());
+                deliveryObject.put("finalDest", d.getFinalDest());
+            }
+            robotObject.put("id", deliveryObject);
+        } else {
+            System.out.println("No robot found of ID " + id);
+            return "";
+        }
+        System.out.println(robotObject.toString());
+        return robotObject.toString();
     }
 }
