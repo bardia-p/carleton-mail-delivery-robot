@@ -1,6 +1,6 @@
 const submitButton = $("#registerRobot-submit");
 /**
- * The JavaScript AJAX call for when a new delivery is created (i.e. the submit button is clicked).
+ * The JavaScript AJAX call for when a new robot is created (i.e. the submit button is clicked).
  */
 
 submitButton.click((e) => {

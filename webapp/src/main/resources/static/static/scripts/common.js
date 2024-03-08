@@ -31,7 +31,6 @@ toastr.options = {
  */
 const setToast = (severity, title, message, redirect= false) => {
     if (!redirect) {
-        // we are not planning on redirecting, just display the toast on the page
         toastr[severity](message, title);
         return;
     }

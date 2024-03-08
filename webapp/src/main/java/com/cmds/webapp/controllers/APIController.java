@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import com.cmds.webapp.models.*;
 import com.cmds.webapp.repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.json.*;
 import java.io.BufferedReader;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -113,7 +111,7 @@ public class APIController {
             return null;
         }
         appUser.setCurrentDelivery(delivery);
-        delivery.setAssignedRobot(robot);
+        delivery.setAssignedRobot(robot.getName());
         deliveryRepo.save(delivery);
         System.out.println(delivery);
         for (Delivery d: deliveryRepo.findAll()){
@@ -143,7 +141,7 @@ public class APIController {
         return 200;
     }
     /**
-     * API Call to login a user by verifying that it exists in the userRespository
+     * API Call to log in a user by verifying that it exists in the userRespository
      * @param request HttpServletRequest, a request from the client.
      * @return 200, if user successfully logs in, 401 if user is not authenticated properly.
      * @throws IOException
@@ -199,7 +197,7 @@ public class APIController {
     }
 
     /**
-     * <p>Handle the update of the status of a delivery based on its ID</p>
+     * Handle the update of the status of a delivery based on its ID.
      * @param id The delivery ID
      * @param request
      * @return 200 if successful, otherwise 400
@@ -248,8 +246,14 @@ public class APIController {
         return "test";
     }
 
+    /**
+     * API Call for getting a JSON formatted object of all deliveries for a given Robot ID.
+     * @param id String Robot ID.
+     * @return A Json formatted list of deliveries for a particular robot.
+     * @throws JSONException
+     */
     @GetMapping("getRobotDeliveries/{id}")
-    public String getRobotDeliveries(@PathVariable("id") String id, Model model, HttpServletRequest request) throws JSONException  {
+    public String getRobotDeliveries(@PathVariable("id") String id) throws JSONException  {
         System.out.println("getRobotDeliveries() API");
 
         Robot robot = robotRepo.findByName(id);

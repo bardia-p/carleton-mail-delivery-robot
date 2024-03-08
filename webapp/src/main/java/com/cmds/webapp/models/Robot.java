@@ -8,6 +8,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class Robot for defining a Robot entity.
+ */
 @Entity
 @Getter
 @Setter
@@ -21,18 +24,32 @@ public class Robot {
     @OneToMany
     public List<Delivery> listTrips;
 
+    /**
+     * One constructor for a Robot. Mostly used for testing purposes.
+     * @param name String name.
+     * @param status RobotStatus Enum status.
+     * @param listTrips List of Delivery object trips.
+     */
     public Robot(String name, RobotStatus status, List<Delivery> listTrips){
         this.name = name;
         this.status = status;
         this.listTrips = listTrips;
     }
 
+    /**
+     * Primary constructor for a Robot. This is the one that should be used in most cases.
+     * @param name String name.
+     */
     public Robot(String name) {
         this.name = name;
         this.status = RobotStatus.IDLE;
         this.listTrips = new ArrayList<>();
     }
 
+    /**
+     * Void method for adding a trip.
+     * @param delivery Delivery object delivery.
+     */
     public void addTrip (Delivery delivery){
         this.listTrips.add(delivery);
     }

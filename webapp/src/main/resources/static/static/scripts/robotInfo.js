@@ -2,7 +2,7 @@ const robotInfoButton = $("#robotInfo-submit");
 
 
 /**
- * The JavaScript AJAX call for when a user logs out of their account.
+ * The JavaScript AJAX call for when robot information is retrieved.
  */
 robotInfoButton.click((e) => {
     e.preventDefault();

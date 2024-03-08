@@ -43,6 +43,12 @@ public class PageController {
         return "index";
     }
 
+    /**
+     * Get mapping for the create delivery page.
+     * @param model
+     * @param request
+     * @return
+     */
     @GetMapping("/createDelivery")
     public String getDeliveryPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
