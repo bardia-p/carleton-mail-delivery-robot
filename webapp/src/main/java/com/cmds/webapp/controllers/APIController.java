@@ -209,6 +209,12 @@ public class APIController {
         Delivery currDelivery = deliveryRepo.findById((Long.valueOf(id))).orElse(null);
         System.out.println(currDelivery);
         if (currDelivery == null) return 400;
+        if (status.equals("COMPLETE")){
+            Robot currRobot = currDelivery.getAssignedRobot();
+            currRobot.removeTrip(currDelivery.getDeliveryId());
+            robotRepo.save(currRobot);
+            return 200;
+        }
 
         currDelivery.setStatus(status);
         deliveryRepo.save(currDelivery);
@@ -255,9 +261,11 @@ public class APIController {
         if (robot != null) {
             JSONObject deliveryObject = new JSONObject();
             for (Delivery d: robot.getListTrips()) {
-                deliveryObject.put("sourceDest", d.getStartingDest());
-                deliveryObject.put("finalDest", d.getFinalDest());
-                robotObject.put(d.getDeliveryId().toString(), deliveryObject);
+                if (d.getStatus().equals("NEW")) {
+                    deliveryObject.put("sourceDest", d.getStartingDest());
+                    deliveryObject.put("finalDest", d.getFinalDest());
+                    robotObject.put(d.getDeliveryId().toString(), deliveryObject);
+                }
             }
         } else {
             System.out.println("No robot found of ID " + id);

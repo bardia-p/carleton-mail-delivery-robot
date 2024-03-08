@@ -21,7 +21,7 @@ public class Robot {
     public String name;
 
 
-    @OneToMany
+    @OneToMany(mappedBy = "assignedRobot", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Delivery> listTrips;
 
     /**
@@ -70,14 +70,7 @@ public class Robot {
      * @return True if the trip was removed, false otherwise.
      */
     public boolean removeTrip (Long tripId) {
-        Delivery trip = this.getListTrips().get(tripId.intValue());
-        if (trip.getStatus().equals("COMPLETED")) {
-            if (trip.getDeliveryId().equals(tripId))
-            {
-                this.listTrips.remove(trip);
-                return true;
-            }
-        }
-        return false;
+
+        return this.listTrips.removeIf(trip -> trip.getDeliveryId().equals(tripId));
     }
 }
