@@ -12,9 +12,11 @@
 <p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
 <a href="/register"><button>Register</button></a>
 <button th:if="${username != null}" id="logout-btn">Log Out</button>
+<a href="/"><button>Home</button></a>
+
 <div class="container">
     <h1>Carleton Mail Delivery Robot</h1>
-    <h2>List of Deliveries: <span th:action="@{/api/v1/getRobotDeliveries/${robot.get.getName()}}"></span></h2>
+    <h2>List of Deliveries: <span th:text="${robot.getName()}"></span></h2>
     <table>
         <thead>
         <tr>
@@ -25,11 +27,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="delivery : ${robot.get().getListTrips()}">
+        <tr th:each="delivery : ${robot.getListTrips()}">
             <td><span th:text="${delivery.getDeliveryId()}"></span></td>
             <td><span th:text="${delivery.getStartingDest()}"></span></td>
             <td><span th:text="${delivery.getFinalDest()}"></span></td>
-            <td><a href="/status"><button>View Delivery Status</button></a></td>
+            <td><a th:href="'/status/' + ${delivery.getDeliveryId()}"><button>View Delivery Status</button></a></td>
         </tr>
         </tbody>
     </table>

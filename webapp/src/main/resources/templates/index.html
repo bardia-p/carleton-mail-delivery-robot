@@ -12,6 +12,7 @@
 <p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
 <a href="/register"><button>Register</button></a>
 <button th:if="${username != null}" id="logout-btn">Log Out</button>
+
 <h1>Carleton Mail Delivery Robot</h1>
 <p>2023-2024 Academic Year, SYSC 4907</p>
 <p>Max Curkovic, Cassidy Pacada, Matt Reid, Bardia Parmoun</p>
@@ -40,7 +41,7 @@
         <tbody>
         <tr th:each="robot : ${robots}">
             <td><span th:text="${robot.getName()}"></span></td>
-            <td><button id="robotInfo-submit" >View Robot Page</button></td>
+            <td><a th:href="'/robot/' + ${robot.getName()}" ><button>View Robot Page</button></a></td>
         </tr>
         </tbody>
     </table>

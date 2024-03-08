@@ -86,7 +86,7 @@ public class APIController {
      * @throws IOException
      */
     @PostMapping("/createDelivery")
-    public int createDelivery(HttpServletRequest request) throws IOException {
+    public Delivery createDelivery(HttpServletRequest request) throws IOException {
         System.out.println("createDelivery() API");
         String username = CookieController.getUsernameFromCookie(request);
         String jsonData = this.JSONBuilder(request);
@@ -99,24 +99,24 @@ public class APIController {
         Delivery delivery = new Delivery(source, destination);
         AppUser appUser = userRepo.findByUsername(username).orElse(null);
         Robot robot = null;
-        if (appUser == null) return 400;
-        System.out.println("Hello this is a test 1");
+        if (appUser == null) return null;
         for (Robot r: robots) {
-            if (Objects.equals(r.getStatus(), "")) {
+            if (Objects.equals(r.getStatus(), RobotStatus.IDLE)) {
                 r.addTrip(delivery);
+                r.setStatus(RobotStatus.BUSY);
                 robot = r;
                 break;
             }
         }
         if (robot == null) {
-            System.out.println("Robots are all occupied with deliveries!");
-            return 400;
+            System.out.println("There is no available robot!");
+            return null;
         }
         appUser.setCurrentDelivery(delivery);
         delivery.setAssignedRobot(robot);
         deliveryRepo.save(delivery);
         System.out.println(delivery);
-        return 200;
+        return delivery;
     }
 
     /**
@@ -247,11 +247,10 @@ public class APIController {
     public List<Delivery> getRobotDeliveries(@PathVariable("id") String id, Model model, HttpServletRequest request) throws JSONException  {
         System.out.println("getRobotDeliveries() API");
 
-        Optional<Robot> r = robotRepo.findById(Long.valueOf(id));
+        Robot r = robotRepo.findByName(id);
         System.out.println(r);
-        Robot robot = r.stream().findFirst().orElse(null);
-        List<Delivery> listDeliveries = robot.getListTrips();
-        model.addAttribute("robot", robot);
+        List<Delivery> listDeliveries = r.getListTrips();
+        model.addAttribute("robot", r);
         model.addAttribute("listDeliveries", listDeliveries);
         return listDeliveries;
     }

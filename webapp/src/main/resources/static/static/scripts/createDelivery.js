@@ -21,7 +21,7 @@ submitButton.click((e) => {
         contentType: "application/json",
         success: function (res) {
             console.log('Delivery created successfully');
-            if (res === 200) {
+            if (res) {
                 setToast("success", "", "Successfully created delivery", true);
                 window.location.href = `/status/${res["deliveryId"]}`;
             }

@@ -8,9 +8,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class Robot for defining a Robot entity.
- */
 @Entity
 @Getter
 @Setter
@@ -19,12 +16,12 @@ public class Robot {
     @Id
     public String name;
 
-    public String status;
+    public RobotStatus status;
 
     @OneToMany
     public List<Delivery> listTrips;
 
-    public Robot(String name, String status, List<Delivery> listTrips){
+    public Robot(String name, RobotStatus status, List<Delivery> listTrips){
         this.name = name;
         this.status = status;
         this.listTrips = listTrips;
@@ -32,13 +29,12 @@ public class Robot {
 
     public Robot(String name) {
         this.name = name;
-        this.status = "";
+        this.status = RobotStatus.IDLE;
         this.listTrips = new ArrayList<>();
     }
 
     public void addTrip (Delivery delivery){
         this.listTrips.add(delivery);
-
     }
 
     /**

@@ -89,9 +89,9 @@ public class PageController {
      * @return Log page mapping.
      */
     @GetMapping("/robot/{id}")
-    public String getRobotPage(@PathVariable("id") Long robotId, Model model, HttpServletRequest request) {
+    public String getRobotPage(@PathVariable("id") String robotId, Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
-        Optional<Robot> r = robotRepo.findById(robotId);
+        Robot r = robotRepo.findByName((robotId));
         model.addAttribute("robot", r);
         return "robot";
     }
