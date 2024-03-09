@@ -138,6 +138,9 @@ class ActionTranslator(Node):
         elif move_action[0] == Action.L_TURN.value:
             message.linear.x = self.config["LEFT_TURN_LIN_SPEED"]
             message.angular.z = self.config["LEFT_TURN_ANG_SPEED"]
+        elif move_action[0] == Action.U_TURN.value:
+            message.linear.x = self.config["U_TURN_LIN_SPEED"]
+            message.angular.z = self.config["U_TURN_ANG_SPEED"]
         elif move_action[0] == Action.WALL_FOLLOW.value:
             feedback = self.wall_follow(float(move_action[1]), float(move_action[2]))
 

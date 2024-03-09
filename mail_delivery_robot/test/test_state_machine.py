@@ -8,14 +8,16 @@ T5 = (False, "NAV_RIGHT", "-1:-1")
 T6 = (False, "NAV_RIGHT", "10:0")
 T7 = (False, "NAV_PASS", "-1:-1")
 T8 = (False, "NAV_PASS", "10:0")
-T9 = (False, "NAV_DOCK", "-1:-1")
-T10 = (False, "NAV_DOCK", "10:0")
-T11 = (True, "NAV_NONE", "10:0")
-T12 = (True, "NAV_LEFT", "10:0")
-T13 = (True, "NAV_RIGHT", "10:0")
-T14 = (True, "NAV_PASS", "10:0")
-T15 = (True, "NAV_DOCK", "10:0")
-
+T9 = (False, "NAV_U-TURN", "-1:-1")
+T10 = (False, "NAV_U-TURN", "10:0")
+T11 = (False, "NAV_DOCK", "-1:-1")
+T12 = (False, "NAV_DOCK", "10:0")
+T13 = (True, "NAV_NONE", "10:0")
+T14 = (True, "NAV_LEFT", "10:0")
+T15 = (True, "NAV_RIGHT", "10:0")
+T16 = (True, "NAV_PASS", "10:0")
+T17 = (True, "NAV_U-TURN", "10:0")
+T18 = (True, "NAV_DOCK", "10:0")
 
 class ActionPublisherStub():
     '''
@@ -57,9 +59,9 @@ def test_path_one():
 
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_NO_DEST"
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T6)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
@@ -82,13 +84,13 @@ def test_path_two():
 
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T4)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
     state = send_update(state, T3)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T3)
     assert state.stateType.value == "HANDLE_INTERSECTION"
@@ -109,7 +111,7 @@ def test_path_three():
 
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T14)
+    state = send_update(state, T16)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T8) 
     assert state.stateType.value == "SHOULD_PASS"
@@ -131,11 +133,11 @@ def test_path_four():
 
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_DOCK"
-    state = send_update(state, T10)
+    state = send_update(state, T12)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "DOCKED"
 
     actionPublisher.extract_data()
@@ -163,17 +165,17 @@ def test_path_six():
     state = state_machine.No_Dest(actionPublisher)
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T13)
-    assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, T12)
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_TURN_RIGHT"
+    state = send_update(state, T16)
+    assert state.stateType.value == "COLLISION_TURN_RIGHT"
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T1)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
@@ -185,7 +187,7 @@ def test_path_six():
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
     state = send_update(state, T8)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T10)
+    state = send_update(state, T12)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
     state = send_update(state, T3)
     assert state.stateType.value == "HANDLE_INTERSECTION"
@@ -197,101 +199,101 @@ def test_path_six():
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T7)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_INTERSECTION"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_INTERSECTION"
-    state = send_update(state, T12)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T16)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T1)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T13)
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T2)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T14)
+    state = send_update(state, T16)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T4)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T5)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T6)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T7)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_INTERSECTION"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_INTERSECTION"
-    state = send_update(state, T10)
+    state = send_update(state, T12)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T1)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T2)
-    assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_NO_DEST"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_NO_DEST"
-    state = send_update(state, T1)
-    assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_NO_DEST"
+    state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_NO_DEST"
+    state = send_update(state, T1)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_NO_DEST"
+    state = send_update(state, T2)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T2)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T3)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T4)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T13)
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T5)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T14)
+    state = send_update(state, T16)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T7)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
     state = send_update(state, T8)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_TURN_RIGHT"
-    state = send_update(state, T10)
+    state = send_update(state, T12)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
     
 def test_path_seven():
@@ -302,17 +304,17 @@ def test_path_seven():
     state = state_machine.No_Dest(actionPublisher)
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T12)
-    assert state.stateType.value == "COLLISION_TURN_LEFT"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_TURN_LEFT"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T16)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T1)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
@@ -324,13 +326,13 @@ def test_path_seven():
     assert state.stateType.value == "SHOULD_TURN_LEFT"
     state = send_update(state, T8)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T10)
+    state = send_update(state, T12)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
     state = send_update(state, T1)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T4)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T2)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
@@ -338,7 +340,7 @@ def test_path_seven():
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T6)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T4)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
@@ -346,35 +348,35 @@ def test_path_seven():
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T5)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
-    state = send_update(state, T10)
-    assert state.stateType.value == "NO_DEST"
     state = send_update(state, T12)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T6)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T7)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
     state = send_update(state, T8)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T13)
-    assert state.stateType.value == "COLLISION_TURN_LEFT"
-    state = send_update(state, T9)
-    assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T14)
-    assert state.stateType.value == "COLLISION_TURN_LEFT"
-    state = send_update(state, T10)
-    assert state.stateType.value == "SHOULD_TURN_LEFT"
     state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T11)
+    assert state.stateType.value == "SHOULD_TURN_LEFT"
+    state = send_update(state, T16)
+    assert state.stateType.value == "COLLISION_TURN_LEFT"
+    state = send_update(state, T12)
+    assert state.stateType.value == "SHOULD_TURN_LEFT"
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_TURN_LEFT"
 
 def test_path_eight():
@@ -385,53 +387,53 @@ def test_path_eight():
     state = state_machine.No_Dest(actionPublisher)
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
-    state = send_update(state, T14)
-    assert state.stateType.value == "COLLISION_PASS"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_PASS"
-    state = send_update(state, T12)
+    state = send_update(state, T16)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_PASS"
+    state = send_update(state, T16)
+    assert state.stateType.value == "COLLISION_PASS"
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T1)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T2)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T3)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T13)
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T4)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T14)
+    state = send_update(state, T16)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T5)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T6)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_PASS"
     state = send_update(state, T7)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_PASS"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_PASS"
-    state = send_update(state, T10)
+    state = send_update(state, T12)
     assert state.stateType.value == "SHOULD_PASS"
     state = send_update(state, T2)
     assert state.stateType.value == "SHOULD_PASS"
@@ -441,13 +443,13 @@ def test_path_eight():
     assert state.stateType.value == "SHOULD_PASS"
     state = send_update(state, T8)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T10)
+    state = send_update(state, T12)
     assert state.stateType.value == "SHOULD_PASS"
     state = send_update(state, T1)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T7)
     assert state.stateType.value == "SHOULD_PASS"
@@ -455,7 +457,7 @@ def test_path_eight():
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T8)
     assert state.stateType.value == "SHOULD_PASS"
@@ -463,11 +465,11 @@ def test_path_eight():
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T7)
     assert state.stateType.value == "SHOULD_PASS"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
 
 
@@ -479,9 +481,9 @@ def test_path_nine():
     state = state_machine.No_Dest(actionPublisher)
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "SHOULD_DOCK"
     state = send_update(state, T2)
     assert state.stateType.value == "SHOULD_DOCK"
@@ -491,53 +493,53 @@ def test_path_nine():
     assert state.stateType.value == "SHOULD_DOCK"
     state = send_update(state, T8)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T10)
-    assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_DOCK"
-    state = send_update(state, T11)
-    assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T12)
+    assert state.stateType.value == "SHOULD_DOCK"
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_DOCK"
+    state = send_update(state, T16)
+    assert state.stateType.value == "COLLISION_DOCK"
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T1)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T12)
+    state = send_update(state, T14)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T2)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T13)
+    state = send_update(state, T15)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T3)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T14)
+    state = send_update(state, T16)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T4)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T5)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T6)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T7)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T8)
     assert state.stateType.value == "SHOULD_DOCK"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_DOCK"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "SHOULD_DOCK"
     state = send_update(state, T1)
     assert state.stateType.value == "DOCKED"
@@ -550,7 +552,7 @@ def test_path_ten():
     state = state_machine.No_Dest(actionPublisher)
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "SHOULD_DOCK"
     state = send_update(state, T3)
     assert state.stateType.value == "DOCKED"
@@ -563,7 +565,7 @@ def test_path_eleven():
     state = state_machine.No_Dest(actionPublisher)
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T10)
+    state = send_update(state, T12)
     assert state.stateType.value == "SHOULD_DOCK"
     state = send_update(state, T5)
     assert state.stateType.value == "DOCKED"
@@ -576,9 +578,9 @@ def test_path_twelve():
     state = state_machine.No_Dest(actionPublisher)
     state = send_update(state, T2)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
-    state = send_update(state, T15)
+    state = send_update(state, T18)
     assert state.stateType.value == "COLLISION_DOCK"
     state = send_update(state, T1)
     assert state.stateType.value == "SHOULD_DOCK"
@@ -605,7 +607,7 @@ def test_path_thirteen():
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T5)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
@@ -613,7 +615,7 @@ def test_path_thirteen():
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T6)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
@@ -621,60 +623,156 @@ def test_path_thirteen():
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T6)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T3)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
-    state = send_update(state, T11)
+    state = send_update(state, T13)
     assert state.stateType.value == "COLLISION_NO_DEST"
     state = send_update(state, T4)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T5)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T6)
     assert state.stateType.value == "SHOULD_TURN_RIGHT"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T4)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
-    state = send_update(state, T9)
+    state = send_update(state, T11)
     assert state.stateType.value == "HANDLE_INTERSECTION"
     state = send_update(state, T8)
     assert state.stateType.value == "NO_DEST"
     state = send_update(state, T3)
     assert state.stateType.value == "SHOULD_TURN_LEFT"
 
+def test_path_fourteen():
+    '''
+    Test Path 14 for the U-Turns
+    '''
+    actionPublisher = ActionPublisherStub()
+    state = state_machine.No_Dest(actionPublisher)
+    state = send_update(state, T2)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T17)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T14)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T16)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T17)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T1)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T2)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T4)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T6)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T8)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T12)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T1)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T4)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T17)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T2)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T5)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T6)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T17)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T4)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T7)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T8)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T17)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T5)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T11)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T12)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T17)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T6)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T13)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T7)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T14)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T8)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T15)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T11)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T16)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T12)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T17)
+    assert state.stateType.value == "COLLISION_U_TURN"
 
+def test_path_fifteen():
 
+    '''
+    Test Path 15 for the U-Turns
+    '''
     
+    actionPublisher = ActionPublisherStub()
+    state = state_machine.No_Dest(actionPublisher)
 
-    
+    state = send_update(state, T2)
+    assert state.stateType.value == "NO_DEST"
+    state = send_update(state, T17)
+    assert state.stateType.value == "COLLISION_U_TURN"
+    state = send_update(state, T9)
+    assert state.stateType.value == "SHOULD_U_TURN"
+    state = send_update(state, T3)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
+    state = send_update(state, T14)
+    assert state.stateType.value == "COLLISION_INTERSECTION"
+    state = send_update(state, T3)
+    assert state.stateType.value == "HANDLE_INTERSECTION"
 
-
-
-    
-
-
-
+    actionPublisher.extract_data()
+    expected_actions = ["WALL_FOLLOW", "L_TURN", "R_TURN", "U_TURN", "L_TURN", "R_TURN"]
+    assert actionPublisher.action_data == expected_actions

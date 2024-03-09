@@ -47,16 +47,21 @@ def launch_setup(context, *args, **kwargs):
             namespace='control',
             executable='robot_driver',
             name='robot_driver',
-            output='log',
-            remappings=[('/control/trips', 'communication/trips')]
+            output='log'
             ),
         Node(package='mail_delivery_robot',
             namespace='navigation',
             executable='captain',
             name='captain',
             output='log',
-            remappings=[('/navigation/navigation', '/control/navigation'),
-                        ('/control/trips', 'communication/trips')]
+            remappings=[('/navigation/navigation', '/control/navigation')]
+            ),
+        Node(package='mail_delivery_robot',
+            namespace='communication',
+            executable='client',
+            name='client',
+            output='log',
+            remappings=[('/communication/trips', '/navigation/trips')]
             ),
         Node(package='mail_delivery_robot',
             namespace='perceptions',

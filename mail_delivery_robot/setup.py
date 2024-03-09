@@ -8,7 +8,7 @@ setup(
     name=package_name,
     version='0.0.0',
     packages=[package_name],
-   py_modules=["control.robot_driver", "control.state_machine", "perceptions.lidar_sensor", "control.action_translator", "perceptions.beacon_sensor", "navigation.captain", "perceptions.bumper_sensor", "tools.csv_parser", "tools.nav_parser", "navigation.map", "stubs.stub_sensor"],
+   py_modules=["control.robot_driver", "control.state_machine", "perceptions.lidar_sensor", "control.action_translator", "perceptions.beacon_sensor", "navigation.captain", "navigation.map", "perceptions.bumper_sensor", "communication.client", "tools.csv_parser", "tools.nav_parser", "stubs.stub_sensor"],
     data_files=[
         # Include the CSV files.
         (os.path.join('lib', package_name, 'config'), glob(os.path.join('config', '*.csv'))),
@@ -34,6 +34,7 @@ setup(
             'beacon_sensor = perceptions.beacon_sensor:main',
             'captain = navigation.captain:main',
             'bumper_sensor = perceptions.bumper_sensor:main',
+            'client = communication.client:main',
             'stub_sensor = stubs.stub_sensor:main'
         ],
     },

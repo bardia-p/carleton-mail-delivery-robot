@@ -190,7 +190,7 @@ class StubSensor(Node):
         '''
         The callback to end the tests.
         '''
-        nodes = ["action_translator", "robot_driver", "captain", "stub_sensor"]
+        nodes = ["action_translator", "robot_driver", "captain", "client", "stub_sensor"]
         for node in nodes:
             os.system('killall ' + node)
 
