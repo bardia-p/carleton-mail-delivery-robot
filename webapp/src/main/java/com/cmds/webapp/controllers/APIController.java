@@ -1,5 +1,6 @@
 package com.cmds.webapp.controllers;
 
+import com.cmds.webapp.aspect.NeedsLogin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.json.*;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -84,6 +86,7 @@ public class APIController {
      * @throws IOException
      */
     @PostMapping("/createDelivery")
+    @NeedsLogin(type="Delivery")
     public Delivery createDelivery(HttpServletRequest request) throws IOException {
         System.out.println("createDelivery() API");
         String username = CookieController.getUsernameFromCookie(request);
@@ -106,8 +109,11 @@ public class APIController {
             }
         }
         if (robot == null) {
-            System.out.println("There is no available robot!");
-            return null;
+            System.out.println("No free robot, adding to a robot's queue");
+            robot = robots.stream().min(Comparator.comparingInt(r->r.getListTrips().size())).orElse(null);
+            if (robot == null) {
+                return null;
+            }
         }
         appUser.setCurrentDelivery(delivery);
         delivery.setAssignedRobot(robot);
@@ -123,6 +129,7 @@ public class APIController {
      * @throws IOException
      */
     @PostMapping("/createRobot")
+    @NeedsLogin(type="int")
     public int createRobot(HttpServletRequest request) throws IOException {
         System.out.println("createRobot() API");
         String jsonData = this.JSONBuilder(request);
@@ -199,6 +206,7 @@ public class APIController {
      * @throws IOException
      */
     @PostMapping("/updateStatus/{id}")
+    @NeedsLogin(type="string")
     public int updateStatus(@PathVariable("id") String id, HttpServletRequest request) throws IOException {
         System.out.println("Updating delivery status API()");
         String jsonData = this.JSONBuilder(request);
@@ -235,17 +243,6 @@ public class APIController {
         return deliveryRepo.findById(Long.valueOf(id)).orElse(null);
     }
 
-
-    /**
-     * Test mapping to ensure it is compatible in ROS.
-     * @return test string
-     * @throws IOException
-     */
-    @GetMapping
-    public String getEndpoint() throws IOException {
-        return "test";
-    }
-
     /**
      * API Call for getting a JSON formatted object of all deliveries for a given Robot ID.
      * @param id String Robot ID.
@@ -253,6 +250,7 @@ public class APIController {
      * @throws JSONException
      */
     @GetMapping("getRobotDeliveries/{id}")
+    @NeedsLogin(type="string")
     public String getRobotDeliveries(@PathVariable("id") String id) throws JSONException  {
         System.out.println("getRobotDeliveries() API");
 

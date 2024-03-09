@@ -1,5 +1,6 @@
 package com.cmds.webapp.controllers;
 
+import com.cmds.webapp.aspect.NeedsLogin;
 import com.cmds.webapp.models.Robot;
 import com.cmds.webapp.repos.DeliveryRepository;
 import com.cmds.webapp.repos.RobotRepository;
@@ -50,6 +51,7 @@ public class PageController {
      * @return
      */
     @GetMapping("/createDelivery")
+    @NeedsLogin
     public String getDeliveryPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "createDelivery";
@@ -83,6 +85,7 @@ public class PageController {
      * @return Log page mapping.
      */
     @GetMapping("/status/{id}")
+    @NeedsLogin
     public String getStatusPage(@PathVariable("id") String deliveryId, Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "log";
@@ -95,6 +98,7 @@ public class PageController {
      * @return Log page mapping.
      */
     @GetMapping("/robot/{id}")
+    @NeedsLogin
     public String getRobotPage(@PathVariable("id") String robotId, Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         Robot r = robotRepo.findByName((robotId));
@@ -108,6 +112,7 @@ public class PageController {
      * @return Login page mapping.
      */
     @GetMapping("/registerRobot")
+    @NeedsLogin
     public String getRegisterRobotPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "registerRobot";
