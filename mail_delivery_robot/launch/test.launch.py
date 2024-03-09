@@ -53,8 +53,7 @@ def generate_launch_description():
             namespace='control',
             executable='robot_driver',
             name='robot_driver',
-            output='log',
-            remappings=[('/stubs/trips', '/control/trips')]
+            output='log'
             ),
         Node(package='mail_delivery_robot',
             namespace='navigation',
