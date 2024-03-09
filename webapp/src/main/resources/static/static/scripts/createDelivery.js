@@ -22,7 +22,6 @@ submitButton.click((e) => {
         success: function (res) {
             console.log('Delivery created successfully');
             if (res) {
-                // delivery not null
                 setToast("success", "", "Successfully created delivery", true);
                 window.location.href = `/status/${res["deliveryId"]}`;
             }
@@ -30,7 +29,7 @@ submitButton.click((e) => {
         error: function (xhr, status, error) {
             // error handling
             console.error('Error creating delivery:', error);
-            setToast("error", "Something went wrong", "Could not create user");
+            setToast("error", "Something went wrong", "Could not create delivery");
         }
     })
 

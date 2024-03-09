@@ -10,10 +10,12 @@ import com.cmds.webapp.models.*;
 import com.cmds.webapp.repos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import org.json.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -87,20 +89,54 @@ public class APIController {
         String username = CookieController.getUsernameFromCookie(request);
         String jsonData = this.JSONBuilder(request);
         ObjectMapper objectMapper = new ObjectMapper();
+        List<Robot> robots = robotRepo.findAll();
         HashMap<String, String> userData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, String>>() {});
         System.out.println(userData);
         String source = userData.get("source");
         String destination = userData.get("destination");
         Delivery delivery = new Delivery(source, destination);
         AppUser appUser = userRepo.findByUsername(username).orElse(null);
+        Robot robot = null;
         if (appUser == null) return null;
+        for (Robot r: robots) {
+            if (Objects.equals(r.getStatus(), Robot.RobotStatus.IDLE)) {
+                r.addTrip(delivery);
+                robot = r;
+                break;
+            }
+        }
+        if (robot == null) {
+            System.out.println("There is no available robot!");
+            return null;
+        }
         appUser.setCurrentDelivery(delivery);
+        delivery.setAssignedRobot(robot);
         deliveryRepo.save(delivery);
         System.out.println(delivery);
         return delivery;
     }
+
     /**
-     * API Call to login a user by verifying that it exists in the userRespository
+     * Post mapping for creating a delivery.
+     * @param request An HttpServletRequest request.
+     * @return Valid delivery if successful, null otherwise.
+     * @throws IOException
+     */
+    @PostMapping("/createRobot")
+    public int createRobot(HttpServletRequest request) throws IOException {
+        System.out.println("createRobot() API");
+        String jsonData = this.JSONBuilder(request);
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, String> userData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, String>>() {});
+        System.out.println(userData);
+        String robotName = userData.get("robotname");
+        Robot robot = new Robot(robotName);
+        robotRepo.save(robot);
+        System.out.println(robot);
+        return 200;
+    }
+    /**
+     * API Call to log in a user by verifying that it exists in the userRespository
      * @param request HttpServletRequest, a request from the client.
      * @return 200, if user successfully logs in, 401 if user is not authenticated properly.
      * @throws IOException
@@ -156,7 +192,7 @@ public class APIController {
     }
 
     /**
-     * <p>Handle the update of the status of a delivery based on its ID</p>
+     * Handle the update of the status of a delivery based on its ID.
      * @param id The delivery ID
      * @param request
      * @return 200 if successful, otherwise 400
@@ -165,21 +201,19 @@ public class APIController {
     @PostMapping("/updateStatus/{id}")
     public int updateStatus(@PathVariable("id") String id, HttpServletRequest request) throws IOException {
         System.out.println("Updating delivery status API()");
-        String username = CookieController.getUsernameFromCookie(request);
         String jsonData = this.JSONBuilder(request);
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String, Object> deliveryData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, Object>>() {});
         // Extract specific data from the parsed JSON
         String status = (String) deliveryData.get("status");
-
-        AppUser appUser = userRepo.findByUsername(username).orElse(null);
         Delivery currDelivery = deliveryRepo.findById((Long.valueOf(id))).orElse(null);
-
+        System.out.println(currDelivery);
         if (currDelivery == null) return 400;
-
-        if (appUser == null) {
-            System.out.println("Could not find the user!");
-            return 400;
+        if (status.equals("COMPLETE")){
+            Robot currRobot = currDelivery.getAssignedRobot();
+            currRobot.removeTrip(currDelivery.getDeliveryId());
+            robotRepo.save(currRobot);
+            return 200;
         }
 
         currDelivery.setStatus(status);
@@ -201,6 +235,7 @@ public class APIController {
         return deliveryRepo.findById(Long.valueOf(id)).orElse(null);
     }
 
+
     /**
      * Test mapping to ensure it is compatible in ROS.
      * @return test string
@@ -209,5 +244,34 @@ public class APIController {
     @GetMapping
     public String getEndpoint() throws IOException {
         return "test";
+    }
+
+    /**
+     * API Call for getting a JSON formatted object of all deliveries for a given Robot ID.
+     * @param id String Robot ID.
+     * @return A Json formatted list of deliveries for a particular robot.
+     * @throws JSONException
+     */
+    @GetMapping("getRobotDeliveries/{id}")
+    public String getRobotDeliveries(@PathVariable("id") String id) throws JSONException  {
+        System.out.println("getRobotDeliveries() API");
+
+        Robot robot = robotRepo.findByName(id);
+        JSONObject robotObject = new JSONObject();
+        if (robot != null) {
+            JSONObject deliveryObject = new JSONObject();
+            for (Delivery d: robot.getListTrips()) {
+                if (d.getStatus().equals("NEW")) {
+                    deliveryObject.put("sourceDest", d.getStartingDest());
+                    deliveryObject.put("finalDest", d.getFinalDest());
+                    robotObject.put(d.getDeliveryId().toString(), deliveryObject);
+                }
+            }
+        } else {
+            System.out.println("No robot found of ID " + id);
+            return "";
+        }
+        System.out.println(robotObject.toString());
+        return robotObject.toString();
     }
 }

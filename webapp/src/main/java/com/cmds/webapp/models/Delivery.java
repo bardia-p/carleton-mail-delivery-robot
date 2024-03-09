@@ -1,5 +1,7 @@
 package com.cmds.webapp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +25,11 @@ public class Delivery {
 
     public String status;
 
+
+    @ManyToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Robot assignedRobot;
+
     /**
      * Default constructor for Delivery.
      * @param startingDest A string starting destination.
@@ -32,5 +39,6 @@ public class Delivery {
         this.startingDest = startingDest;
         this.finalDest = finalDest;
         this.status = "";
+        this.assignedRobot = null;
     }
 }

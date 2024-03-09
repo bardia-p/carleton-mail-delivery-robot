@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface RobotRepository extends CrudRepository<Robot, Long> {
     List<Robot> findAll();
-    Robot findById(long Id);
+    Robot findByName(String Id);
 }
 
