@@ -10,6 +10,7 @@ class Nav_Event(Enum):
     '''
     An enum for the various navigation events for the robot.
     '''
+    NAV_START = "NAV_START"
     NAV_NONE = "NAV_NONE"
     NAV_LEFT = "NAV_LEFT"
     NAV_RIGHT = "NAV_RIGHT"
@@ -96,6 +97,9 @@ class Captain(Node):
         self.prev_beacon = trip[0]
         self.destination = trip[1]
         self.get_logger().info("Got a new trip from " + self.prev_beacon + " to " + self.destination)
+        navMessage = String()
+        navMessage.data = Nav_Event.NAV_START.value
+        self.mapPublisher.publish(navMessage)
 
 def main():
     '''

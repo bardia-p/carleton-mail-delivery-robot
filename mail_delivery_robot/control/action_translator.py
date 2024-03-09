@@ -6,7 +6,6 @@ from std_msgs.msg import String
 from std_msgs.msg import Empty
 from geometry_msgs.msg import Twist
 from control.state_machine import Action
-from rclpy.action import ActionClient
 
 from tools.csv_parser import loadConfig
 
@@ -16,6 +15,7 @@ class ActionTranslator(Node):
     
     @Subscribers:
     - Listens to /actions in case new actions were sent.
+    - Listens to /dock_status to see the dock station.
 
     @Publishers:
     - Publishes Twist commands to /cmds_vel to move the robot.
@@ -44,15 +44,23 @@ class ActionTranslator(Node):
             self.undockPublisher = self.create_publisher(Empty, 'dock', 1)
             self.dockPublisher = self.create_publisher(Empty, 'undock', 1)
         else:
-            from irobot_create_msgs.action import Dock, Undock
-            self.dockPublisher = ActionClient(self, Dock, 'dock')
-            #self.undockPublisher = ActionClient(self, Undock, 'undock')
+            from irobot_create_msgs.msg import DockStatus
+            self.dockStatusSubscriber = self.create_subscription(DockStatus, "dock_status", self.updateDockStatus, 10)
 
-            #self.dockPublisher.wait_for_server()
-            #self.undockPublisher.wait_for_server()
+        self.should_dock = False
+        self.can_see_dock = False
 
         # The subscribers for the node.
-        self.subscription = self.create_subscription(String, 'actions', self.decodeAction, 10)
+        self.actionSubscriber = self.create_subscription(String, 'actions', self.decodeAction, 10)
+
+    def updateDockStatus(self, data):
+        '''
+        The callback for /dock_status.
+        Reads the dock status of the robot.
+
+        @param data: the dock status data.
+        '''
+        self.can_see_dock = data.data.dock_visible
 
     def decodeAction(self, data):
         '''
@@ -71,19 +79,21 @@ class ActionTranslator(Node):
                 dockMessage = Empty()
                 self.dockPublisher.publish(dockMessage)
             else:
-                from irobot_create_msgs.action import Dock
-                #dockMessage = Dock.Goal()
-                #self.dockPublisher.send_goal(dockMessage)
-                # Waits for the server to finish performing the action.
-                #r = self.dockPublisher.wait_for_result()
-                #self.get_logger().info(r)
-                os.system('ros2 action send_goal /dock irobot_create_msgs/action/Dock "{}"')
+                if self.can_see_dock:
+                    os.system('ros2 action send_goal /dock irobot_create_msgs/action/Dock "{}"')
+                else:
+                    # Tries to search for the dock station.
+                    message = Twist()
+                    message.angular.z = self.config["RIGHT_TURN_ANG_SPEED"]
+                    message.linear.x = self.config["WALL_FOLLOW_SPEED"]
+                    self.drivePublisher.publish(message)
+
         elif split_action[0] == Action.UNDOCK.value:
             if self.robot_model != "CREATE_3":
                 undockMessage = Empty()
+                self.undockPublisher.publish(undockMessage)
             else:
-                undockMessage = Undock()
-            self.undockPublisher.publish(undockMessage)
+                os.system('ros2 action send_goal /undock irobot_create_msgs/action/Undock "{}"')
         else:
             self.move_robot(split_action)
     

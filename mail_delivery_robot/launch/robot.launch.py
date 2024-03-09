@@ -40,20 +40,23 @@ def launch_setup(context, *args, **kwargs):
             name='action_translator',
             output='log',
             parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
-            remappings=[('/control/cmd_vel', '/cmd_vel')]
+            remappings=[('/control/cmd_vel', '/cmd_vel'),
+                        ('/control/dock_status', '/dock_status')]
             ),
         Node(package='mail_delivery_robot',
             namespace='control',
             executable='robot_driver',
             name='robot_driver',
-            output='log'
+            output='log',
+            remappings=[('/control/trips', 'communication/trips')]
             ),
         Node(package='mail_delivery_robot',
             namespace='navigation',
             executable='captain',
             name='captain',
             output='log',
-            remappings=[('/navigation/navigation', '/control/navigation')]
+            remappings=[('/navigation/navigation', '/control/navigation'),
+                        ('/control/trips', 'communication/trips')]
             ),
         Node(package='mail_delivery_robot',
             namespace='perceptions',

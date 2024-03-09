@@ -9,12 +9,12 @@ from geometry_msgs.msg import Twist
 from tools.csv_parser import loadConfig
 
 LIDAR_TIMER = 0.2
-BEACON_TIMER = 10
+BEACON_TIMER = 15
 BUMPER_TIMER = 0.1
 MIN_WALL_DISTANCE = 0.1
 ANGLE_ERROR = 0.6
 INTERSECTION_COUNT = 2
-TRIP_TIMER = 0.5
+TRIP_TIMER = 1
 
 class StubSensor(Node):
     '''
