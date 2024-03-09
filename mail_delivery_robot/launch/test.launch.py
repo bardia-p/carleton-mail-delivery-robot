@@ -26,7 +26,7 @@ def generate_launch_description():
             description="Specifies the wall's inconsistency as a percentage '[0.0 to 1.0]'.")
 
     delivery = DeclareLaunchArgument("delivery",
-            default_value="UC:Nicol",
+            default_value="",
             description="Specifies the robot's delivery (source and destination) '[src:dest]'.")
     
     duration = DeclareLaunchArgument("duration",

@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 import requests
+import json
 
 class Client(Node):
     '''
@@ -20,6 +21,13 @@ class Client(Node):
         '''
         super().__init__('client')
         
+        # Get the model of the robot.
+        self.declare_parameter('robot_model', 'CREATE_2')
+        self.robot_model = self.get_parameter('robot_model').get_parameter_value().string_value
+
+        # The current trip
+        self.currentTrip = ""
+
         # The publishers for the node.
         self.tripPublisher = self.create_publisher(String, 'trips', 10)
 
@@ -28,7 +36,8 @@ class Client(Node):
 
         # The timer to check for new requests with the web app.
         # TODO: REPLACE THIS WITH A CONSTANT
-        #self.request_timer = self.create_timer(2, self.handleUpdate)
+        self.request_timer = self.create_timer(2, self.sendRequest)
+        self.update_timer = self.create_timer(2, self.handleUpdate)
 
     def handleUpdate(self):
         '''
@@ -36,9 +45,9 @@ class Client(Node):
 
         @param data: the new update data.
         '''
-        url = 'https://cudelivery.azurewebsites.net/api/v1/updateStatus/1'
+        url = 'https://cudelivery.azurewebsites.net/api/v1/updateStatus/' + self.currentTrip
         post_data = {
-            "status": "max is a bozo"
+            "status": "IN PROGRESS"
         }
 
         x = requests.post(url, json = post_data)
@@ -49,8 +58,21 @@ class Client(Node):
         '''
         The callback for the requests timer.
         '''
-        r = requests.get("https://cudelivery.azurewebsites.net/api/v1").text
-        self.get_logger().info("Got a new request: " + r)
+        if self.currentTrip == "":
+            url = "https://cudelivery.azurewebsites.net/api/v1/getRobotDeliveries/" + self.robot_model
+            r = json.loads(requests.get(url).text)
+
+            # Get a new trip once you are done.
+            if len(r) != 0:
+                for k in r:
+                    trip = r[k]["sourceDest"]+":"+r[k]["finalDest"]
+                    self.currentTrip = k
+                    break
+
+                tripMessage = String()
+                tripMessage.data = trip 
+                self.tripPublisher.publish(tripMessage)
+                self.get_logger().info("Got a new request: " + trip)
 
 def main():
     '''

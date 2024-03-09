@@ -61,6 +61,7 @@ def launch_setup(context, *args, **kwargs):
             executable='client',
             name='client',
             output='log',
+            parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
             remappings=[('/communication/trips', '/navigation/trips')]
             ),
         Node(package='mail_delivery_robot',

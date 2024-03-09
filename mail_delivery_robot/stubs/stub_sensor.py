@@ -52,12 +52,12 @@ class StubSensor(Node):
         self.wall_diff = float(self.get_parameter('wall_diff').value)
 
         self.declare_parameter('delivery', 'UC:Nicol')
-        self.source, self.destination = self.get_parameter('delivery').value.split(":")
+        self.trip = self.get_parameter('delivery').value
 
         self.declare_parameter('duration', 45)
         self.duration = float(self.get_parameter('duration').value)
 
-        self.get_logger().info("Init Pos (distance, angle): (" + self.wall_distance + "," + self.wall_angle + ") Collision Freq: " + str(self.collision_freq) + ", Path: " + str(self.path) + " , Wall Difficulty: " + str(self.wall_diff) + ", Delivery(src, dest): (" + self.source + "," + self.destination + "), Duration: " + str(self.duration))
+        self.get_logger().info("Init Pos (distance, angle): (" + self.wall_distance + "," + self.wall_angle + ") Collision Freq: " + str(self.collision_freq) + ", Path: " + str(self.path) + " , Wall Difficulty: " + str(self.wall_diff) + ", Delivery(src, dest): (" + self.trip + "), Duration: " + str(self.duration))
 
         # Load the global config.
         self.config = loadConfig()
@@ -77,7 +77,8 @@ class StubSensor(Node):
         if self.collision_freq > 0:
             self.bumper_timer = self.create_timer(BUMPER_TIMER, self.bumper_callback)
 
-        self.trip_timer = self.create_timer(TRIP_TIMER, self.init_trip)
+        if len(self.trip) > 0:
+            self.trip_timer = self.create_timer(TRIP_TIMER, self.init_trip)
         self.kill_timer = self.create_timer(self.duration, self.end_tests)
 
         # Action Translator Subscription
@@ -179,12 +180,11 @@ class StubSensor(Node):
         '''
         The callback function to initialize a new trip.
         '''
-        if self.source != "" and self.destination != "":
-            trip = String()
-            trip.data = self.source + ":" + self.destination
-            self.trip_publisher.publish(trip)
-            self.source = ""
-            self.destination = ""
+        if self.trip != "":
+            tripMessage = String()
+            tripMessage.data = self.trip
+            self.trip_publisher.publish(tripMessage)
+            self.trip = ""
 
     def end_tests(self):
         '''
