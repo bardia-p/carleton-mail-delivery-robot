@@ -64,7 +64,6 @@ class RobotDriver(Node):
 
         @param data: The data sent by the lidar sensor.
         '''
-        #TODO: ADD PARTICLE FILTERING HERE
         lidarData = str(data.data)
         self.get_logger().info(lidarData)
 

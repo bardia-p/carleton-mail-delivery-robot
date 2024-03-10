@@ -60,7 +60,8 @@ def generate_launch_description():
             executable='captain',
             name='captain',
             output='log',
-            remappings=[('/navigation/navigation', '/control/navigation')]
+            remappings=[('/navigation/navigation', '/control/navigation'),
+                        ('/navigation/update', '/communication/update')]
             ),
         Node(package='mail_delivery_robot',
             namespace='communication',

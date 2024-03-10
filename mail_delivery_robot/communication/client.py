@@ -4,6 +4,8 @@ from std_msgs.msg import String
 import requests
 import json
 
+from tools.csv_parser import loadConfig
+
 class Client(Node):
     '''
     The Node in charge of communicating to the webapp.
@@ -21,6 +23,9 @@ class Client(Node):
         '''
         super().__init__('client')
         
+        # Load the global config.
+        self.config = loadConfig()
+
         # Get the model of the robot.
         self.declare_parameter('robot_model', 'CREATE_2')
         self.robot_model = self.get_parameter('robot_model').get_parameter_value().string_value
@@ -32,27 +37,25 @@ class Client(Node):
         self.tripPublisher = self.create_publisher(String, 'trips', 10)
 
         # The subscribers for the node.
-        self.updateSubscriber = self.create_subscription(String, 'updates', self.handleUpdate, 10)
+        self.updateSubscriber = self.create_subscription(String, 'update', self.handleUpdate, 10)
 
         # The timer to check for new requests with the web app.
-        # TODO: REPLACE THIS WITH A CONSTANT
-        self.request_timer = self.create_timer(2, self.sendRequest)
-        self.update_timer = self.create_timer(2, self.handleUpdate)
+        self.request_timer = self.create_timer(self.config["CLIENT_REQUEST_TIMER"], self.sendRequest)
 
-    def handleUpdate(self):
+    def handleUpdate(self, data):
         '''
-        The callback for /updates.
+        The callback for /update.
 
         @param data: the new update data.
         '''
+        update_data = data.data
+        self.get_logger().info("Got a new updated: " + update_data)
+
         url = 'https://cudelivery.azurewebsites.net/api/v1/updateStatus/' + self.currentTrip
-        post_data = {
-            "status": "IN PROGRESS"
-        }
+        post_data = {"status": update_data}
 
         x = requests.post(url, json = post_data)
         self.get_logger().info(x.text)
-        return
     
     def sendRequest(self):
         '''
