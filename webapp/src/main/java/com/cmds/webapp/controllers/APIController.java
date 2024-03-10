@@ -206,7 +206,6 @@ public class APIController {
      * @throws IOException
      */
     @PostMapping("/updateStatus/{id}")
-    @NeedsLogin(type="string")
     public int updateStatus(@PathVariable("id") String id, HttpServletRequest request) throws IOException {
         System.out.println("Updating delivery status API()");
         String jsonData = this.JSONBuilder(request);
@@ -217,15 +216,16 @@ public class APIController {
         Delivery currDelivery = deliveryRepo.findById((Long.valueOf(id))).orElse(null);
         System.out.println(currDelivery);
         if (currDelivery == null) return 400;
+
+        currDelivery.addStatus(status);
+        deliveryRepo.save(currDelivery);
+
         if (status.equals("COMPLETE")){
             Robot currRobot = currDelivery.getAssignedRobot();
             currRobot.removeTrip(currDelivery.getDeliveryId());
             robotRepo.save(currRobot);
             return 200;
         }
-
-        currDelivery.setStatus(status);
-        deliveryRepo.save(currDelivery);
 
         return 200;
     }
@@ -237,10 +237,25 @@ public class APIController {
      * @throws IOException
      */
     @GetMapping("/getDeliveryStatus/{id}")
-    public Delivery getDeliveryStatus(@PathVariable("id") String id) throws IOException {
+    public String getDeliveryStatus(@PathVariable("id") String id) throws IOException, JSONException {
         System.out.println("getDeliveryStatus()");
+        Delivery delivery = deliveryRepo.findById(Long.valueOf(id)).orElse(null);
+
+        JSONObject res = new JSONObject();
+
+        if (delivery == null){
+            res.put("statuses",  new JSONObject());
+        } else {
+            JSONObject statuses = new JSONObject();
+
+            for (int i = 0; i < delivery.getStatuses().size(); i++){
+                statuses.put(String.valueOf(i + 1), delivery.getStatuses().get(i));
+            }
+            res.put("statuses", statuses);
+        }
+
         // Extract specific data from the parsed JSON
-        return deliveryRepo.findById(Long.valueOf(id)).orElse(null);
+        return res.toString();
     }
 
     /**
@@ -259,7 +274,7 @@ public class APIController {
         if (robot != null) {
             JSONObject deliveryObject = new JSONObject();
             for (Delivery d: robot.getListTrips()) {
-                if (d.getStatus().equals("NEW")) {
+                if (d.getStatuses().get(d.getStatuses().size() - 1).equals("NEW")) {
                     deliveryObject.put("sourceDest", d.getStartingDest());
                     deliveryObject.put("finalDest", d.getFinalDest());
                     robotObject.put(d.getDeliveryId().toString(), deliveryObject);
