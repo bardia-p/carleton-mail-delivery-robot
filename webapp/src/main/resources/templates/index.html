@@ -29,6 +29,7 @@
     <p>You can define a robot, and create a delivery for the robot to go on!</p>
     <a href="/registerRobot"><button>Register Robot</button></a>
     <a href="/createDelivery"><button>Create Delivery</button></a>
+    <a th:if="${currentUser != null && currentUser.getCurrentDelivery() != null}" th:href="'/status/' + ${currentUser.getCurrentDelivery().getDeliveryId()}"><button>View Current Delivery</button></a>
     <br>
     <br>
     <table>

@@ -1,10 +1,12 @@
 package com.cmds.webapp.controllers;
 
 import com.cmds.webapp.aspect.NeedsLogin;
+import com.cmds.webapp.models.AppUser;
 import com.cmds.webapp.models.Robot;
 import com.cmds.webapp.repos.DeliveryRepository;
 import com.cmds.webapp.repos.RobotRepository;
 import com.cmds.webapp.repos.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,17 @@ public class PageController {
         CookieController.setUsernameCookie(model, request);
         List<Robot> robotList = robotRepo.findAll();
         model.addAttribute("robots", robotList);
+        List<AppUser> appUsers = userRepo.findAll();
+        String username = CookieController.getUsernameFromCookie(request);
+        System.out.println(username);
+        if (username != null) {
+            for (AppUser user: appUsers){
+                if (user.getUsername().equals(username)) {
+                    model.addAttribute("currentUser", user);
+                    break;
+                }
+            }
+        }
         return "index";
     }
 
