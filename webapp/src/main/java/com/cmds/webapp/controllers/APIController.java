@@ -265,7 +265,6 @@ public class APIController {
      * @throws JSONException
      */
     @GetMapping("getRobotDeliveries/{id}")
-    @NeedsLogin(type="string")
     public String getRobotDeliveries(@PathVariable("id") String id) throws JSONException  {
         System.out.println("getRobotDeliveries() API");
 
