@@ -47,19 +47,20 @@ package "models" <<frame>> {
         - deliveryId: Long
         - startingDest: String
         - finalDest: String
-        - status: String
+        - statuses: List<String>
         - assignedRobot: Robot
         + Delivery(startingDest: String, finalDest: String)
         + getDeliveryId(): Long
         + getStartingDest(): String
         + getFinalDest(): String
-        + getStatus(): String
+        + getStatuses(): List<String>
         + getAssignedRobot(): Robot
         + setDeliveryId(deliveryId: Long): void
         + setStartingDest(startingDest: String): void
         + setFinalDest(finalDest: String): void
-        + setStatus(status: String): void
+        + setStatus(statuses: List<String>): void
         + setAssignedRobot(assignedRobot: Robot): void
+        + addStatus(s: String): void
     }
 }
 

@@ -1,5 +1,6 @@
 package com.cmds.webapp.controllers;
 
+import com.cmds.webapp.aspect.NeedsLogin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.json.*;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -84,6 +86,7 @@ public class APIController {
      * @throws IOException
      */
     @PostMapping("/createDelivery")
+    @NeedsLogin(type="Delivery")
     public Delivery createDelivery(HttpServletRequest request) throws IOException {
         System.out.println("createDelivery() API");
         String username = CookieController.getUsernameFromCookie(request);
@@ -106,8 +109,11 @@ public class APIController {
             }
         }
         if (robot == null) {
-            System.out.println("There is no available robot!");
-            return null;
+            System.out.println("No free robot, adding to a robot's queue");
+            robot = robots.stream().min(Comparator.comparingInt(r->r.getListTrips().size())).orElse(null);
+            if (robot == null) {
+                return null;
+            }
         }
         appUser.setCurrentDelivery(delivery);
         delivery.setAssignedRobot(robot);
@@ -123,6 +129,7 @@ public class APIController {
      * @throws IOException
      */
     @PostMapping("/createRobot")
+    @NeedsLogin(type="int")
     public int createRobot(HttpServletRequest request) throws IOException {
         System.out.println("createRobot() API");
         String jsonData = this.JSONBuilder(request);
@@ -209,15 +216,16 @@ public class APIController {
         Delivery currDelivery = deliveryRepo.findById((Long.valueOf(id))).orElse(null);
         System.out.println(currDelivery);
         if (currDelivery == null) return 400;
+
+        currDelivery.addStatus(status);
+        deliveryRepo.save(currDelivery);
+
         if (status.equals("COMPLETE")){
             Robot currRobot = currDelivery.getAssignedRobot();
             currRobot.removeTrip(currDelivery.getDeliveryId());
             robotRepo.save(currRobot);
             return 200;
         }
-
-        currDelivery.setStatus(status);
-        deliveryRepo.save(currDelivery);
 
         return 200;
     }
@@ -229,21 +237,25 @@ public class APIController {
      * @throws IOException
      */
     @GetMapping("/getDeliveryStatus/{id}")
-    public Delivery getDeliveryStatus(@PathVariable("id") String id) throws IOException {
+    public String getDeliveryStatus(@PathVariable("id") String id) throws IOException, JSONException {
         System.out.println("getDeliveryStatus()");
+        Delivery delivery = deliveryRepo.findById(Long.valueOf(id)).orElse(null);
+
+        JSONObject res = new JSONObject();
+
+        if (delivery == null){
+            res.put("statuses",  new JSONObject());
+        } else {
+            JSONObject statuses = new JSONObject();
+
+            for (int i = 0; i < delivery.getStatuses().size(); i++){
+                statuses.put(String.valueOf(i + 1), delivery.getStatuses().get(i));
+            }
+            res.put("statuses", statuses);
+        }
+
         // Extract specific data from the parsed JSON
-        return deliveryRepo.findById(Long.valueOf(id)).orElse(null);
-    }
-
-
-    /**
-     * Test mapping to ensure it is compatible in ROS.
-     * @return test string
-     * @throws IOException
-     */
-    @GetMapping
-    public String getEndpoint() throws IOException {
-        return "test";
+        return res.toString();
     }
 
     /**
@@ -253,6 +265,7 @@ public class APIController {
      * @throws JSONException
      */
     @GetMapping("getRobotDeliveries/{id}")
+    @NeedsLogin(type="string")
     public String getRobotDeliveries(@PathVariable("id") String id) throws JSONException  {
         System.out.println("getRobotDeliveries() API");
 
@@ -261,7 +274,7 @@ public class APIController {
         if (robot != null) {
             JSONObject deliveryObject = new JSONObject();
             for (Delivery d: robot.getListTrips()) {
-                if (d.getStatus().equals("NEW")) {
+                if (d.getStatuses().get(d.getStatuses().size() - 1).equals("NEW")) {
                     deliveryObject.put("sourceDest", d.getStartingDest());
                     deliveryObject.put("finalDest", d.getFinalDest());
                     robotObject.put(d.getDeliveryId().toString(), deliveryObject);

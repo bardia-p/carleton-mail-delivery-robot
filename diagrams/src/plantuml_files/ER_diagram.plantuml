@@ -17,7 +17,7 @@ entity "Delivery" as delivery {
   --
   startingDest: String
   finalDest: String
-  status: String
+  statuses: List<String>
   ~~robotName: String~~
 }
 
