@@ -1,11 +1,13 @@
 package com.cmds.webapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class Delivery for defining a Delivery entity.
@@ -19,11 +21,12 @@ public class Delivery {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long deliveryId;
 
-    public String startingDest;
+    private String startingDest;
 
-    public String finalDest;
+    private String finalDest;
 
-    public String status;
+    @ElementCollection
+    private List<String> statuses;
 
 
     @ManyToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
@@ -38,7 +41,16 @@ public class Delivery {
     public Delivery(String startingDest, String finalDest) {
         this.startingDest = startingDest;
         this.finalDest = finalDest;
-        this.status = "";
+        this.statuses = new ArrayList<>(){{ add("NEW");}};
         this.assignedRobot = null;
+    }
+
+    /**
+     * Adds a new status to the list of statuses.
+     *
+     * @param s the new status to add.
+     */
+    public void addStatus(String s){
+        this.statuses.add(s);
     }
 }

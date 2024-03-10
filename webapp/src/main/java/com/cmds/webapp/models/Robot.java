@@ -64,7 +64,6 @@ public class Robot {
      */
     public void addTrip (Delivery delivery){
         this.setStatus(RobotStatus.BUSY);
-        delivery.setStatus("NEW");
         this.listTrips.add(delivery);
     }
 

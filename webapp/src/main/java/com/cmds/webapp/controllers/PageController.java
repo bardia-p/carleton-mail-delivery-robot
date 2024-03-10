@@ -1,9 +1,12 @@
 package com.cmds.webapp.controllers;
 
+import com.cmds.webapp.aspect.NeedsLogin;
+import com.cmds.webapp.models.AppUser;
 import com.cmds.webapp.models.Robot;
 import com.cmds.webapp.repos.DeliveryRepository;
 import com.cmds.webapp.repos.RobotRepository;
 import com.cmds.webapp.repos.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,17 @@ public class PageController {
         CookieController.setUsernameCookie(model, request);
         List<Robot> robotList = robotRepo.findAll();
         model.addAttribute("robots", robotList);
+        List<AppUser> appUsers = userRepo.findAll();
+        String username = CookieController.getUsernameFromCookie(request);
+        System.out.println(username);
+        if (username != null) {
+            for (AppUser user: appUsers){
+                if (user.getUsername().equals(username)) {
+                    model.addAttribute("currentUser", user);
+                    break;
+                }
+            }
+        }
         return "index";
     }
 
@@ -50,6 +64,7 @@ public class PageController {
      * @return
      */
     @GetMapping("/createDelivery")
+    @NeedsLogin
     public String getDeliveryPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "createDelivery";
@@ -83,6 +98,7 @@ public class PageController {
      * @return Log page mapping.
      */
     @GetMapping("/status/{id}")
+    @NeedsLogin
     public String getStatusPage(@PathVariable("id") String deliveryId, Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "log";
@@ -95,6 +111,7 @@ public class PageController {
      * @return Log page mapping.
      */
     @GetMapping("/robot/{id}")
+    @NeedsLogin
     public String getRobotPage(@PathVariable("id") String robotId, Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         Robot r = robotRepo.findByName((robotId));
@@ -108,6 +125,7 @@ public class PageController {
      * @return Login page mapping.
      */
     @GetMapping("/registerRobot")
+    @NeedsLogin
     public String getRegisterRobotPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "registerRobot";
