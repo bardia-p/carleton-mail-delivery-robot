@@ -89,6 +89,9 @@ class Captain(Node):
             navMessage.data = direction
             self.mapPublisher.publish(navMessage)
         self.prev_beacon = current_beacon
+        
+        if current_beacon == self.destination:
+            self.sendUpdate("COMPLETE")
 
     def readTrip(self, data):
         '''
