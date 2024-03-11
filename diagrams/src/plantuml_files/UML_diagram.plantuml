@@ -10,15 +10,27 @@ package "models" <<frame>> {
     class "AppUser" {
         - username: String
         - password: String
+        - type: UserType
         - currentDelivery: Delivery
         + AppUser(username: String, password: String)
         + getUsername(): String
         + getPassword(): String
         + getCurrentDelivery(): Delivery
+        + getType(): UserType
         + setUsername(username: String): void
         + setPassword(password: String): void
         + setCurrentDelivery(delivery: Delivery): void
+        + setType(type: UserType): void
         + equals(o: Object): boolean
+    }
+
+    class "SuperUser" {
+        + SuperUser(username: String, password: String)
+    }
+
+    enum "UserType" {
+        - REGULAR
+        - SUPER_USER
     }
 
     class "Robot" {
@@ -69,4 +81,6 @@ package "models" <<frame>> {
 
 "Delivery" "1  " o--* "0.." "Robot"
 "AppUser" "1  " *-- "1 " "Delivery"
+"AppUser" -up-> "UserType"
+"SuperUser" --|> "AppUser"
 @enduml
