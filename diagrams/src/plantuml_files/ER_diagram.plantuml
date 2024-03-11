@@ -1,0 +1,34 @@
+@startuml ER_diagram
+skinparam classFontSize 11
+skinparam classBackgroundColor beige
+skinparam ClassBorderColor red
+skinparam ArrowColor red
+
+
+entity "AppUser" as user{
+  <u>username: String</u>
+  --
+  password : String
+  type: String
+  ~~deliveryId: Long~~
+}
+
+entity "Delivery" as delivery {
+  <u>deliveryId : Long</u>
+  --
+  startingDest: String
+  finalDest: String
+  statuses: List<String>
+  ~~robotName: String~~
+}
+
+entity "Robot" as robot {
+  <u>robotName : String</u>
+  --
+  status : String
+}
+
+
+user ||--|| delivery
+delivery }|--|| robot
+@enduml
