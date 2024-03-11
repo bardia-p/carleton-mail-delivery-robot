@@ -343,6 +343,8 @@ public class APIController {
             return 401;
         }
         robotRepo.save(robot);
+        System.out.println("test");
         return 200;
     }
+
 }
