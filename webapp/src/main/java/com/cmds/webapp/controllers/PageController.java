@@ -57,6 +57,14 @@ public class PageController {
         return "index";
     }
 
+    @GetMapping("/manageRobots")
+    public String getManageRobotsPage(Model model, HttpServletRequest request) {
+        CookieController.setUsernameCookie(model, request);
+        List<Robot> robotList = robotRepo.findAll();
+        model.addAttribute("robots", robotList);
+        return "manageRobots";
+    }
+
     /**
      * Get mapping for the create delivery page.
      * @param model
@@ -69,6 +77,20 @@ public class PageController {
         CookieController.setUsernameCookie(model, request);
         return "createDelivery";
     }
+
+    /**
+     * Get mapping for the admin page.
+     * @param model
+     * @param request
+     * @return
+     */
+    @GetMapping("/admin")
+    @NeedsLogin
+    public String getAdminPage(Model model, HttpServletRequest request) {
+        CookieController.setUsernameCookie(model, request);
+        return "admin";
+    }
+
 
     /**
      * Get mapping for the login page.
@@ -85,7 +107,7 @@ public class PageController {
      * @param request
      * @return Register page mapping.
      */
-    @GetMapping("/register")
+    @GetMapping("/registerUser")
     public String getRegisterPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "registerUser";
@@ -129,6 +151,18 @@ public class PageController {
     public String getRegisterRobotPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "registerRobot";
+    }
+
+    /**
+     * Get mapping for the register superuser page.
+     * @param model
+     * @param request
+     * @return Register page mapping.
+     */
+    @GetMapping("/registerSuperuser")
+    public String getRegisterSuperuserPage(Model model, HttpServletRequest request) {
+        CookieController.setUsernameCookie(model, request);
+        return "registerSuperuser";
     }
 
 }

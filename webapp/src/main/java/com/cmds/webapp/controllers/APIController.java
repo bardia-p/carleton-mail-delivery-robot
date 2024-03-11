@@ -33,6 +33,9 @@ public class APIController {
     @Autowired
     private DeliveryRepository deliveryRepo;
 
+    @Autowired
+    private SuperuserRepository superuserRepo;
+
     /**
      * Method for building a JSON format from a request.
      * @param request An HttpServletRequest request.
@@ -286,5 +289,61 @@ public class APIController {
         }
         System.out.println(robotObject.toString());
         return robotObject.toString();
+    }
+
+    /**
+     * Post mapping for creating a superuser.
+     * @param request An HttpServletRequest request.
+     * @return 200 if successful, 401 otherwise.
+     * @throws IOException
+     */
+    @PostMapping("/createSuperuser")
+    public int createSuperuser(HttpServletRequest request) throws IOException {
+        System.out.println("createSuperuser() API");
+        String jsonData = this.JSONBuilder(request);
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, String> userData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, String>>() {});
+        System.out.println(userData);
+        String username = userData.get("username");
+        String password = userData.get("password");
+        for (Superuser superuser: superuserRepo.findAll()){
+            if (superuser.getUsername().equals(username)){
+                return 401;
+            }
+        }
+        Superuser superuser = new Superuser(username, password);
+        superuserRepo.save(superuser);
+        System.out.println(superuser);
+        return 200;
+    }
+
+    @GetMapping("/killRobot/{id}")
+    public String killRobot(@PathVariable("id") String id) throws IOException, JSONException {
+        System.out.println("killRobot() API:");
+        Robot robot = robotRepo.findByName(id);
+        JSONObject robotKillObject = new JSONObject();
+        if (robot != null) {
+            robotKillObject.put("kill", robot.isShouldDie());
+        } else {
+            System.out.println("No robot found of ID " + id);
+            return "";
+        }
+        return robotKillObject.toString();
+    }
+
+    @PostMapping("/removeDelivery/{id1}/{id2}")
+    public int removeDelivery(@PathVariable("id1") String robotId, @PathVariable("id2") Long deliveryId) throws IOException, JSONException {
+        System.out.println("removeDelivery() API:");
+        Robot robot = robotRepo.findByName(robotId);
+        Delivery delivery = deliveryRepo.findById(deliveryId).orElse(null);
+        if (delivery != null) {
+            robot.removeTrip(deliveryId);
+        }
+        else {
+            System.out.println("Delivery not found within list");
+            return 401;
+        }
+        robotRepo.save(robot);
+        return 200;
     }
 }

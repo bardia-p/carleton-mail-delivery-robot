@@ -10,7 +10,7 @@
 <body>
 <a th:if="${username == null}" href="/login"><button>Login</button></a>
 <p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
-<a href="/register"><button>Register</button></a>
+<a href="/registerUser"><button>Register</button></a>
 <button th:if="${username != null}" id="logout-btn">Log Out</button>
 <a href="/"><button>Home</button></a>
 
@@ -24,6 +24,7 @@
             <th>Starting Dest</th>
             <th>Final Dest</th>
             <th>View Delivery Status</th>
+            <th>Remove Delivery</th>
         </tr>
         </thead>
         <tbody>
@@ -32,11 +33,13 @@
             <td><span th:text="${delivery.getStartingDest()}"></span></td>
             <td><span th:text="${delivery.getFinalDest()}"></span></td>
             <td><a th:href="'/status/' + ${delivery.getDeliveryId()}"><button>View Delivery Status</button></a></td>
+            <td><span th:action="@{/api/v1/removeDelivery/${robot.getName()/${delivery.getDeliveryId()}}}"><button id="removeDelivery-submit">X</button></span></td>
         </tr>
         </tbody>
     </table>
 </div>
 <script src="/static/scripts/common.js" type="application/javascript"></script>
 <script src="/static/scripts/logoutFunc.js"></script>
+<script src="/static/scripts/removeDelivery.js"></script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mail Delivery Robot | Status</title>
+    <title>Mail Delivery Robot - Manage Robots</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/images/create2.png">
+    <link rel="icon" type="image/x-icon" href="/static/images/create2.png">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
 </head>
@@ -13,14 +13,27 @@
 <a href="/registerUser"><button>Register</button></a>
 <button th:if="${username != null}" id="logout-btn">Log Out</button>
 <a href="/"><button>Home</button></a>
-<h1>Carleton Mail Delivery Robot</h1>
+
 <div class="container">
-    <h2>Status of Delivery</h2>
-    <label for="logs"></label>
-    <textarea id="logs" name="logs" rows="40" cols="100" contenteditable="false"></textarea>
+    <h1>Carleton Mail Delivery Robot</h1>
+    <h2>List of Registered Robots</h2>
+    <a href="/registerRobot"><button>Register Robot</button></a>
+    <table>
+        <thead>
+        <tr>
+            <th>Robot Name</th>
+            <th>Robot Page</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="robot : ${robots}">
+            <td><span th:text="${robot.getName()}"></span></td>
+            <td><a th:href="'/robot/' + ${robot.getName()}" ><button>View Robot Page</button></a></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 <script src="/static/scripts/common.js" type="application/javascript"></script>
 <script src="/static/scripts/logoutFunc.js"></script>
-<script src="/static/scripts/updateStatus.js"></script>
 </body>
 </html>
