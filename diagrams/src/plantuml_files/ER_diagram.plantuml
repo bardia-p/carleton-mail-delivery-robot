@@ -9,6 +9,7 @@ entity "AppUser" as user{
   <u>username: String</u>
   --
   password : String
+  type: String
   ~~deliveryId: Long~~
 }
 
