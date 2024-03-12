@@ -316,6 +316,13 @@ public class APIController {
         return 200;
     }
 
+    /**
+     * Get mapping for killing a robot.
+     * @param id String robot id.
+     * @return A JSON parsed string, with a kill value that is true or false for a given robot.
+     * @throws IOException
+     * @throws JSONException
+     */
     @GetMapping("/killRobot/{id}")
     public String killRobot(@PathVariable("id") String id) throws IOException, JSONException {
         System.out.println("killRobot() API:");
@@ -330,21 +337,29 @@ public class APIController {
         return robotKillObject.toString();
     }
 
-    @PostMapping("/removeDelivery/{id1}/{id2}")
-    public int removeDelivery(@PathVariable("id1") String robotId, @PathVariable("id2") Long deliveryId) throws IOException, JSONException {
-        System.out.println("removeDelivery() API:");
-        Robot robot = robotRepo.findByName(robotId);
-        Delivery delivery = deliveryRepo.findById(deliveryId).orElse(null);
-        if (delivery != null) {
-            robot.removeTrip(deliveryId);
+    /**
+     * Post mapping for removing a user.
+     * @param request
+     * @return 200 if successful, 401 otherwise.
+     * @throws IOException
+     * @throws JSONException
+     */
+    @PostMapping("/removeUser")
+    public int removeUser(HttpServletRequest request) throws IOException, JSONException {
+        System.out.println("removeUser() API");
+        String jsonData = this.JSONBuilder(request);
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String, String> userData = objectMapper.readValue(jsonData, new TypeReference<HashMap<String, String>>() {});
+        System.out.println(userData);
+        String username = userData.get("username");
+        for (AppUser user: userRepo.findAll()){
+            if (user.getUsername().equals(username)){
+                userRepo.delete(user);
+                return 200;
+            }
         }
-        else {
-            System.out.println("Delivery not found within list");
-            return 401;
-        }
-        robotRepo.save(robot);
-        System.out.println("test");
-        return 200;
+        System.out.println("User to remove not found");
+        return 401;
     }
 
 }

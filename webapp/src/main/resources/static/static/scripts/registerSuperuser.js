@@ -2,7 +2,7 @@ const submitButton = $("#registerSuperuser-submit");
 const errorMessage = $("#error-message");
 
 /**
- * The JavaScript AJAX call for when a new user is registered.
+ * The JavaScript AJAX call for when a new superuser is registered.
  */
 submitButton.click((e) => {
     e.preventDefault();

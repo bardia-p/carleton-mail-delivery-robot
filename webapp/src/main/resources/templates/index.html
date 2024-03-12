@@ -22,15 +22,15 @@
 
 <div th:if="${username == null}">
     <p>Log into an account to access the website features!</p>
-    <p><strong>Disclaimer: This website can only be accessed by Carleton University students.</strong></p>
+    <p><strong>Disclaimer: This website can only be accessed by users logged in from Carleton University.</strong></p>
 </div>
 
 <div th:if="${username != null}">
     <p>You can create a delivery here. Once you create a delivery, you will be able to view the delivery status.</p>
-    <p th:if="${currentUser != null && currentUser.getType().getType() == 'Superuser'}">You are logged in as an admin. You have special access to the Admin button.</p>
-    <a th:if="${currentUser != null && currentUser.getType().getType() == 'Superuser'}" href="/admin"><button>View Admin Page</button></a>
+    <p th:if="${currentUser != null && currentUser.getType().getType() == 'Superuser'}"><strong>You are logged in as an admin.</strong></p>
     <a href="/createDelivery"><button>Create Delivery</button></a>
     <a th:if="${currentUser != null && currentUser.getCurrentDelivery() != null}" th:href="'/status/' + ${currentUser.getCurrentDelivery().getDeliveryId()}"><button>View Current Delivery</button></a>
+    <a th:if="${currentUser != null && currentUser.getType().getType() == 'Superuser'}" href="/admin"><button>View Admin Page</button></a>
     <br>
 </div>
 

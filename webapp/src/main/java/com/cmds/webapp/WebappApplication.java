@@ -16,6 +16,12 @@ public class WebappApplication {
     public static void main(String[] args) {
         SpringApplication.run(WebappApplication.class, args);
     }
+
+    /**
+     * This bean initializes an admin account for the team's use.
+     * @param superuserRepo The superuser repository.
+     * @return
+     */
     @Bean
     public CommandLineRunner bean(SuperuserRepository superuserRepo) {
         return (args) -> {

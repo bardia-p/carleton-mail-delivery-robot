@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mail Delivery Robot - Manage Robots</title>
+    <title>Mail Delivery Robot - Remove User</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="icon" type="image/x-icon" href="/static/images/create2.png">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
 </head>
 <body>
-<a th:if="${username == null}" href="/login"><button>Login</button></a>
-<p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
-<a href="/registerUser"><button>Register</button></a>
-<button th:if="${username != null}" id="logout-btn">Log Out</button>
 <a href="/"><button>Home</button></a>
-
 <div class="container">
     <h1>Carleton Mail Delivery Robot</h1>
-    <h2>Admin Page</h2>
-    <br>
-    <a href="/manageRobots"><button>Manage Robots</button></a>
-    <a href="/registerSuperuser"><button>Register Admin</button></a>
-    <a href="/removeUser"><button>Remove User</button></a>
+    <h2>Remove a User</h2>
+    <form id="removeUser-form" th:action="@{/api/v1/createUser}" method="post">
+        <p>Username:</p>
+        <label for="username"></label><input type="text" id="username"/>
+        <p id="error-message"></p>
+        <button type="submit" id="removeUser-submit"  class="btn">Remove User</button>
+    </form>
 </div>
 <script src="/static/scripts/common.js" type="application/javascript"></script>
+<script src="/static/scripts/removeUser.js" type="application/javascript"></script>
 <script src="/static/scripts/logoutFunc.js"></script>
 </body>
 </html>
