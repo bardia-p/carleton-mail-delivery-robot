@@ -3,8 +3,10 @@ package com.cmds.webapp.controllers;
 import com.cmds.webapp.aspect.NeedsLogin;
 import com.cmds.webapp.models.AppUser;
 import com.cmds.webapp.models.Robot;
+import com.cmds.webapp.models.Superuser;
 import com.cmds.webapp.repos.DeliveryRepository;
 import com.cmds.webapp.repos.RobotRepository;
+import com.cmds.webapp.repos.SuperuserRepository;
 import com.cmds.webapp.repos.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,6 +33,22 @@ public class PageController {
     private RobotRepository robotRepo;
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private SuperuserRepository superuserRepo;
+
+    /**
+     * Boolean method for checking whether the user from a given cookie is a superuser, for purpose of endpoint protection.
+     * @param request
+     * @return True if a superuser, false otherwise.
+     */
+    public boolean isSuperUser(HttpServletRequest request) {
+        String username = CookieController.getUsernameFromCookie(request);
+        for (Superuser user: superuserRepo.findAll()) {
+            if (user.getUsername().equals(username))
+                return true;
+        }
+        return false;
+    }
 
     /**
      * Get mapping for the home page.
@@ -38,6 +56,7 @@ public class PageController {
      * @param request
      * @return Home page mapping.
      */
+
     @GetMapping("/")
     public String getHomePage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
@@ -58,10 +77,27 @@ public class PageController {
     }
 
     /**
+     * Get mapping for the manage robots page.
+     * @param model
+     * @param request
+     * @return Redirects to the home page if not a superuser, otherwise the manageRobots page.
+     */
+    @GetMapping("/manageRobots")
+    public String getManageRobotsPage(Model model, HttpServletRequest request) {
+        CookieController.setUsernameCookie(model, request);
+        if (!isSuperUser(request)) {
+            return "redirect:/";
+        }
+        List<Robot> robotList = robotRepo.findAll();
+        model.addAttribute("robots", robotList);
+        return "manageRobots";
+    }
+
+    /**
      * Get mapping for the create delivery page.
      * @param model
      * @param request
-     * @return
+     * @return The createDelivery mapping.
      */
     @GetMapping("/createDelivery")
     @NeedsLogin
@@ -69,6 +105,38 @@ public class PageController {
         CookieController.setUsernameCookie(model, request);
         return "createDelivery";
     }
+
+    /**
+     * Get mapping for the remove user page.
+     * @param model
+     * @param request
+     * @return Back to the home page if not an admin, otherwise the remove user page.
+     */
+    @GetMapping("/removeUser")
+    @NeedsLogin
+    public String getRemoveUserPage(Model model, HttpServletRequest request) {
+        CookieController.setUsernameCookie(model, request);
+        if (!isSuperUser(request)) {
+            return "redirect:/";
+        }
+        return "removeUser";
+    }
+    /**
+     * Get mapping for the admin page.
+     * @param model
+     * @param request
+     * @return Back to the home page if not a superuser, otherwise the admin mapping.
+     */
+    @GetMapping("/admin")
+    @NeedsLogin
+    public String getAdminPage(Model model, HttpServletRequest request) {
+        CookieController.setUsernameCookie(model, request);
+        if (!isSuperUser(request)) {
+            return "redirect:/";
+        }
+        return "admin";
+    }
+
 
     /**
      * Get mapping for the login page.
@@ -80,12 +148,12 @@ public class PageController {
     }
 
     /**
-     * Get mapping for the register page.
+     * Get mapping for the register user page.
      * @param model
      * @param request
-     * @return Register page mapping.
+     * @return Register user page mapping.
      */
-    @GetMapping("/register")
+    @GetMapping("/registerUser")
     public String getRegisterPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
         return "registerUser";
@@ -108,12 +176,15 @@ public class PageController {
      * Get mapping for the robot page.
      * @param model
      * @param request
-     * @return Log page mapping.
+     * @return Robot page mapping.
      */
     @GetMapping("/robot/{id}")
     @NeedsLogin
     public String getRobotPage(@PathVariable("id") String robotId, Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
+        if (!isSuperUser(request)) {
+            return "redirect:/";
+        }
         Robot r = robotRepo.findByName((robotId));
         model.addAttribute("robot", r);
         return "robot";
@@ -128,7 +199,25 @@ public class PageController {
     @NeedsLogin
     public String getRegisterRobotPage(Model model, HttpServletRequest request) {
         CookieController.setUsernameCookie(model, request);
+        if (!isSuperUser(request)) {
+            return "redirect:/";
+        }
         return "registerRobot";
+    }
+
+    /**
+     * Get mapping for the register superuser page.
+     * @param model
+     * @param request
+     * @return Register page mapping.
+     */
+    @GetMapping("/registerSuperuser")
+    public String getRegisterSuperuserPage(Model model, HttpServletRequest request) {
+        CookieController.setUsernameCookie(model, request);
+        if (!isSuperUser(request)) {
+            return "redirect:/";
+        }
+        return "registerSuperuser";
     }
 
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mail Delivery Robot - Robot Status</title>
+    <title>Mail Delivery Robot - Manage Robots</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="icon" type="image/x-icon" href="/static/images/create2.png">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -16,22 +16,20 @@
 
 <div class="container">
     <h1>Carleton Mail Delivery Robot</h1>
-    <h2>List of Deliveries: <span th:text="${robot.getName()}"></span></h2>
+    <h2>List of Registered Robots</h2>
+    <a href="/registerRobot"><button>Register Robot</button></a>
+    <br>
     <table>
         <thead>
         <tr>
-            <th>Delivery Id</th>
-            <th>Starting Dest</th>
-            <th>Final Dest</th>
-            <th>View Delivery Status</th>
+            <th>Robot Name</th>
+            <th>Robot Page</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="delivery : ${robot.getListTrips()}">
-            <td><span th:text="${delivery.getDeliveryId()}"></span></td>
-            <td><span th:text="${delivery.getStartingDest()}"></span></td>
-            <td><span th:text="${delivery.getFinalDest()}"></span></td>
-            <td><a th:href="'/status/' + ${delivery.getDeliveryId()}"><button>View Delivery Status</button></a></td>
+        <tr th:each="robot : ${robots}">
+            <td><span th:text="${robot.getName()}"></span></td>
+            <td><a th:href="'/robot/' + ${robot.getName()}" ><button>View Robot Page</button></a></td>
         </tr>
         </tbody>
     </table>

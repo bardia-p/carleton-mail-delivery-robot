@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.catalina.User;
 
 import java.util.Objects;
 
@@ -25,6 +26,22 @@ public class AppUser {
     private Delivery currentDelivery;
 
     /**
+     * Enum RobotStatus for defining Robot status entities.
+     */
+
+    @Getter
+    public enum UserType {
+        REGULAR("Regular"), SUPER_USER("Superuser");
+
+        private final String type;
+        UserType(String type) {
+            this.type = type;
+        }
+    }
+
+    public UserType type;
+
+    /**
      * Default constructor for User.
      * @param username A string username.
      * @param password A string password.
@@ -33,6 +50,7 @@ public class AppUser {
         this.username = username;
         this.password = password;
         this.currentDelivery = null;
+        this.type = UserType.REGULAR;
     }
 
     /**

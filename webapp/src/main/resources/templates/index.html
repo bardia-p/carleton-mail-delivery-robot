@@ -10,7 +10,7 @@
 <body>
 <a th:if="${username == null}" href="/login"><button>Login</button></a>
 <p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
-<a href="/register"><button>Register</button></a>
+<a href="/registerUser"><button>Register</button></a>
 <button th:if="${username != null}" id="logout-btn">Log Out</button>
 
 <h1>Carleton Mail Delivery Robot</h1>
@@ -22,30 +22,16 @@
 
 <div th:if="${username == null}">
     <p>Log into an account to access the website features!</p>
-    <p><strong>Disclaimer: This website can only be accessed by Carleton University students.</strong></p>
+    <p><strong>Disclaimer: This website can only be accessed by users logged in from Carleton University.</strong></p>
 </div>
 
 <div th:if="${username != null}">
-    <p>You can define a robot, and create a delivery for the robot to go on!</p>
-    <a href="/registerRobot"><button>Register Robot</button></a>
+    <p>You can create a delivery here. Once you create a delivery, you will be able to view the delivery status.</p>
+    <p th:if="${currentUser != null && currentUser.getType().getType() == 'Superuser'}"><strong>You are logged in as an admin.</strong></p>
     <a href="/createDelivery"><button>Create Delivery</button></a>
     <a th:if="${currentUser != null && currentUser.getCurrentDelivery() != null}" th:href="'/status/' + ${currentUser.getCurrentDelivery().getDeliveryId()}"><button>View Current Delivery</button></a>
+    <a th:if="${currentUser != null && currentUser.getType().getType() == 'Superuser'}" href="/admin"><button>View Admin Page</button></a>
     <br>
-    <br>
-    <table>
-        <thead>
-        <tr>
-            <th>Robot Name</th>
-            <th>Robot Page</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="robot : ${robots}">
-            <td><span th:text="${robot.getName()}"></span></td>
-            <td><a th:href="'/robot/' + ${robot.getName()}" ><button>View Robot Page</button></a></td>
-        </tr>
-        </tbody>
-    </table>
 </div>
 
 

@@ -21,12 +21,14 @@ import java.util.List;
 @NoArgsConstructor
 public class Robot {
     @Id
-    public String name;
+    private String name;
 
 
     @OneToMany(mappedBy = "assignedRobot", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    public List<Delivery> listTrips;
+    private List<Delivery> listTrips;
+
+    private boolean shouldDie;
 
     /**
      * Enum RobotStatus for defining Robot status entities.
@@ -46,6 +48,7 @@ public class Robot {
         this.name = name;
         this.status = status;
         this.listTrips = listTrips;
+        this.shouldDie = false;
     }
 
     /**
@@ -56,6 +59,7 @@ public class Robot {
         this.name = name;
         this.status = RobotStatus.IDLE;
         this.listTrips = new ArrayList<>();
+        this.shouldDie = false;
     }
 
     /**
@@ -73,7 +77,6 @@ public class Robot {
      * @return True if the trip was removed, false otherwise.
      */
     public boolean removeTrip (Long tripId) {
-
         return this.listTrips.removeIf(trip -> trip.getDeliveryId().equals(tripId));
     }
 }

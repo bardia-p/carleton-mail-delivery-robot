@@ -10,7 +10,7 @@
 <body>
 <a th:if="${username == null}" href="/login"><button>Login</button></a>
 <p th:if="${username != null}" >Logged in as <span th:text="${username}"></span></p>
-<a href="/register"><button>Register</button></a>
+<a href="/registerUser"><button>Register</button></a>
 <button th:if="${username != null}" id="logout-btn">Log Out</button>
 <a href="/"><button>Home</button></a>
 <div class="container">
