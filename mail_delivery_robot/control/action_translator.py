@@ -45,10 +45,13 @@ class ActionTranslator(Node):
             self.dockPublisher = self.create_publisher(Empty, 'undock', 1)
         else:
             from irobot_create_msgs.msg import DockStatus
-            self.dockStatusSubscriber = self.create_subscription(DockStatus, "dock_status", self.updateDockStatus, 10)
+            from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
+            self.dockStatusSubscriber = self.create_subscription(DockStatus, 'dock_status', self.updateDockStatus, qos_profile=QoSProfile(
+                reliability=QoSReliabilityPolicy.BEST_EFFORT,
+                depth=10
+            ))
 
         self.should_dock = False
-        self.can_see_dock = False
 
         # The subscribers for the node.
         self.actionSubscriber = self.create_subscription(String, 'actions', self.decodeAction, 10)
@@ -60,8 +63,13 @@ class ActionTranslator(Node):
 
         @param data: the dock status data.
         '''
-        self.can_see_dock = data.data.dock_visible
-
+        is_docked = data.is_docked
+        if self.should_dock and not is_docked:
+            os.system('ros2 action send_goal /dock irobot_create_msgs/action/Dock "{}"')
+        
+        if is_docked:
+            self.should_dock = False
+    
     def decodeAction(self, data):
         '''
         The callback for /actions.
@@ -79,15 +87,7 @@ class ActionTranslator(Node):
                 dockMessage = Empty()
                 self.dockPublisher.publish(dockMessage)
             else:
-                if self.can_see_dock:
-                    os.system('ros2 action send_goal /dock irobot_create_msgs/action/Dock "{}"')
-                else:
-                    # Tries to search for the dock station.
-                    message = Twist()
-                    message.angular.z = self.config["RIGHT_TURN_ANG_SPEED"]
-                    message.linear.x = self.config["WALL_FOLLOW_SPEED"]
-                    self.drivePublisher.publish(message)
-
+                self.should_dock = True
         elif split_action[0] == Action.UNDOCK.value:
             if self.robot_model != "CREATE_3":
                 undockMessage = Empty()

@@ -47,7 +47,8 @@ def generate_launch_description():
             name='action_translator',
             output='log',
             parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
-            remappings=[('/control/cmd_vel', '/cmd_vel')]
+            remappings=[('/control/cmd_vel', '/cmd_vel'),
+                        ('/control/dock_status', '/dock_status')]
             ),
         Node(package='mail_delivery_robot',
             namespace='control',
@@ -68,6 +69,7 @@ def generate_launch_description():
             executable='client',
             name='client',
             output='log',
+            parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
             remappings=[('/communication/trips', '/navigation/trips')]
             ),
         Node(package='mail_delivery_robot',
