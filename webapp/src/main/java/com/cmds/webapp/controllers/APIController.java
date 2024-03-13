@@ -227,6 +227,7 @@ public class APIController {
             Robot currRobot = currDelivery.getAssignedRobot();
             currRobot.removeTrip(currDelivery.getDeliveryId());
             robotRepo.save(currRobot);
+            deliveryRepo.delete(currDelivery);
             return 200;
         }
 
