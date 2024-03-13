@@ -40,7 +40,7 @@ class RobotDriver(Node):
         self.lidarSubscriber = self.create_subscription(String, 'perceptions', self.updateLidarSensor, 10) 
         self.beaconSubscriber = self.create_subscription(String, 'navigation', self.updateNavigation, 10)
         self.beaconSubscriber = self.create_subscription(String, 'bumpEvent', self.updateCollision, 10)
-
+        
         # Timer set up.
         self.timer = self.create_timer(self.config["ROBOT_DRIVER_SCAN_TIMER"], self.updateStateMachine)
 
@@ -51,7 +51,7 @@ class RobotDriver(Node):
         '''
         Initializes the robot's state and sensor data.
         '''
-        self.state = state_machine.No_Dest(self.actionPublisher)
+        self.state = state_machine.Docked(self.actionPublisher)
         self.wall_data = ""
         self.nav_data = Nav_Event.NAV_NONE.value
         self.bump_data = False
@@ -64,7 +64,6 @@ class RobotDriver(Node):
 
         @param data: The data sent by the lidar sensor.
         '''
-        #TODO: ADD PARTICLE FILTERING HERE
         lidarData = str(data.data)
         self.get_logger().info(lidarData)
 
@@ -89,14 +88,24 @@ class RobotDriver(Node):
         '''
         navData = str(data.data)
         self.get_logger().info("Got: " + navData)
-        self.nav_data = navData
+        if navData == Nav_Event.NAV_START.value:
+            action = String()
+            action.data = state_machine.Action.UNDOCK.value
+            self.actionPublisher.publish(action)
+            self.state = state_machine.No_Dest(self.actionPublisher)
+            self.wall_data = ""
+            self.nav_data = Nav_Event.NAV_NONE.value
+            self.bump_data = False
+            self.get_logger().info("Robot Starting " + self.state.printState())
+        else:
+            self.nav_data = navData
 
     def updateCollision(self, data):
         '''
         The callback for /bumperSensor.
         Reads and updates the information sent by the bumper sensor.
 
-        @param data: The data sent by the bumper sensor..
+        @param data: The data sent by the bumper sensor.
         '''
         bumpData = str(data.data)
         if bumpData == Bump_Event.PRESSED.value:
@@ -115,7 +124,6 @@ class RobotDriver(Node):
             return 
 
         new_state = self.state.handleUpdate(self.bump_data, self.nav_data, self.wall_data)
-        
         if new_state != self.state:
             self.state = new_state
             self.get_logger().info("Changed State " + new_state.printState())

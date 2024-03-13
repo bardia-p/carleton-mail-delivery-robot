@@ -10,11 +10,11 @@ from tools.csv_parser import loadConfig
 
 LIDAR_TIMER = 0.2
 BEACON_TIMER = 15
+BUMPER_TIMER = 0.1
 MIN_WALL_DISTANCE = 0.1
 ANGLE_ERROR = 0.6
-COLLISION_PERCENTAGE = 0.3
-INTERSECTION_COUNT = 1
-TRIP_TIMER = 0.5
+INTERSECTION_COUNT = 2
+TRIP_TIMER = 1
 
 class StubSensor(Node):
     '''
@@ -39,7 +39,7 @@ class StubSensor(Node):
         self.declare_parameter('init_pos', '0.2:0.1')
         self.wall_distance, self.wall_angle = self.get_parameter('init_pos').value.split(":")
 
-        self.declare_parameter('collision_freq', '0')
+        self.declare_parameter('collision_freq', 0)
         self.collision_freq = float(self.get_parameter('collision_freq').value)
 
         self.declare_parameter('path', '')
@@ -48,16 +48,16 @@ class StubSensor(Node):
         if self.path == ['']:
             self.path = []
 
-        self.declare_parameter('wall_diff', '0')
+        self.declare_parameter('wall_diff', 0)
         self.wall_diff = float(self.get_parameter('wall_diff').value)
 
         self.declare_parameter('delivery', 'UC:Nicol')
-        self.source, self.destination = self.get_parameter('delivery').value.split(":")
+        self.trip = self.get_parameter('delivery').value
 
-        self.declare_parameter('duration', '45')
+        self.declare_parameter('duration', 45)
         self.duration = float(self.get_parameter('duration').value)
 
-        self.get_logger().info("Init Pos (distance, angle): (" + self.wall_distance + "," + self.wall_angle + ") Collision Freq: " + str(self.collision_freq) + ", Path: " + str(self.path) + " , Wall Difficulty: " + str(self.wall_diff) + ", Delivery(src, dest): (" + self.source + "," + self.destination + "), Duration: " + str(self.duration))
+        self.get_logger().info("Init Pos (distance, angle): (" + self.wall_distance + "," + self.wall_angle + ") Collision Freq: " + str(self.collision_freq) + ", Path: " + str(self.path) + " , Wall Difficulty: " + str(self.wall_diff) + ", Delivery(src, dest): (" + self.trip + "), Duration: " + str(self.duration))
 
         # Load the global config.
         self.config = loadConfig()
@@ -75,9 +75,10 @@ class StubSensor(Node):
             self.beacon_timer = self.create_timer(BEACON_TIMER, self.beacon_callback)
         
         if self.collision_freq > 0:
-            self.bumper_timer = self.create_timer(self.collision_freq, self.bumper_callback)
+            self.bumper_timer = self.create_timer(BUMPER_TIMER, self.bumper_callback)
 
-        self.trip_timer = self.create_timer(TRIP_TIMER, self.init_trip)
+        if len(self.trip) > 0:
+            self.trip_timer = self.create_timer(TRIP_TIMER, self.init_trip)
         self.kill_timer = self.create_timer(self.duration, self.end_tests)
 
         # Action Translator Subscription
@@ -91,15 +92,18 @@ class StubSensor(Node):
         self.distance_diff = 0
         self.angle_diff = 0
 
-        # Stores the number of collision clock cycles.
+        # Stores the number of intersection clock cycles.
         self.intersection_count = 0
+
+        # Checks to see if a collision is happening.
+        self.is_colliding = False
 
     def lidar_callback(self):
         '''
         The callback for the lidar timer.
         Reads the lidar scan and acts accordingly.
         '''
-        calc = String()
+        message = String()
         
         if self.intersection_count == 0:
             new_angle = self.wall_angle + self.angle_diff * LIDAR_TIMER
@@ -120,17 +124,17 @@ class StubSensor(Node):
             if self.wall_distance <= MIN_WALL_DISTANCE:
                 self.wall_distance = MIN_WALL_DISTANCE
         
-            calc.data = str(self.wall_distance) + ":" + str(self.wall_angle) + ":" + str(self.wall_distance) + ":" + str(4) + ":" + str(3)
+            message.data = str(self.wall_distance) + ":" + str(self.wall_angle) + ":" + str(self.wall_distance) + ":" + str(4) + ":" + str(3)
         else:
             # Simulate an intersection
-            calc.data = str(self.wall_distance) + ":" + str(self.wall_angle) + ":-1:-1:-1"
+            message.data = str(self.wall_distance) + ":" + str(self.wall_angle) + ":-1:-1:-1"
             self.intersection_count -= 1
 
             if self.intersection_count == 0:
                 self.wall_distance = 0.2
                 self.wall_angle = 1.0
 
-        self.lidar_publisher.publish(calc)
+        self.lidar_publisher.publish(message)
  
     def beacon_callback(self):
         '''
@@ -139,26 +143,29 @@ class StubSensor(Node):
         '''
         if len(self.path) > 0:
             self.intersection_count = INTERSECTION_COUNT
-            calc = String()
+            message = String()
         
-            calc.data = self.path.pop(0) + "," + str(self.config["BEACON_RSSI_THRESHOLD"] + 1)
+            message.data = self.path.pop(0) + "," + str(self.config["BEACON_RSSI_THRESHOLD"] + 1)
 
-            self.beacon_publisher.publish(calc)
+            self.beacon_publisher.publish(message)
 
     def bumper_callback(self):
         '''
         The callback for the bumper timer.
         Sends a bumper event.
         '''
-        calc = String()
-        
-        should_collide = random.random()
-        if should_collide <= COLLISION_PERCENTAGE:
-            calc.data = "PRESSED"
+        message = String()
+        if self.is_colliding:
+            message.data = "UNPRESSED"
+            self.is_colliding = False
         else:
-            calc.data = "UNPRESSED"
-
-        self.bumper_publisher.publish(calc)
+            collision_percentage = random.random()
+            if collision_percentage <= self.collision_freq:
+                message.data = "PRESSED"
+                self.is_colliding = True
+            else:
+                message.data = "UNPRESSED"
+        self.bumper_publisher.publish(message)
 
     def decode_action(self, data):
         '''
@@ -173,12 +180,11 @@ class StubSensor(Node):
         '''
         The callback function to initialize a new trip.
         '''
-        if self.source != "" and self.destination != "":
-            trip = String()
-            trip.data = self.source + ":" + self.destination
-            self.trip_publisher.publish(trip)
-            self.source = ""
-            self.destination = ""
+        if self.trip != "":
+            tripMessage = String()
+            tripMessage.data = self.trip
+            self.trip_publisher.publish(tripMessage)
+            self.trip = ""
 
     def end_tests(self):
         '''

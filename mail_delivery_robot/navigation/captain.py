@@ -10,6 +10,7 @@ class Nav_Event(Enum):
     '''
     An enum for the various navigation events for the robot.
     '''
+    NAV_START = "NAV_START"
     NAV_NONE = "NAV_NONE"
     NAV_LEFT = "NAV_LEFT"
     NAV_RIGHT = "NAV_RIGHT"
@@ -50,6 +51,7 @@ class Captain(Node):
 
         # The publishers for the node.
         self.mapPublisher = self.create_publisher(String, 'navigation', 10)
+        self.updatePublisher = self.create_publisher(String, 'update', 10)
 
         # The subscribers for the node.
         self.beaconSubscriber = self.create_subscription(String, 'beacons', self.readBeacon, 10)
@@ -70,20 +72,26 @@ class Captain(Node):
         beacon_orientation = "0"
 
         current_beacon,rssi = data.data.split(",")
+
         self.get_logger().info("CURRENT BEACON IS " + current_beacon)
 
+        self.sendUpdate("IN PROGRESS: PASSED " + current_beacon)
+        
         if current_beacon == self.prev_beacon:
             return
         else:
             beacon_orientation = self.beacon_connections[current_beacon][self.prev_beacon]
             if beacon_orientation == "-":
-                self.get_logger().info("ROBOT HAS BEEN MOVED")
+                self.sendUpdate("ERROR: ROBOT HAS BEEN MOVED")
                 beacon_orientation = "1"
             direction = self.map.getDirection(current_beacon + beacon_orientation, self.destination)
             navMessage = String()
             navMessage.data = direction
             self.mapPublisher.publish(navMessage)
         self.prev_beacon = current_beacon
+        
+        if current_beacon == self.destination:
+            self.sendUpdate("COMPLETE")
 
     def readTrip(self, data):
         '''
@@ -95,7 +103,21 @@ class Captain(Node):
         trip = data.data.split(":")
         self.prev_beacon = trip[0]
         self.destination = trip[1]
+        self.sendUpdate("STARTING A NEW TRIP FROM " + self.prev_beacon + " TO " + self.destination)
         self.get_logger().info("Got a new trip from " + self.prev_beacon + " to " + self.destination)
+        navMessage = String()
+        navMessage.data = Nav_Event.NAV_START.value
+        self.mapPublisher.publish(navMessage)
+
+    def sendUpdate(self, data):
+        '''
+        Publishes an update for the user to see.
+
+        @param data: the new update for the user.
+        '''
+        update_message = String()
+        update_message.data = data
+        self.updatePublisher.publish(update_message)
 
 def main():
     '''
