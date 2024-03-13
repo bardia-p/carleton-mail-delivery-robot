@@ -29,7 +29,7 @@ public class SuperuserTests {
      */
     @Test
     public void testSetCurrentDelivery() {
-        Superuser user = new Superuser("test", "test");
+        Superuser user = new Superuser("test2", "test");
         Delivery delivery = new Delivery();
         userRepo.save(user);
         deliveryRepo.save(delivery);

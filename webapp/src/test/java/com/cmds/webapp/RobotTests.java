@@ -29,7 +29,7 @@ public class RobotTests {
     @Test
     public void testAddTrip() {
         Delivery delivery = new Delivery();
-        Robot robot = new Robot("CREATE2");
+        Robot robot = new Robot("CREATE2-1");
         robotRepo.save(robot);
         deliveryRepo.save(delivery);
         assertFalse(robot.getListTrips().contains(delivery));
@@ -43,7 +43,7 @@ public class RobotTests {
     @Test
     public void testRemoveTrip() {
         Delivery delivery = new Delivery();
-        Robot robot = new Robot("CREATE2");
+        Robot robot = new Robot("CREATE2-2");
         robotRepo.save(robot);
         deliveryRepo.save(delivery);
         robot.addTrip(delivery);

@@ -29,8 +29,8 @@ public class DeliveryTests {
      */
     @Test
     public void testSetAssignedRobot() {
-        Delivery delivery = new Delivery();
-        Robot robot = new Robot("CREATE2");
+        Delivery delivery = new Delivery("Loeb", "Nicol");
+        Robot robot = new Robot("CREATE2-3");
         robotRepo.save(robot);
         deliveryRepo.save(delivery);
         assertNull(delivery.getAssignedRobot());

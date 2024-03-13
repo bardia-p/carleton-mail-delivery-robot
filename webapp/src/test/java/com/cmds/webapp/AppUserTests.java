@@ -26,7 +26,7 @@ public class AppUserTests {
      */
     @Test
     public void testSetCurrentDelivery() {
-        AppUser user = new AppUser("test", "test");
+        AppUser user = new AppUser("test1", "test");
         Delivery delivery = new Delivery();
         userRepo.save(user);
         deliveryRepo.save(delivery);
@@ -34,5 +34,4 @@ public class AppUserTests {
         user.setCurrentDelivery(delivery);
         assertEquals(user.getCurrentDelivery(), delivery);
     }
-
 }
