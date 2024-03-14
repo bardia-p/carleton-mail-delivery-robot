@@ -63,19 +63,23 @@ class Client(Node):
         '''
         if self.currentTrip == "":
             url = "https://cudelivery.azurewebsites.net/api/v1/getRobotDeliveries/" + self.robot_model
-            r = json.loads(requests.get(url).text)
+            res = requests.get(url)
+            if res.status_code == 200:
+                r = json.loads(res.text)
 
-            # Get a new trip once you are done.
-            if len(r) != 0:
-                for k in r:
-                    trip = r[k]["sourceDest"]+":"+r[k]["finalDest"]
-                    self.currentTrip = k
-                    break
+                # Get a new trip once you are done.
+                if len(r) != 0:
+                    for k in r:
+                        trip = r[k]["sourceDest"]+":"+r[k]["finalDest"]
+                        self.currentTrip = k
+                        break
 
-                tripMessage = String()
-                tripMessage.data = trip 
-                self.tripPublisher.publish(tripMessage)
-                self.get_logger().info("Got a new request: " + trip)
+                    tripMessage = String()
+                    tripMessage.data = trip 
+                    self.tripPublisher.publish(tripMessage)
+                    self.get_logger().info("Got a new request: " + trip)
+            else:
+                self.get_logger().info("ERROR: Failed to get an update")
 
 def main():
     '''
