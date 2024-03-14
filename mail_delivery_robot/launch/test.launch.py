@@ -5,19 +5,36 @@ from launch.substitutions import TextSubstitution
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    init_pos = DeclareLaunchArgument("init_pos", default_value=TextSubstitution(text="0.2:0.1"))
+    robot_model = DeclareLaunchArgument("robot_model",
+            default_value=TextSubstitution(text="CREATE_2"),
+            description="The parameter is used to declare the robot model ('CREATE_2' or 'CREATE_3'")
 
-    collision_freq = DeclareLaunchArgument("collision_freq", default_value="0")
+    init_pos = DeclareLaunchArgument("init_pos",
+            default_value=TextSubstitution(text="0.2:0.1"),
+            description="Specifies the robot's initial distance and angle with the wall '[distance]:[angle]'.")
+
+    collision_freq = DeclareLaunchArgument("collision_freq",
+            default_value="0",
+            description="Specifies the frequency of collisions as a percentage '[0.0 to 1.0]'.")
     
-    path = DeclareLaunchArgument("path", default_value="")
+    path = DeclareLaunchArgument("path",
+            default_value="",
+            description="Specifies the beacons the robot sees along its path '[a:b:c:..]'.")
 
-    wall_diff = DeclareLaunchArgument("wall_diff", default_value="0")
+    wall_diff = DeclareLaunchArgument("wall_diff",
+            default_value="0",
+            description="Specifies the wall's inconsistency as a percentage '[0.0 to 1.0]'.")
 
-    delivery = DeclareLaunchArgument("delivery", default_value="UC:Nicol")
+    delivery = DeclareLaunchArgument("delivery",
+            default_value="",
+            description="Specifies the robot's delivery (source and destination) '[src:dest]'.")
     
-    duration = DeclareLaunchArgument("duration", default_value="45")
+    duration = DeclareLaunchArgument("duration",
+            default_value="45",
+            description="Specifies the total time for the simulation '[value in seconds]'.")
     
     return LaunchDescription([
+        robot_model,
         init_pos,
         collision_freq,
         path,
@@ -29,7 +46,9 @@ def generate_launch_description():
             executable='action_translator',
             name='action_translator',
             output='log',
-            remappings=[('/control/cmd_vel', '/cmd_vel')]
+            parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
+            remappings=[('/control/cmd_vel', '/cmd_vel'),
+                        ('/control/dock_status', '/dock_status')]
             ),
         Node(package='mail_delivery_robot',
             namespace='control',
@@ -42,13 +61,15 @@ def generate_launch_description():
             executable='captain',
             name='captain',
             output='log',
-            remappings=[('/navigation/navigation', '/control/navigation')]
+            remappings=[('/navigation/navigation', '/control/navigation'),
+                        ('/navigation/update', '/communication/update')]
             ),
         Node(package='mail_delivery_robot',
             namespace='communication',
             executable='client',
             name='client',
             output='log',
+            parameters=[{"robot_model": LaunchConfiguration('robot_model')}],
             remappings=[('/communication/trips', '/navigation/trips')]
             ),
         Node(package='mail_delivery_robot',
