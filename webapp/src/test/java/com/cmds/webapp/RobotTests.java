@@ -51,4 +51,15 @@ public class RobotTests {
         robot.removeTrip(delivery.getDeliveryId());
         assertFalse(robot.getListTrips().contains(delivery));
     }
+
+    /**
+     * Test that checks if a Robot object persists on the back end.
+     */
+    @Test
+    public void testPersist() {
+        Robot robot = new Robot("TestPersistRobot");
+        robotRepo.save(robot);
+        Robot retrievedRobot = robotRepo.findByName("TestPersistRobot");
+        assertEquals(robot.getName(), retrievedRobot.getName());
+    }
 }

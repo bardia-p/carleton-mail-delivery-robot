@@ -13,6 +13,6 @@ import java.util.Optional;
 public interface SuperuserRepository extends CrudRepository<Superuser, Long>{
     List<Superuser> findAll();
 
-    Optional<AppUser> findByUsername(String userid);
+    Optional<Superuser> findByUsername(String userid);
 }
 

@@ -51,4 +51,15 @@ public class DeliveryTests {
 
     }
 
+    /**
+     * Test for checking if a Delivery object can persist on the back end.
+     */
+    @Test
+    public void testPersist() {
+        Delivery delivery = new Delivery("TestPersistStart", "TestPersistEnd");
+        deliveryRepo.save(delivery);
+        Delivery retrievedDelivery = deliveryRepo.findById(delivery.getDeliveryId()).orElse(null);
+        assertEquals(2, retrievedDelivery.getDeliveryId());
+    }
+
 }

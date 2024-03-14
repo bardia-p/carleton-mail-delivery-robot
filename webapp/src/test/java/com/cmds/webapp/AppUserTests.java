@@ -34,4 +34,12 @@ public class AppUserTests {
         user.setCurrentDelivery(delivery);
         assertEquals(user.getCurrentDelivery(), delivery);
     }
+    @Test
+    public void testPersist(){
+        AppUser user = new AppUser("testPersistUser", "testPass");
+        userRepo.save(user);
+        AppUser retrievedUser = userRepo.findByUsername("testPersistUser").orElse(null);
+        assertEquals(retrievedUser, user);
+
+    }
 }
