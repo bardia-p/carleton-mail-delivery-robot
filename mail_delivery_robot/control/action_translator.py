@@ -1,4 +1,5 @@
 import math
+import os
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
@@ -14,6 +15,7 @@ class ActionTranslator(Node):
     
     @Subscribers:
     - Listens to /actions in case new actions were sent.
+    - Listens to /dock_status to see the dock station.
 
     @Publishers:
     - Publishes Twist commands to /cmds_vel to move the robot.
@@ -28,17 +30,46 @@ class ActionTranslator(Node):
         '''
         super().__init__('action_translator')
 
+        # Get the model of the robot.
+        self.declare_parameter('robot_model', 'CREATE_2')
+        self.robot_model = self.get_parameter('robot_model').get_parameter_value().string_value
+        
         # Load the global config.
         self.config = loadConfig()
 
         # The publishers for the node.
         self.drivePublisher = self.create_publisher(Twist, 'cmd_vel', 2)
-        self.undockPublisher = self.create_publisher(Empty, 'dock', 1)
-        self.dockPublisher = self.create_publisher(Empty, 'undock', 1)
         
-        # The subscribers for the node.
-        self.subscription = self.create_subscription(String, 'actions', self.decodeAction, 10)
+        if self.robot_model != "CREATE_3":
+            self.undockPublisher = self.create_publisher(Empty, 'dock', 1)
+            self.dockPublisher = self.create_publisher(Empty, 'undock', 1)
+        else:
+            from irobot_create_msgs.msg import DockStatus
+            from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
+            self.dockStatusSubscriber = self.create_subscription(DockStatus, 'dock_status', self.updateDockStatus, qos_profile=QoSProfile(
+                reliability=QoSReliabilityPolicy.BEST_EFFORT,
+                depth=10
+            ))
 
+        self.should_dock = False
+
+        # The subscribers for the node.
+        self.actionSubscriber = self.create_subscription(String, 'actions', self.decodeAction, 10)
+
+    def updateDockStatus(self, data):
+        '''
+        The callback for /dock_status.
+        Reads the dock status of the robot.
+
+        @param data: the dock status data.
+        '''
+        is_docked = data.is_docked
+        if self.should_dock and not is_docked:
+            os.system('ros2 action send_goal /dock irobot_create_msgs/action/Dock "{}"')
+        
+        if is_docked:
+            self.should_dock = False
+    
     def decodeAction(self, data):
         '''
         The callback for /actions.
@@ -47,15 +78,22 @@ class ActionTranslator(Node):
         @param data: the action data to interpret.
         '''
         action = str(data.data)
-        emptyMessage = Empty()
 
         split_action = action.split(":")
 
-        # TODO: IMPLEMENT DOCK/UNDOCK later.
+        # TODO: FIX UNDOCK BEHAVIOUR FOR CREATE 2.
         if split_action[0] == Action.DOCK.value:
-            self.dockPublisher.publish(emptyMessage)
+            if self.robot_model != "CREATE_3":
+                dockMessage = Empty()
+                self.dockPublisher.publish(dockMessage)
+            else:
+                self.should_dock = True
         elif split_action[0] == Action.UNDOCK.value:
-            self.undockPublisher.publish(emptyMessage)
+            if self.robot_model != "CREATE_3":
+                undockMessage = Empty()
+                self.undockPublisher.publish(undockMessage)
+            else:
+                os.system('ros2 action send_goal /undock irobot_create_msgs/action/Undock "{}"')
         else:
             self.move_robot(split_action)
     
