@@ -51,7 +51,8 @@ class RobotDriver(Node):
         '''
         Initializes the robot's state and sensor data.
         '''
-        self.state = state_machine.Docked(self.actionPublisher)
+        #self.state = state_machine.Docked(self.actionPublisher)
+        self.state = state_machine.No_Dest(self.actionPublisher)
         self.wall_data = ""
         self.nav_data = Nav_Event.NAV_NONE.value
         self.bump_data = False

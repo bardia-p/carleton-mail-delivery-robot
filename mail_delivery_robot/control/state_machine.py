@@ -247,7 +247,7 @@ class No_Dest(Operational):
         self.noWallCount = 0
 
     def no_bumper_none_no_wall(self):
-        if self.noWallCount % 2 == 0:
+        if self.noWallCount % 5 == 0:
             self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT)
         else:
             self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT)
