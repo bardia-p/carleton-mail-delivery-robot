@@ -21,6 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
+/**
+ * Tests for the GET mappings in PageController.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 public class PageControllerTests {
