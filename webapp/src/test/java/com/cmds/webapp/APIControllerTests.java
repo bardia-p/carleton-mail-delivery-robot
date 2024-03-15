@@ -191,7 +191,7 @@ public class APIControllerTests {
         System.out.println(delivery.getDeliveryId());
 
         Cookie userCookie = new Cookie("username", user.getUsername());
-        this.mockMvc.perform(post("/api/v1/updateStatus/1")
+        this.mockMvc.perform(post("/api/v1/updateStatus/2")
                         .cookie(userCookie)
                         .contentType(MediaType.APPLICATION_JSON).content(postData))
                 .andExpect(status().isOk());
