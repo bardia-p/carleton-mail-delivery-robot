@@ -37,10 +37,10 @@ class Client(Node):
         self.tripPublisher = self.create_publisher(String, 'trips', 10)
 
         # The subscribers for the node.
-        #self.updateSubscriber = self.create_subscription(String, 'update', self.handleUpdate, 10)
+        self.updateSubscriber = self.create_subscription(String, 'update', self.handleUpdate, 10)
 
         # The timer to check for new requests with the web app.
-        #self.request_timer = self.create_timer(self.config["CLIENT_REQUEST_TIMER"], self.sendRequest)
+        self.request_timer = self.create_timer(self.config["CLIENT_REQUEST_TIMER"], self.sendRequest)
 
     def handleUpdate(self, data):
         '''
@@ -55,7 +55,7 @@ class Client(Node):
         post_data = {"status": update_data}
 
         x = requests.post(url, json = post_data)
-        self.get_logger().info(x.text)
+        #self.get_logger().info(x.text)
     
     def sendRequest(self):
         '''

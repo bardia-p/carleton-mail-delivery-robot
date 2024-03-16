@@ -24,5 +24,16 @@ class Map:
     def getDirection(self, source, destination):
         '''
         General method to return the value from a given key in a key-value pair.
+
+        @param source: the source of the trip.
+        @param destination: the destination of the trip.
         '''
         return self.routing_map[source][destination]
+
+    def exists(self, location):
+        '''
+        Checks to see if the location exists in the map.
+
+        @param location: the building to verify.
+        '''
+        return location in self.routing_map

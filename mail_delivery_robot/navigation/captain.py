@@ -83,7 +83,11 @@ class Captain(Node):
             beacon_orientation = self.beacon_connections[current_beacon][self.prev_beacon]
             if beacon_orientation == "-":
                 self.sendUpdate("ERROR: ROBOT HAS BEEN MOVED")
-                beacon_orientation = "1"
+                # Finds a valid orientation for the robot.
+                for i in range(1, 5):
+                    if self.map.exists(beacon + str(i)):
+                        beacon_orientation = str(i)
+                        break
             direction = self.map.getDirection(current_beacon + beacon_orientation, self.destination)
             navMessage = String()
             navMessage.data = direction

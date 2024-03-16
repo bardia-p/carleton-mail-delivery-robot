@@ -5,6 +5,7 @@ from navigation.captain import Nav_Event
 from tools.csv_parser import loadConfig
 
 config = loadConfig()
+LOST_WALL_TUNER = config["LOST_WALL_TUNER"]
 LEFT_TURN_LIMIT = config["LEFT_TURN_CLOCK_CYCLES"]
 RIGHT_TURN_LIMIT = config["RIGHT_TURN_CLOCK_CYCLES"]
 U_TURN_LIMIT = config["U_TURN_CLOCK_CYCLES"]
@@ -247,7 +248,7 @@ class No_Dest(Operational):
         self.noWallCount = 0
 
     def no_bumper_none_no_wall(self):
-        if self.noWallCount % 5 == 0:
+        if self.noWallCount % LOST_WALL_TUNER == 0:
             self.setLongAction(generateAction(Action.R_TURN.value), RIGHT_TURN_LIMIT)
         else:
             self.setLongAction(generateAction(Action.FORWARD.value), FORWARD_LIMIT)
