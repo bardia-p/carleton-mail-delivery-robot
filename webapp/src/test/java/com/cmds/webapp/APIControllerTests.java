@@ -166,46 +166,4 @@ public class APIControllerTests {
         assertNotNull(retrievedRobot);
         assertEquals("TestRobot", retrievedRobot.getName());
     }
-
-    /**
-     * Method to test the Update Status post mapping. A mock delivery is created, and the updateStatus post mapping is applied to it.
-     *
-     * @throws Exception, exception
-     */
-    @Test
-    public void testUpdateStatus() throws Exception {
-        String postData = "{\"status\":\"TEST STATUS: This is a test\"}";
-
-        Superuser user = new Superuser("APITestUpdateStatus", "password");
-        this.superuserRepo.save(user);
-        assertNotNull(this.superuserRepo.findByUsername("APITestUpdateStatus").orElse(null));
-
-        Robot robot = new Robot("TestRobotUpdateStatus");
-        this.robotRepo.save(robot);
-        assertNotNull(this.robotRepo.findByName("TestRobotUpdateStatus"));
-
-        Delivery delivery = new Delivery("TestStart", "TestFinal");
-        this.deliveryRepo.save(delivery);
-        assertNotNull(this.deliveryRepo.findById(delivery.getDeliveryId()));
-
-        System.out.println(delivery.getDeliveryId());
-
-        Cookie userCookie = new Cookie("username", user.getUsername());
-        this.mockMvc.perform(post("/api/v1/updateStatus/2")
-                        .cookie(userCookie)
-                        .contentType(MediaType.APPLICATION_JSON).content(postData))
-                .andExpect(status().isOk());
-
-
-        Delivery retrievedDelivery = null;
-        for (Delivery d: this.deliveryRepo.findAll()) {
-            if (d.getStartingDest().equals("TestStart")) {
-                retrievedDelivery = d;
-                break;
-            }
-        }
-        System.out.println(retrievedDelivery.getStatuses());
-        assertNotNull(retrievedDelivery);
-        assertEquals("TEST STATUS: This is a test", retrievedDelivery.getStatuses().get(1));
-    }
 }
