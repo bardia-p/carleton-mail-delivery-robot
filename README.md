@@ -95,6 +95,7 @@ For detailed instructions on how to run system please refer to Appendix D of the
 To help with the development of the project, the team has created a few tools that allow for quick tests. The tools are as follows:
 * [Beacon Analyzer](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Beacon_Analyzer): This tool allows the developers to quickly measure the range and signal strength of the beacons and record them in a CSV file.
 * [Wall Follow Simulator](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Wall_Follow_Simulator): This tool allows the developers to test the wall following algorithm of the robot in a Turtle simulator.
+* [Firebase IP Service](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Firebase_IP_Service): This tool allows the Raspberry Pi to send its IP to a Firebase Realtime Database on boot for easy SSH access to the robot without connection to an external monitor.
 
 ## Other Iterations of the Project
 As previously mentioned this is a continuious project. You can find the previous iterations of the project here for reference:

@@ -1,0 +1,14 @@
+[Unit]
+Description=Firebase IP Service
+After=network.target
+
+[Service]
+User=ubuntu
+Type=oneshot
+ReaminAfterExit=true
+ExecStart=/bin/fwdip/fwdip_helper.sh
+StandardOutput=append:/home/ubuntu/fwdip.log
+StandardError=append:/home/ubuntu/fwdip.log
+
+[Install]
+WantedBy=multi-user.target
