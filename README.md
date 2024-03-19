@@ -91,6 +91,9 @@ For detailed instructions on how to run system please refer to Appendix D of the
 6. At the home page click on the "Launch a Delivery" button.
 7. Once you have created your delivery, you can select it on the home page to track its status.
 
+## Miscellanous
+This section includes the all the design related aspects of the project. This includes CAD models for the robot chassis and Figma drawings for the web app. 
+
 ## Tools
 To help with the development of the project, the team has created a few tools that allow for quick tests. The tools are as follows:
 * [Beacon Analyzer](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Beacon_Analyzer): This tool allows the developers to quickly measure the range and signal strength of the beacons and record them in a CSV file.
