@@ -9,7 +9,7 @@ from geometry_msgs.msg import Twist
 from tools.csv_parser import loadConfig
 
 LIDAR_TIMER = 0.2
-BEACON_TIMER = 15
+BEACON_TIMER = 10
 BUMPER_TIMER = 0.1
 MIN_WALL_DISTANCE = 0.1
 ANGLE_ERROR = 0.6

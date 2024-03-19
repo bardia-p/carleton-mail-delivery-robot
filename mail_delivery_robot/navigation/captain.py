@@ -41,10 +41,10 @@ class Captain(Node):
         self.beacon_connections = loadConnections()
 
         # Destination route for the robot.
-        self.destination = "UC"
+        self.destination = "Mackenzie/Minto"
 
         # Previous beacon for the robot.
-        self.prev_beacon = "UC"
+        self.prev_beacon = "Canal"
 
         # Routing table for the captain.
         self.map = Map()
