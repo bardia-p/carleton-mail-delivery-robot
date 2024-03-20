@@ -41,10 +41,10 @@ class Captain(Node):
         self.beacon_connections = loadConnections()
 
         # Destination route for the robot.
-        self.destination = "Mackenzie/Minto"
+        self.destination = "Canal"
 
         # Previous beacon for the robot.
-        self.prev_beacon = "Canal"
+        self.prev_beacon = "Mackenzie/Minto"
 
         # Routing table for the captain.
         self.map = Map()
@@ -85,7 +85,7 @@ class Captain(Node):
                 self.sendUpdate("ERROR: ROBOT HAS BEEN MOVED")
                 # Finds a valid orientation for the robot.
                 for i in range(1, 5):
-                    if self.map.exists(beacon + str(i)):
+                    if self.map.exists(current_beacon + str(i)):
                         beacon_orientation = str(i)
                         break
             direction = self.map.getDirection(current_beacon + beacon_orientation, self.destination)

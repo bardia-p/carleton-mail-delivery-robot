@@ -151,7 +151,7 @@ class ActionTranslator(Node):
 
             # For minor changes avoid big arcs.
             if abs(feedback) > self.config["WALL_FOLLOW_ANGLE_CHANGE_THRESHOLD"]:
-                message.linear.x = self.config["WALL_FOLLOW_SPEED"] // 2
+                message.linear.x = self.config["WALL_FOLLOW_SPEED"] / 2
             else:
                 message.linear.x = self.config["WALL_FOLLOW_SPEED"]
 
