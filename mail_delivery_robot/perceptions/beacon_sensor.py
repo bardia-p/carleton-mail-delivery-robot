@@ -71,27 +71,43 @@ class BeaconSensor(Node):
                     #self.get_logger().info("Device {} ({}), RSSI={} dB".format(dev.addr, dev.addrType, dev.rssi))
 
                     # Publishes the observed beacon only if it is within the RSSI range.
-                    if dev.rssi > self.config["BEACON_RSSI_THRESHOLD"]:
+                    beacon_rssi = abs(int(dev.rssi))
+                    if beacon_rssi < abs(self.config["BEACON_RSSI_THRESHOLD"]):
                         key = self.beacons[beacon]
                         if key in self.scan:
-                            self.scan[key] = (str(dev.rssi), self.scan[key][1] + 1)
+                            self.scan[key] = self.scan[key] + [beacon_rssi]
                         else:
-                            self.scan[key] = (str(dev.rssi), 1)
+                            self.scan[key] = [beacon_rssi]
 
-        if self.scan_counter == self.config["BEACON_SCAN_COUNT"]:
+                    break
+
+        self.get_logger().info(str(self.scan))
+        if self.scan_counter >= self.config["BEACON_SCAN_COUNT"]:
             best_beacon = ""
-            max_count = 0
+            best_rssi = 100
             for beacon in self.scan.keys():
-                if self.scan[beacon][1] > max_count:
-                    max_count = self.scan[beacon][1]
-                    best_beacon = beacon + "," + self.scan[beacon][0]
+                beacon_scan = self.scan[beacon]
+               
+                # Not enough data
+                if len(beacon_scan) < 2:
+                    continue
 
+                # We are getting away from this beacon.
+                if beacon_scan[-1] > beacon_scan[0]:
+                    continue
+
+                # Finds the strongest beacon.
+                if beacon_scan[-1] < best_rssi:
+                    best_beacon = beacon
+                    best_rssi = beacon_scan[-1]
+            
             if best_beacon != "":
-                beaconData.data = self.beacons[beacon] + "," + str(dev.rssi) 
+                beaconData.data = best_beacon + "," + str(best_rssi) 
+                self.get_logger().info(beaconData.data)
                 self.publisher_.publish(beaconData)
             
-            self.scan = dict()
-            self.scan_counter = 0
+                self.scan = dict()
+                self.scan_counter = 0
 
 def main():
     '''
