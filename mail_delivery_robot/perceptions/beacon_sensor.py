@@ -93,7 +93,7 @@ class BeaconSensor(Node):
                     continue
 
                 # We are getting away from this beacon.
-                if beacon_scan[-1] > beacon_scan[0]:
+                if beacon_scan[-1] > beacon_scan[-2]:
                     continue
 
                 # Finds the strongest beacon.
