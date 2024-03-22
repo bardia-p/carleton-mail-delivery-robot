@@ -42,6 +42,9 @@ class Client(Node):
         # The timer to check for new requests with the web app.
         self.request_timer = self.create_timer(self.config["CLIENT_REQUEST_TIMER"], self.sendRequest)
 
+        # The timer to check if the system needs to be killed.
+        self.kill_timer = self.create_timer(self.config["CLIENT_KILL_TIMER"], self.killSystem)
+    
     def handleUpdate(self, data):
         '''
         The callback for /update.
@@ -54,8 +57,11 @@ class Client(Node):
         url = 'https://cudelivery.azurewebsites.net/api/v1/updateStatus/' + self.currentTrip
         post_data = {"status": update_data}
 
-        x = requests.post(url, json = post_data)
-        self.get_logger().info(x.text)
+        try:
+            x = requests.post(url, json = post_data)
+            #self.get_logger().info(x.text)
+        except:
+            self.get_logger().info("ERROR: FAILED TO CONNECT TO THE WEBSITE.")
     
     def sendRequest(self):
         '''
@@ -63,20 +69,51 @@ class Client(Node):
         '''
         if self.currentTrip == "":
             url = "https://cudelivery.azurewebsites.net/api/v1/getRobotDeliveries/" + self.robot_model
-            r = json.loads(requests.get(url).text)
+            try:
+                res = requests.get(url)
+                if res.status_code == 200:
+                    r = json.loads(res.text)
 
-            # Get a new trip once you are done.
-            if len(r) != 0:
-                for k in r:
-                    trip = r[k]["sourceDest"]+":"+r[k]["finalDest"]
-                    self.currentTrip = k
-                    break
+                    # Get a new trip once you are done.
+                    if len(r) != 0:
+                        for k in r:
+                            trip = r[k]["sourceDest"]+":"+r[k]["finalDest"]
+                            self.currentTrip = k
+                            break
 
-                tripMessage = String()
-                tripMessage.data = trip 
-                self.tripPublisher.publish(tripMessage)
-                self.get_logger().info("Got a new request: " + trip)
+                        tripMessage = String()
+                        tripMessage.data = trip 
+                        self.tripPublisher.publish(tripMessage)
+                        self.get_logger().info("Got a new request: " + trip)
+                else:
+                    self.get_logger().info("ERROR: Failed to get an update.")
+            except:
+                self.get_logger().info("ERROR: FAILED TO CONNECT TO THE WEBSITE.")
 
+    def killSystem(self):
+        '''
+        Checks to see if the system needs to be killed.
+        '''
+        url = "https://cudelivery.azurewebsites.net/api/v1/killRobot/" + self.robot_model
+        try:
+            res = requests.get(url)
+            if res.status_code == 200:
+                r = json.loads(res.text)
+
+                if len(r) != 0:
+                    if r["kill"]:
+                        # Attempts to kill the system.
+                        nodes = ["sllidar_node", "action_translator", "robot_driver", "captain", "client", "lidar_sensor", "beacon_sensor", "bumper_sensor"]
+                        if self.robot_model != "CREATE_3":
+                            nodes.append("create_driver")
+
+                        for node in nodes:
+                            os.system('killall ' + node)
+            else:
+                self.get_logger().info("ERROR: Failed to get a kill update.")
+        except:
+            self.get_logger().info("ERROR: FAILED TO CONNECT TO THE WEBSITE")
+        
 def main():
     '''
     Starts up the node. 

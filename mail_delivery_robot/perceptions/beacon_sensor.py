@@ -44,6 +44,9 @@ class BeaconSensor(Node):
         # Timer set up.
         self.timer = self.create_timer(self.config["BEACON_SCAN_TIMER"], self.checkForBeacons) # call checkForBeacons() every 0.5 seconds
 
+        self.scan_counter = 0
+        self.scan = dict()
+
     def initBeacons(self):
         '''
         Initializes all the beacons and their values.
@@ -55,8 +58,10 @@ class BeaconSensor(Node):
         The callback for the timer.
         Performs a scan for the available Bluetooth devices.
         '''
-        devices = self.scanner.scan(self.config["BEACON_SCAN_TIMER"]) # Listen for ADV_IND packages.
+        devices = self.scanner.scan(self.config["BEACON_SCAN_DURATION"]) # Listen for ADV_IND packages.
         beaconData = String()
+
+        self.scan_counter += 1
 
         # For each scanned device check if device address matches beacon in list
         for dev in devices:
@@ -66,9 +71,43 @@ class BeaconSensor(Node):
                     #self.get_logger().info("Device {} ({}), RSSI={} dB".format(dev.addr, dev.addrType, dev.rssi))
 
                     # Publishes the observed beacon only if it is within the RSSI range.
-                    if dev.rssi > self.config["BEACON_RSSI_THRESHOLD"]:
-                        beaconData.data = self.beacons[beacon] + "," + str(dev.rssi) 
-                        self.publisher_.publish(beaconData)
+                    beacon_rssi = abs(int(dev.rssi))
+                    if beacon_rssi < abs(self.config["BEACON_RSSI_THRESHOLD"]):
+                        key = self.beacons[beacon]
+                        if key in self.scan:
+                            self.scan[key] = self.scan[key] + [beacon_rssi]
+                        else:
+                            self.scan[key] = [beacon_rssi]
+
+                    break
+
+        self.get_logger().info(str(self.scan))
+        if self.scan_counter >= self.config["BEACON_SCAN_COUNT"]:
+            best_beacon = ""
+            best_rssi = 100
+            for beacon in self.scan.keys():
+                beacon_scan = self.scan[beacon]
+               
+                # Not enough data
+                if len(beacon_scan) < 2:
+                    continue
+
+                # We are getting away from this beacon.
+                if beacon_scan[-1] > beacon_scan[-2]:
+                    continue
+
+                # Finds the strongest beacon.
+                if beacon_scan[-1] < best_rssi:
+                    best_beacon = beacon
+                    best_rssi = beacon_scan[-1]
+            
+            if best_beacon != "":
+                beaconData.data = best_beacon + "," + str(best_rssi) 
+                self.get_logger().info(beaconData.data)
+                self.publisher_.publish(beaconData)
+            
+                self.scan = dict()
+                self.scan_counter = 0
 
 def main():
     '''
@@ -78,7 +117,5 @@ def main():
     beacon_sensor = BeaconSensor()
     rclpy.spin(beacon_sensor)
     
-
-
 if __name__ == '__main__':
     main()

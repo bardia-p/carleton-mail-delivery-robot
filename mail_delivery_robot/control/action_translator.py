@@ -51,10 +51,15 @@ class ActionTranslator(Node):
                 depth=10
             ))
 
+            # Disable the robot's safety features.
+            os.system("ros2 param set /motion_control safety_override full")
+
         self.should_dock = False
 
         # The subscribers for the node.
         self.actionSubscriber = self.create_subscription(String, 'actions', self.decodeAction, 10)
+
+
 
     def updateDockStatus(self, data):
         '''
@@ -146,7 +151,7 @@ class ActionTranslator(Node):
 
             # For minor changes avoid big arcs.
             if abs(feedback) > self.config["WALL_FOLLOW_ANGLE_CHANGE_THRESHOLD"]:
-                message.linear.x = self.config["WALL_FOLLOW_SPEED"] // 2
+                message.linear.x = self.config["WALL_FOLLOW_SPEED"] / 2
             else:
                 message.linear.x = self.config["WALL_FOLLOW_SPEED"]
 
