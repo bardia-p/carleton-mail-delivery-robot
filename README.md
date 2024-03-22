@@ -27,6 +27,9 @@ The system will be controlled through a web application component which will all
   <p>A use case diagram summarizing the main features of the system</p>
 </div>
 
+## Demo
+You can video demos of the project [here](https://www.youtube.com/playlist?list=PLOsC27zWBS6e39ZaXaD6GpvZ17f-Q_1Of)
+
 ## Implementation
 
 ### Website
@@ -41,9 +44,9 @@ Here is a summary of the hardware implementations of the project:
      <td>Iteration 3 using iRobot CREATE 3</td>
   </tr>
   <tr>
-    <td><img src="demo/create1.png" width=1500></td>
-    <td><img src="demo/create2.png" width=1800></td>
-    <td><img src="demo/create3.png" width=2500></td>
+    <td><img src="images/create1.png" width=1500></td>
+    <td><img src="images/create2.png" width=1800></td>
+    <td><img src="images/create3.png" width=2500></td>
   </tr>
  </table>
 
