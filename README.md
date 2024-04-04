@@ -22,10 +22,16 @@ For the purpose of this project, the robot's navigation system should allow it t
 that it strays off its original course.
 The system will be controlled through a web application component which will allow users to give the robot a desired destination.
 
-<div align='center'>
-  <img src='diagrams/use_case_diagram.png' width=300>
-  <p>A use case diagram summarizing the main features of the system</p>
-</div>
+<table>
+  <tr>
+    <td>Use Case Diagram (Web App)</td>
+     <td>Use Case Diagram (System)</td>
+  </tr>
+  <tr>
+    <td><img src="diagrams/use_case_web_app_diagram.png" width=3400></td>
+    <td><img src="diagrams/use_case_diagram.png" width=1800></td>
+  </tr>
+</table>
 
 ## Demo
 You can video demos of the project [here](https://www.youtube.com/playlist?list=PLOsC27zWBS6e39ZaXaD6GpvZ17f-Q_1Of)

@@ -28,11 +28,6 @@ package "models" <<frame>> {
         + SuperUser(username: String, password: String)
     }
 
-    enum "UserType" {
-        - REGULAR
-        - SUPER_USER
-    }
-
     class "Robot" {
         - name: String
         - status: RobotStatus
@@ -81,6 +76,5 @@ package "models" <<frame>> {
 
 "Delivery" "1  " o--* "0.." "Robot"
 "AppUser" "1  " *-- "1 " "Delivery"
-"AppUser" -up-> "UserType"
 "SuperUser" --|> "AppUser"
 @enduml
