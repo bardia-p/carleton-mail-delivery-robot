@@ -75,21 +75,21 @@ This project involves both software and hardware components.
 
 ## Project Design
 The project is broken down into 2 major components:
-* [ROS Backend](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/mail_delivery_robot): this package includes all the code related to the ROS portion of the application
-* [Web App](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/webapp): this package includes all the code related to the web application portion of the project.
+* [ROS Backend](mail_delivery_robot): this package includes all the code related to the ROS portion of the application
+* [Web App](webapp): this package includes all the code related to the web application portion of the project.
 
 <div align='center'>
   <img src='diagrams/component_diagram.png' width=400>
   <p>A component diagram summarizing the relationship between these packages.</p>
 </div>
 
-For more detailed information about the design of the project please refer to the [Final Report](https://github.com/bardia-p/carleton-mail-delivery-robot/blob/master/documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf) and the [diagrams folder](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/diagrams).
+For more detailed information about the design of the project please refer to the [Final Report](documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf) and the [diagrams folder](diagrams).
 
 ## Setting up the Project
-For detailed instructions on how to set up the system please refer to Appendices B & C of the [Final Report](https://github.com/bardia-p/carleton-mail-delivery-robot/blob/master/documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf)
+For detailed instructions on how to set up the system please refer to Appendices B & C of the [Final Report](documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf)
 
 ## Running the Project
-For detailed instructions on how to run system please refer to Appendix D of the [Final Report](https://github.com/bardia-p/carleton-mail-delivery-robot/blob/master/documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf)
+For detailed instructions on how to run system please refer to Appendix D of the [Final Report](documents/Final-Report_Autonomous-Mail-Delivery-Robot.pdf)
 
 ## Using the Project
 1. Make sure the robots are all set up by following the "Setting up the Project" step.
@@ -105,9 +105,9 @@ This section includes the all the design related aspects of the project. This in
 
 ## Tools
 To help with the development of the project, the team has created a few tools that allow for quick tests. The tools are as follows:
-* [Beacon Analyzer](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Beacon_Analyzer): This tool allows the developers to quickly measure the range and signal strength of the beacons and record them in a CSV file.
-* [Wall Follow Simulator](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Wall_Follow_Simulator): This tool allows the developers to test the wall following algorithm of the robot in a Turtle simulator.
-* [Firebase IP Service](https://github.com/bardia-p/carleton-mail-delivery-robot/tree/master/tools/Firebase_IP_Service): This tool allows the Raspberry Pi to send its IP to a Firebase Realtime Database on boot for easy SSH access to the robot without connection to an external monitor.
+* [Beacon Analyzer](tools/Beacon_Analyzer): This tool allows the developers to quickly measure the range and signal strength of the beacons and record them in a CSV file.
+* [Wall Follow Simulator](tools/Wall_Follow_Simulator): This tool allows the developers to test the wall following algorithm of the robot in a Turtle simulator.
+* [Firebase IP Service](tools/Firebase_IP_Service): This tool allows the Raspberry Pi to send its IP to a Firebase Realtime Database on boot for easy SSH access to the robot without connection to an external monitor.
 
 ## Other Iterations of the Project
 As previously mentioned this is a continuious project. You can find the previous iterations of the project here for reference:
