@@ -17,7 +17,7 @@ Diagram Generation Status: [![Generate Diagrams](https://github.com/bardia-p/car
 ## Description
 This project is being completed to fulfill the 2023 - 2024 Capstone project requirements for SYSC 4907 at Carleton University.
 
-The Carleton Mail Delivery Robot system aims to automate Carleton's existing mail deliver system. With the placement of several bluetoopth beacons throughout the tunnels, the robot will be able to navigate across Carleton using a LiDAR sensor.
+The Carleton Mail Delivery Robot system aims to automate Carleton's existing mail deliver system. With the placement of several Bluetooth beacons throughout the tunnels, the robot will be able to navigate across Carleton using a LiDAR sensor.
 For the purpose of this project, the robot's navigation system should allow it to reach its intended destination while detecting and avoiding any obstacles. The robot must be resilient and should be able to find its destination in the event
 that it strays off its original course.
 The system will be controlled through a web application component which will allow users to give the robot a desired destination.
@@ -100,8 +100,8 @@ For detailed instructions on how to run system please refer to Appendix D of the
 6. At the home page click on the "Launch a Delivery" button.
 7. Once you have created your delivery, you can select it on the home page to track its status.
 
-## Miscellanous
-This section includes the all the design related aspects of the project. This includes CAD models for the robot chassis and Figma drawings for the web app. 
+## Miscellaneous
+This [miscellaneous](miscellaneous/) section includes the all the design related aspects of the project. This includes CAD models for the robot chassis and frontend designs for the web app.
 
 ## Tools
 To help with the development of the project, the team has created a few tools that allow for quick tests. The tools are as follows:
@@ -109,8 +109,8 @@ To help with the development of the project, the team has created a few tools th
 * [Wall Follow Simulator](tools/Wall_Follow_Simulator): This tool allows the developers to test the wall following algorithm of the robot in a Turtle simulator.
 * [Firebase IP Service](tools/Firebase_IP_Service): This tool allows the Raspberry Pi to send its IP to a Firebase Realtime Database on boot for easy SSH access to the robot without connection to an external monitor.
 
-## Other Iterations of the Project
-As previously mentioned this is a continuious project. You can find the previous iterations of the project here for reference:
+## Previous Iterations of the Project
+As previously mentioned this is a continuous project. You can find the previous iterations of the project here for reference:
 * [2022-2023](https://github.com/Em-kale/carleton-mail-delivery-robot)
 * [2021-2022](https://github.com/SteveWick/carleton-mail-delivery-robot)
 
